@@ -55,6 +55,9 @@ $gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin
   preceded by a Show Text command. (Ensured a command101 alias method
   returns a boolean value as expected by the current MZ corescript.)
 
+**v0.6.1** - 8/30/2023
+- This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
+
 > **Remember, only you can build your dreams!**
 >
 > *Tyruswoo*

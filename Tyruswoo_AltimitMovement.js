@@ -36,7 +36,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.6 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.6.1 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -86,6 +86,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Fixed a bug in which a Show Choices command could happen twice when
  *          preceded by a Show Text command. (Ensured a command101 alias method
  *          returns a boolean value as expected by the current MZ corescript.)
+ * 
+ * v0.6.1  8/30/2023
+ *        - This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
  *
