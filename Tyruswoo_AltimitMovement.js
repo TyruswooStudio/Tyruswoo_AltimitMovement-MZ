@@ -1652,19 +1652,19 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			case gc.ROUTE_MOVE_BACKWARD:
 				this._wasDirectionFixed = this.isDirectionFixed();
 				this.setDirectionFix(true);
-				vx = Direction.isLeft(this._direction)
+				let vx_ = Direction.isLeft(this._direction)
 					? -1
 					: Direction.isRight(this._direction)
 						? 1
 						: 0;
-				vy = Direction.isUp(this._direction)
+				let vy_ = Direction.isUp(this._direction)
 					? -1
 					: Direction.isDown(this._direction)
 						? 1
 						: 0;
 				this._moveTarget = true;
-				this._moveTargetX = this._x - vx;
-				this._moveTargetY = this._y - vy;
+				this._moveTargetX = this._x - vx_;
+				this._moveTargetY = this._y - vy_;
 				break;
 			default:
 				Game_Character_processMoveCommand.call(this, command);
