@@ -58,6 +58,10 @@ $gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin
 **v0.6.1** - 8/30/2023
 - This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
+**v0.7.0** - 3/8/2024
+- Integrated fixes by VeLee et al, including a fix to the bug where
+  multiple touch events sometimes triggered at once.
+
 > **Remember, only you can build your dreams!**
 >
 > *Tyruswoo*
