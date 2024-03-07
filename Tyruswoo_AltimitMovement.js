@@ -3015,9 +3015,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		// Recalculation is about to happen, so clear the recalc flag.
 		Tyruswoo.AltimitMovement._recalculateCollisionMesh = false;
 
-		if (CollisionMesh.meshInMemory.mapId === mapId) {
-			return CollisionMesh.meshInMemory.mesh[type];
-		}
 		const cacheName = 'cache_mesh%1'.format(mapId.padZero(3));
 		if (PLAY_TEST.COLLISION_MESH_CACHING &&
 			$gameTemp.isPlaytest() &&
