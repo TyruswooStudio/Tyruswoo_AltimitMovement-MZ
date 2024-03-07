@@ -582,58 +582,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Id number or name of event to move around. Direction must be set to Event or this will be ignored.
  */
 
-/*
-// Tyruswoo code:
-  
-  // TODO: apply changes below
-
-	CollisionMesh.getMesh = function( mapId, type ) {
-	  type = type || CollisionMesh.WALK;
-
-	  // This is the portion Tyruswoo needs to change, to provide a means for us to update the collision mesh.
-	  if ( CollisionMesh.meshInMemory.mapId === mapId && !Tyruswoo.AltimitMovement._recalculateCollisionMesh) {
-		return CollisionMesh.meshInMemory.mesh[type];
-	  }
-	  //No need to plan to recalculate, since the calculation will now occur.
-	  Tyruswoo.AltimitMovement._recalculateCollisionMesh = false;
-
-	  var cacheName = 'cache_mesh%1'.format( mapId.padZero( 3 ) );
-	  if ( ( PLAY_TEST.COLLISION_MESH_CACHING && $gameTemp.isPlaytest() ) && StorageManager.exists( cacheName ) ) {
-		CollisionMesh.meshInMemory.mapId = mapId;
-		CollisionMesh.meshInMemory.mesh = JsonEx.parse( StorageManager.load( cacheName ) );
-	  } else {
-		var gameMap;
-		if ( $gameMap.mapId() === mapId ) {
-		  gameMap = $gameMap;
-		} else {
-		  gameMap = new Game_Map();
-		  gameMap.setup( mapId );
-		}
-
-		CollisionMesh.meshInMemory.mapId = mapId;
-		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] = CollisionMesh.makeCollisionMesh( gameMap, gameMap.isPassable );
-		if ( !gameMap.boat().isTransparent() ) {
-		  CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] = CollisionMesh.makeCollisionMesh( gameMap, gameMap.isBoatPassable );
-		}
-		if ( !gameMap.ship().isTransparent() ) {
-		  CollisionMesh.meshInMemory.mesh[CollisionMesh.SHIP] = CollisionMesh.makeCollisionMesh( gameMap, gameMap.isShipPassable );
-		}
-		if ( !gameMap.airship().isTransparent() ) {
-		  CollisionMesh.meshInMemory.mesh[CollisionMesh.AIRSHIP] = CollisionMesh.makeCollisionMesh( gameMap );
-		}
-		StorageManager.saveObject( cacheName, JSON.prune( CollisionMesh.meshInMemory.mesh ) );
-	  }
-
-	  return CollisionMesh.meshInMemory.mesh[type];
-	};
-
-*/
 (() => {
 	//=========================================================================
 	// Parameters and Constants
 	//=========================================================================
 
-	const pluginName = 'AltimitMovement';
+	const pluginName = 'Tyruswoo_AltimitMovement';
 	const DOM_PARSER = new DOMParser();
 	const PARAMETERS = PluginManager.parameters(pluginName);
 	// const GAME_PAD_THRESHOLD = 1 / 5;
