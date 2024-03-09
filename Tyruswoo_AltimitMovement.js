@@ -89,13 +89,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * 
  * v0.6.1  8/30/2023
  *        - This plugin is now free and open source under the MIT license.
- * 
- * v0.7.0  3/8/2024
- *        - Fixed issue where two events sometimes trigger at once and
- *          play out one after the other even when it doesn't make sense.
- *          Now the second event only runs if it's still in range and
- *          on the correct page when the first event finishes running.
- * 
  * ============================================================================
  * MIT License
  *
@@ -2732,12 +2725,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
       // New method
       Game_Event.prototype.markDelayed = function() {
-      	this._pageIndexBeforeDelay = this._pageIndex;
+        this._pageIndexBeforeDelay = this._pageIndex;
       };
 
       // New method
       Game_Event.prototype.isDelayedStart = function() {
-      	return this._starting && this._pageIndexBeforeDelay !== undefined;
+        return this._starting && this._pageIndexBeforeDelay !== undefined;
       };
 
       // New method
@@ -2747,8 +2740,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
           return false;
         }
         
-        if (!Collider.aabboxCheck(this.x, this.y, this.collider().aabbox,
-      	  $gamePlayer.x, $gamePlayer.y, $gamePlayer.collider().aabbox)) {
+        if (this.isTriggerIn([0, 1, 2])) {
+          // This event can only trigger when the event is near the player.
+          if (!Collider.aabboxCheck(this.x, this.y, this.collider().aabbox,
+            $gamePlayer.x, $gamePlayer.y, $gamePlayer.collider().aabbox))
           return false;
         }
 
@@ -2758,10 +2753,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
       // Alias method
       // When starting flag clears, delayed start info clears too.
       Tyruswoo.AltimitMovement.Game_Event_clearStartingFlag =
-      	Game_Event.prototype.clearStartingFlag;
+        Game_Event.prototype.clearStartingFlag;
       Game_Event.prototype.clearStartingFlag = function() {
-      	Tyruswoo.AltimitMovement.Game_Event_clearStartingFlag.call(this);
-      	this._pageIndexBeforeDelay = undefined;
+        Tyruswoo.AltimitMovement.Game_Event_clearStartingFlag.call(this);
+        this._pageIndexBeforeDelay = undefined;
       }
 
     } )();
@@ -2833,10 +2828,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
       // Replacement method
       // Re-evaluates delayed-start events before setting them up.
       Game_Map.prototype.setupStartingMapEvent = function() {
-      	var nextEvent = null;
+        var nextEvent = null;
         for (const event of this.events()) {
           if (!event.isStarting()) {
-          	continue;
+            continue;
           }
           // Only events already triggered to start will be checked.
           if (nextEvent != null) {
@@ -2850,8 +2845,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
               event.clearStartingFlag(); // Cancel this delayed event's start.
             }
           } else {
-          	// Not a delayed event. It's already condition-checked and ready.
-          	nextEvent = event;
+            // Not a delayed event. It's already condition-checked and ready.
+            nextEvent = event;
           }
         }
 
