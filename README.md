@@ -60,7 +60,7 @@ $gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin
 
 **v0.7.0** - 3/8/2024
  - Fixed issue where two events sometimes triggered at once and
- play out one after the other even when it didsn't make sense.
+ play out one after the other even when it didn't make sense.
  Now the second event only runs if it's still in range and
  on the correct page when the first event finishes running.
 

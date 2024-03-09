@@ -36,7 +36,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.6.1 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.7.0 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -89,6 +89,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * 
  * v0.6.1  8/30/2023
  *        - This plugin is now free and open source under the MIT license.
+ * 
+ * v0.7.0  3/8/2024
+ *        - Fixed issue where two events sometimes triggered at once and
+ *          play out one after the other even when it didn't make sense.
+ *          Now the second event only runs if it's still in range and
+ *          on the correct page when the first event finishes running.
+ * 
  * ============================================================================
  * MIT License
  *
