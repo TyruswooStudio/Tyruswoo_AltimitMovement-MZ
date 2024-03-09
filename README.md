@@ -58,6 +58,12 @@ $gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin
 **v0.6.1** - 8/30/2023
 - This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
+**v0.7.0** - 3/8/2024
+ - Fixed issue where two events sometimes trigger at once and
+ play out one after the other even when it doesn't make sense.
+ Now the second event only runs if it's still in range and
+ on the correct page when the first event finishes running.
+
 > **Remember, only you can build your dreams!**
 >
 > *Tyruswoo*
