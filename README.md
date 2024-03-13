@@ -66,7 +66,7 @@ Now the second event only runs if it's still in range and
 on the correct page when the first event finishes running.
 
 **v0.8.0** - 3/13/2024
-- Removed caching from game, as it was causing crashes and conferring no benefit.
+- Removed caching, as it was causing crashes and conferring no benefit.
 
 > **Remember, only you can build your dreams!**
 >

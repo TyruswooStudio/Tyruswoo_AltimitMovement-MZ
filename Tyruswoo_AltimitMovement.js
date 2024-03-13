@@ -97,7 +97,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *          on the correct page when the first event finishes running.
  * 
  * v0.8.0  3/13/2024
- *        - Removed caching from game; it was causing crashes and conferring
+ *        - Removed caching to files, as it was causing crashes and conferring
  *          no benefit.
  * 
  * ============================================================================
