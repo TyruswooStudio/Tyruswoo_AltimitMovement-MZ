@@ -2,7 +2,8 @@
 
 Tyruswoo’s modification of the open-source pixel movement plugin Altimit Movement!
 
-This modified plugin provides a command to recalculate tile boundaries. This allows Tyruswoo Altimit Movement to be used with Tile Control MZ.
+This modified plugin provides a command to recalculate tile boundaries.
+This allows Tyruswoo Altimit Movement to be used with Tile Control MZ.
 
 ## Usage
 
@@ -59,10 +60,13 @@ $gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin
 - This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
 **v0.7.0** - 3/8/2024
- - Fixed issue where two events sometimes triggered at once and
- play out one after the other even when it didn't make sense.
- Now the second event only runs if it's still in range and
- on the correct page when the first event finishes running.
+- Fixed issue where two events sometimes triggered at once and
+play out one after the other even when it didn't make sense.
+Now the second event only runs if it's still in range and
+on the correct page when the first event finishes running.
+
+**v0.8.0** - 3/13/2024
+- Removed caching from game, as it was causing crashes and conferring no benefit.
 
 > **Remember, only you can build your dreams!**
 >
