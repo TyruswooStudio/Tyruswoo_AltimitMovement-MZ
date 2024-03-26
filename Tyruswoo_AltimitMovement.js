@@ -36,9 +36,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.7.0 AltimitMovement patch to work for dynamic maps
- * @author Altimit Community
- * @url https://github.com/TyruswooStudio/Tyruswoo_AltimitMovement-MZ
+ * @plugindesc MZ v0.9.0 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @author Tyruswoo and Altimit Community
+ * @url https://www.tyruswoo.com
  *
  * @help Tyruswoo Patched AltimitMovement for RPG Maker MZ
  * ============================================================================
@@ -73,7 +73,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * This is the script call run by the plugin command.
  * 
  * ============================================================================
- * Shapes exemples:
+ * Shape examples:
+ * 
  * Rectangle (this example makes a tile-sized square)
  * <rect x='0.0' y='0.0' width='1.0' height='1.0' />
  *
@@ -88,7 +89,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *
  * Regular polygon (this example makes a 5-pointed polygon; a pentagon)
  * <regular cx='0.5' cy='0.5' rx='0.5' ry='0.5' p='5' />
- * 
+ *
  * ============================================================================
  * For more help using this plugin, see Tyruswoo.com.
  * ============================================================================
@@ -107,8 +108,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - This plugin is now free and open source under the MIT license.
  * 
  * v0.7.0  3/8/2024
- *        - Integrated fixes by VeLee et al, including a fix to the bug where
- *          multiple touch events sometimes triggered at once.
+ *        - Fixed issue where two events sometimes triggered at once and
+ *          play out one after the other even when it didn't make sense.
+ *          Now the second event only runs if it's still in range and
+ *          on the correct page when the first event finishes running.
+ * 
+ * v0.8.0  3/13/2024
+ *        - Removed caching to files, as it was causing crashes and conferring
+ *          no benefit.
+ * 
+ * v0.9.0  3/27/2024
+ *        - Added VeLee's optional debug overlay, AltimitMovementDebug.js
+ * 
  * ============================================================================
  * MIT License
  *
@@ -135,7 +146,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * Remember, only you can build your dreams!
  * -Tyruswoo
  *
- *
  * @param player
  * @text Player
  * @desc Parameters related to player character.
@@ -155,8 +165,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @on Yes
  * @off No
  * @default true
- *
- * @param
  *
  * @param followers
  * @text Followers
@@ -187,7 +195,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off No
  * @default true
  *
- * @param
  *
  * @param vehicles
  * @text Vehicles
@@ -213,8 +220,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @parent vehicles
  * @type note
  * @default "<circle cx='0.5' cy='0.5' r='0.25' />"
- *
- * @param
+ * 
  *
  * @param event
  * @text Events
@@ -233,16 +239,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @parent event
  * @type note
  * @default "<rect x='0' y='0' width='1' height='1' />"
- *
- * @param
+ * 
  *
  * @param presets
  * @text Collider presets
  * @desc Preset colliders to be referenced by events.
  * @type note[]
  * @default ["\"<name>wall</name><rect x='0.0' y='0.0' width='1.0' height='1.0' />\""]
- *
- * @param
+ * 
  *
  * @param move_route
  * @text Move route behaviour
@@ -256,8 +260,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @on Yes
  * @off No
  * @default true
- *
- * @param
+ * 
  *
  * @param input_config
  * @text Input config
@@ -314,7 +317,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @command setPlayerCollider
  * @text Change Player Collider
  * @desc Change Player's Collider to another preset.
- *
+ * 
  * @arg colliderPreset
  * @text Change To
  * @type text
@@ -322,11 +325,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Change the collider to this preset(Defined in plugin settings).
  * Numbers are treated as an index into the preset array. 0 is the default collider.
  * Text will find a collider with a matching Name field.
- *
+ * 
  * @command setThisCollider
  * @text Change This Collider
  * @desc Change this event's Collider to another preset.
- *
+ * 
  * @arg colliderPreset
  * @text Change To
  * @type text
@@ -334,17 +337,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Change the collider to this preset(Defined in plugin settings).
  * Numbers are treated as an index into the preset array. 0 is the default collider.
  * Text will find a collider with a matching Name field.
- *
+ * 
  * @command setEventCollider
  * @text Change Event Collider
  * @desc Change an event's Collider to another preset.
- *
+ * 
  * @arg eventId
  * @text Event
  * @type text
  * @default 1
  * @desc Enter the event name or the ID number.
- *
+ * 
  * @arg colliderPreset
  * @text Change To
  * @type text
@@ -352,11 +355,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Change the collider to this preset(Defined in plugin settings).
  * Numbers are treated as an index into the preset array. 0 is the default collider.
  * Text will find a collider with a matching Name field.
- *
+ * 
  * @command setVehicleCollider
  * @text Change Vehicle Collider
  * @desc Change a vehicle's Collider to another preset.
- *
+ * 
  * @arg vehicleId
  * @text Vehicle
  * @type select
@@ -368,7 +371,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value airship
  * @default boat
  * @desc Select the vehicle to change the collider for.
- *
+ * 
  * @arg colliderPreset
  * @text Change To
  * @type text
@@ -376,11 +379,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Change the collider to this preset(Defined in plugin settings).
  * Numbers are treated as an index into the preset array. 0 is the default collider.
  * Text will find a collider with a matching Name field.
- *
+ * 
  * @command setFollowerCollider
  * @text Change Follower Collider
  * @desc Change a Follower's Collider to another preset.
- *
+ * 
  * @arg followerId
  * @text Follower
  * @type select
@@ -392,7 +395,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value 3
  * @default 1
  * @desc Select the follower to change the collider for.
- *
+ * 
  * @arg colliderPreset
  * @text Change To
  * @type text
@@ -400,23 +403,23 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Change the collider to this preset(Defined in plugin settings).
  * Numbers are treated as an index into the preset array. 0 is the default collider.
  * Text will find a collider with a matching Name field.
- *
- *
+ * 
+ * 
  * @command setFollowersDistance
  * @text Change Followers Distance
  * @desc Change a Follower's follow distance from the player.
- *
+ * 
  * @arg distance
  * @text Following Distance
  * @type number
  * @decimals 2
  * @default 0.25
  * @desc The follow distance in tiles.
- *
+ * 
  * @command setFollowersFollow
  * @text Set Followers Can Follow
  * @desc Change if followers can follow the player.
- *
+ * 
  * @arg followerId
  * @text Follower
  * @type select
@@ -430,7 +433,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value all
  * @default 1
  * @desc Select the follower to change.
- *
+ * 
  * @arg shouldFollow
  * @text Should Follow?
  * @type boolean
@@ -438,11 +441,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off Don't Follow
  * @default true
  * @desc Select if the follower should follow the player.
- *
+ * 
  * @command setMoveAlign
  * @text Change Move Route Alignment
  * @desc Change if move routes should align to the grid.
- *
+ * 
  * @arg alignToGrid
  * @text Align To Grid?
  * @type boolean
@@ -450,17 +453,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off Don't Align To Grid
  * @default true
  * @desc Move route commands will align to the grid.
- *
- *
+ * 
+ * 
  * @command move
  * @text Move
  * @desc Do an advanced movement command
- *
+ * 
  * @arg moveCommand
  * @text Move Command
  * @type struct<MoveStep>
  * @desc Enter advanced movement commands
- *
+ * 
  * @arg wait
  * @text Wait For Completion
  * @type boolean
@@ -468,7 +471,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off No
  * @default true
  * @desc Waits for all movement to finish
- *
+ * 
  * @arg isSkippable
  * @text Skip If Cannot Move
  * @type boolean
@@ -476,17 +479,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off No
  * @default false
  * @desc Skips any command that would move a character into an impassable location.
- *
- *
+ * 
+ * 
  * @command setTouchMouse
  * @text Change Touch/Mouse Input
  * @desc Change if Touch/Mouse Input is enabled.
- *
+ * 
  * @arg value
  * @text Touch/Mouse Enabled
  * @type boolean
  * @default false
  * @desc Allows the player can move their character with mouse or touchscreen input.
+ *
  * 
  * @command recalculateCollisionMesh
  * @text Recalculate Collision Mesh
@@ -520,10 +524,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value ship
  * @option Airship
  * @value airship
- *
+ * 
  * @desc Select what you want to move.
  * If you select event, also fill out the Mover Event Id field.
- *
+ * 
  * @param dir
  * @text Direction
  * @type select
@@ -546,14 +550,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value away
  * @option Towards Other
  * @value towards
- *
+ * 
  * @param dist
  * @text Distance
  * @type number
  * @decimals 2
  * @default 1
  * @desc Distance to move in tiles. Or set to the text edge and the character will align to the current tiles edge.
- *
+ * 
  * @param other
  * @text Other
  * @type select
@@ -570,12 +574,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @value ship
  * @option Airship
  * @value airship
- *
+ * 
  * @param moverEventId
  * @text Mover Event Id
  * @type text
  * @desc Id number or name of event to move. Mover must be set to Event or this will be ignored.
- *
+ * 
  * @param otherEventId
  * @text Other Event Id
  * @type text
