@@ -299,21 +299,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off No
  * @default false
  *
- * @param
- *
- * @param play_test
- * @text Play-testing
- * @desc Parameters when running in Play-test mode.
- *
- * @param play_test_collision_mesh_caching
- * @text Use cached collision?
- * @desc Disabled caching will re-compile the collision mesh for maps that are in-development.
- * @parent play_test
- * @type boolean
- * @on Yes
- * @off No
- * @default false
- *
  * @command setPlayerCollider
  * @text Change Player Collider
  * @desc Change Player's Collider to another preset.
@@ -3019,38 +3004,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		// Recalculation is about to happen, so clear the recalc flag.
 		Tyruswoo.AltimitMovement._recalculateCollisionMesh = false;
 
-		const cacheName = 'cache_mesh%1'.format(mapId.padZero(3));
-		if (PLAY_TEST.COLLISION_MESH_CACHING &&
-			$gameTemp.isPlaytest() &&
-			StorageManager.exists(cacheName)) {
-			CollisionMesh.meshInMemory.mapId = mapId;
-			const cachePath = StorageManager.filePath(cacheName);
-			const data = StorageManager.fsReadFile(cachePath);
-			CollisionMesh.meshInMemory.mesh = JsonEx.parse(data);
+		let gameMap;
+		if ($gameMap.mapId() === mapId) {
+			gameMap = $gameMap;
 		} else {
-			let gameMap;
-			if ($gameMap.mapId() === mapId) {
-				gameMap = $gameMap;
-			} else {
-				gameMap = new Game_Map();
-				gameMap.setup(mapId);
-			}
-			CollisionMesh.meshInMemory.mapId = mapId;
-			CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] =
-				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
-			if (!gameMap.boat().isTransparent()) {
-				CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] =
-					CollisionMesh.makeCollisionMesh(gameMap, gameMap.isBoatPassable);
-			}
-			if (!gameMap.ship().isTransparent()) {
-				CollisionMesh.meshInMemory.mesh[CollisionMesh.SHIP] =
-					CollisionMesh.makeCollisionMesh(gameMap, gameMap.isShipPassable);
-			}
-			if (!gameMap.airship().isTransparent()) {
-				CollisionMesh.meshInMemory.mesh[CollisionMesh.AIRSHIP] =
-					CollisionMesh.makeCollisionMesh(gameMap);
-			}
-			StorageManager.saveObject(cacheName, pruneReplacer(CollisionMesh.meshInMemory.mesh));
+			gameMap = new Game_Map();
+			gameMap.setup(mapId);
+		}
+		CollisionMesh.meshInMemory.mapId = mapId;
+		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] =
+			CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
+		if (!gameMap.boat().isTransparent()) {
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isBoatPassable);
+		}
+		if (!gameMap.ship().isTransparent()) {
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.SHIP] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isShipPassable);
+		}
+		if (!gameMap.airship().isTransparent()) {
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.AIRSHIP] =
+				CollisionMesh.makeCollisionMesh(gameMap);
 		}
 		return CollisionMesh.meshInMemory.mesh[type];
 	};
@@ -4609,26 +4583,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return { x: vx * length, y: vy * length, l: length };
 	};
 
-	function pruneReplacer(mesh) {
-		return JSON.stringify(mesh.map((root) => ({
-			...root,
-			colliders: root.colliders?.map((vehicle) => ({
-				...vehicle,
-				colliders: vehicle.colliders?.map((collider) => ({
-					...collider,
-					colliders: undefined,
-					vertices: undefined,
-					aabbox: undefined,
-				})),
-			})),
-		})));
-	}
-
-	//=========================================================================
+	
+	//=============================================================================
 	// Plugin Commands
-	//=========================================================================
-
-	const logPluginCommandWarning = function (warningMsg) {
+	//=============================================================================
+	PluginManager.warn = function(warningMsg){
 		const currentEventId = $gameMap._interpreter._eventId;
 		const currentEvent = $gameMap.event(currentEventId);
 		if (currentEvent.characterName()) {
@@ -4640,16 +4599,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	PluginManager.registerCommand(pluginName, 'setPlayerCollider', (args) => {
+	PluginManager.registerCommand(pluginName, 'setPlayerCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (presetCollider) {
 			$gamePlayer.setCollider(presetCollider);
 		} else {
-			logPluginCommandWarning(`Preset Collider (${args.colliderPreset}) not found!`);
+			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
 	});
 
-	PluginManager.registerCommand(pluginName, 'setThisCollider', (args) => {
+	PluginManager.registerCommand(pluginName, 'setThisCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (presetCollider) {
 			const eventId = $gameMap._interpreter._eventId;
@@ -4657,14 +4616,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			if (event) {
 				event.setCollider(presetCollider);
 			} else {
-				logPluginCommandWarning(`This Event (${eventId}) not found!`);
+				PluginManager.warn(`This Event (${eventId}) not found!`);
 			}
 		} else {
-			logPluginCommandWarning(`Preset Collider (${args.colliderPreset}) not found!`);
+			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
 	});
 
-	PluginManager.registerCommand(pluginName, 'setEventCollider', (args) => {
+	PluginManager.registerCommand(pluginName, 'setEventCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (presetCollider) {
 			let eventId = args.eventId;
@@ -4677,53 +4636,53 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				}
 			}
 			if (isNaN(eventId)) {
-				logPluginCommandWarning(`Event (${eventId}) not found!`);
+				PluginManager.warn(`Event (${eventId}) not found!`);
 				return;
 			}
 			const event = $gameMap.event(eventId);
 			if (event) {
 				event.setCollider(presetCollider);
 			} else {
-				logPluginCommandWarning(`Event (${eventId}) not found!`);
+				PluginManager.warn(`Event (${eventId}) not found!`);
 			}
 		} else {
-			logPluginCommandWarning(`Preset Collider (${args.colliderPreset}) not found!`);
+			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
 	});
 
-	PluginManager.registerCommand(pluginName, 'setVehicleCollider', (args) => {
+	PluginManager.registerCommand(pluginName, 'setVehicleCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (!presetCollider) {
-			logPluginCommandWarning(`Preset Collider (${args.colliderPreset}) not found!`);
+			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 			return;
 		}
 		const vehicle = $gameMap.vehicle(args.vehicleId);
 		if (!vehicle) {
-			logPluginCommandWarning(`Vehicle (${args.vehicleId}) not found!`);
+			PluginManager.warn(`Vehicle (${args.vehicleId}) not found!`);
 			return;
 		}
 		vehicle.setCollider(presetCollider);
 	});
 
-	PluginManager.registerCommand(pluginName, 'setFollowerCollider', (args) => {
+	PluginManager.registerCommand(pluginName, 'setFollowerCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (!presetCollider) {
-			logPluginCommandWarning(`Preset Collider (${args.colliderPreset}) not found!`);
+			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 			return;
 		}
 		const follower = $gamePlayer.followers().follower(args.followerId - 1);
 		if (!follower) {
-			logPluginCommandWarning(`Follower (${args.followerId}) not found!`);
+			PluginManager.warn(`Follower (${args.followerId}) not found!`);
 			return;
 		}
 		follower.setCollider(presetCollider);
 	});
 
-	PluginManager.registerCommand(pluginName, 'setFollowersDistance', (args) => {
+	PluginManager.registerCommand(pluginName, 'setFollowersDistance', args => {
 		$gameSystem._followerDistance = args.distance;
 	});
 
-	PluginManager.registerCommand(pluginName, 'setFollowersFollow', (args) => {
+	PluginManager.registerCommand(pluginName, 'setFollowersFollow', args => {
 		if (args.followerId === 'all') {
 			for (const follower of $gamePlayer.followers()._data) {
 				follower.setFrozen(args.shouldFollow);
@@ -4731,14 +4690,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} else {
 			const follower = $gamePlayer.followers().follower(args.followerId - 1);
 			if (!follower) {
-				logPluginCommandWarning(`Follower (${args.followerId}) not found!`);
+				PluginManager.warn(`Follower (${args.followerId}) not found!`);
 				return;
 			}
 			follower.setFrozen(args.shouldFollow === 'true');
 		}
 	});
 
-	PluginManager.registerCommand(pluginName, 'move', (args) => {
+	PluginManager.registerCommand(pluginName, 'move', args => {
 		let mover;
 		const skip = args.isSkippable === 'true';
 		const wait = args.wait === 'true';
@@ -4780,14 +4739,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		$gameMap._interpreter.altMovementMoveCharacter(subMoveArgs);
 	});
 
-	PluginManager.registerCommand(pluginName, 'setTouchMouse', (args) => {
+	PluginManager.registerCommand(pluginName, 'setTouchMouse', args => {
 		$gameSystem._enableTouchMouse = args.value === 'true';
 	});
 
-	// Recalculate Collision Mesh - added by Tyruswoo
-	PluginManager.registerCommand(pluginName, "recalculateCollisionMesh", args => {
+	// Recalculate Collision Mesh, added by Tyruswoo
+	PluginManager.registerCommand(pluginName, 'recalculateCollisionMesh', args => {
 		$gameMap.recalculateCollisionMesh();
 	});
 
 })();
-//# sourceMappingURL=AltimitMovement.js.map
