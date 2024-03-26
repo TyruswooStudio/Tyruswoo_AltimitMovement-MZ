@@ -25,23 +25,22 @@ vice versa.
 To use this plugin, you can use a plugin command each time you want the
 map's collision mesh to be recalculated.
 
-## Plugin Command
+## Plugin Command: Recalculate Collision Mesh
 
-| Plugin Command                       | Description                        |
-|--------------------------------------|------------------------------------|
-| Recalculate Collision Mesh           | Informs AltimitMovement that it    |
-|                                      | needs to recalculates the map's    |
-|                                      | collision mesh. Use this script    |
-|                                      | after completing any tile changes  |
-|                                      | affecting passability, so that the |
-|                                      | AltimitMovement plugin recognizes  |
-|                                      | the changed tiles.                 |
+This command informs AltimitMovement that it needs to recalculates the map's
+collision mesh. Use it after completing any tile changes affecting passability,
+so that the AltimitMovement plugin recognizes the changed tiles.
 
 ## Script calls (Advanced)
 
-| Script | Description |
-|--------|-------------|
-$gameMap.recalculateCollisionMesh(); | This is the script call run by the plugin command "Recalculate Collision Mesh". |
+    $gameMap.recalculateCollisionMesh();
+
+This is the script call run by the plugin command "Recalculate Collision Mesh";
+the script and the plugin command have the same effect.
+
+## Debug Overlay
+
+AltimitMovementDebug.js is an optional supplementary plugin developed by VeLee and packaged with Tyruswoo Altimit Movement. When AltimitMovementDebug.js is added to the plugin list and turned ON, it shows a color-coded wireframe overlay of the map's collision mesh and all characters' colliders. To hide the overlay, use Plugin Manager to turn AltimitMovevementDebug.js OFF.
 
 ### For more help using this plugin, see [Tyruswoo.com](https://www.tyruswoo.com).
 
@@ -67,6 +66,9 @@ on the correct page when the first event finishes running.
 
 **v0.8.0** - 3/13/2024
 - Removed caching, as it was causing crashes and conferring no benefit.
+
+**v0.9.0** - 3/27/2024
+- Added VeLee's optional debug overlay, AltimitMovementDebug.js
 
 > **Remember, only you can build your dreams!**
 >

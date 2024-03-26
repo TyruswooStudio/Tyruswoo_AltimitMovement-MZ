@@ -100,6 +100,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Removed caching to files, as it was causing crashes and conferring
  *          no benefit.
  * 
+ * v0.9.0  3/27/2024
+ *        - Added VeLee's optional debug overlay, AltimitMovementDebug.js
+ * 
  * ============================================================================
  * MIT License
  *
