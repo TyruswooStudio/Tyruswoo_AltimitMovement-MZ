@@ -61,13 +61,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * ============================================================================
  * Plugin command:
  *
- * Recalculate Collision Mesh               Informs AltimitMovement that it
- *                                          needs to recalculates the map's
- *                                          collision mesh. Use this script
- *                                          after completing any tile changes
- *                                          affecting passability, so that the
- *                                          AltimitMovement plugin recognizes
- *                                          the changed tiles.
+ * Recalculate Collision Mesh         Informs AltimitMovement that it needs to
+ *                                    recalculate the map's collision mesh.
+ *                                    Use this script after completing any tile
+ *                                    changes affecting passability, so that
+ *                                    this plugin recognizes the changed tiles.
  * ============================================================================
  * Script calls (Advanced):
  *

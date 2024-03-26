@@ -27,7 +27,7 @@ map's collision mesh to be recalculated.
 
 ## Plugin Command: Recalculate Collision Mesh
 
-This command informs AltimitMovement that it needs to recalculates the map's
+This command informs AltimitMovement that it needs to recalculate the map's
 collision mesh. Use it after completing any tile changes affecting passability,
 so that the AltimitMovement plugin recognizes the changed tiles.
 
