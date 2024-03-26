@@ -840,7 +840,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-----------------------------------------------------------------------------
 
 	Game_Interpreter.prototype.altMovementStringArgs = function(args) {
-		if(Array.isArray(args))
+		if (Array.isArray(args))
 			return args;
 		var str = args.join(' ');
 		var args = [];
@@ -1299,14 +1299,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			var characterX = character._x;
 			var characterY = character._y;
 
-			if (loopMap[character] == 1) { characterX += $gameMap.width(); }
-			else if (loopMap[character] == 2) { characterX -= $gameMap.width(); }
-			else if (loopMap[character] == 3) { characterY += $gameMap.height(); }
-			else if (loopMap[character] == 4) { characterY -= $gameMap.height(); }
-			else if (loopMap[character] == 5) { characterX += $gameMap.width(); characterY += $gameMap.height(); }
-			else if (loopMap[character] == 6) { characterX -= $gameMap.width(); characterY += $gameMap.height(); }
-			else if (loopMap[character] == 7) { characterX += $gameMap.width(); characterY -= $gameMap.height(); }
-			else if (loopMap[character] == 8) { characterX -= $gameMap.width(); characterY -= $gameMap.height(); }
+			if (loopMap[character] == 1) {
+				characterX += $gameMap.width(); 
+			} else if (loopMap[character] == 2) {
+				characterX -= $gameMap.width(); 
+			} else if (loopMap[character] == 3) {
+				characterY += $gameMap.height();
+			} else if (loopMap[character] == 4) {
+				characterY -= $gameMap.height(); 
+			} else if (loopMap[character] == 5) {
+				characterX += $gameMap.width();
+				characterY += $gameMap.height();
+			} else if (loopMap[character] == 6) {
+				characterX -= $gameMap.width();
+				characterY += $gameMap.height();
+			} else if (loopMap[character] == 7) {
+				characterX += $gameMap.width();
+				characterY -= $gameMap.height();
+			} else if (loopMap[character] == 8) {
+				characterX -= $gameMap.width();
+				characterY -= $gameMap.height();
+			}
 
 			move = Collider.move(owner._x, owner._y, collider, characterX, characterY, character.collider(), move);
 			if (move.x === 0 && move.y === 0) {
@@ -1319,30 +1332,42 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		for (var ii = 0; ii < bboxTests.length; ii++) {
 			var offsetX = 0;
 			var offsetY = 0;
-			if (bboxTests[ii].type == 1) { offsetX += $gameMap.width(); }
-			else if (bboxTests[ii].type == 2) { offsetX -= $gameMap.width(); }
-			else if (bboxTests[ii].type == 3) { offsetY += $gameMap.height(); }
-			else if (bboxTests[ii].type == 4) { offsetY -= $gameMap.height(); }
-			else if (bboxTests[ii].type == 5) { offsetX += $gameMap.width(); offsetY += $gameMap.height(); }
-			else if (bboxTests[ii].type == 6) { offsetX -= $gameMap.width(); offsetY += $gameMap.height(); }
-			else if (bboxTests[ii].type == 7) { offsetX += $gameMap.width(); offsetY -= $gameMap.height(); }
-			else if (bboxTests[ii].type == 8) { offsetX -= $gameMap.width(); offsetY -= $gameMap.height(); }
+			if (bboxTests[ii].type == 1) { 
+				offsetX += $gameMap.width();
+			} else if (bboxTests[ii].type == 2) {
+				offsetX -= $gameMap.width();
+			} else if (bboxTests[ii].type == 3) {
+				offsetY += $gameMap.height();
+			} else if (bboxTests[ii].type == 4) {
+				offsetY -= $gameMap.height();
+			} else if (bboxTests[ii].type == 5) {
+				offsetX += $gameMap.width();
+				offsetY += $gameMap.height();
+			} else if (bboxTests[ii].type == 6) {
+				offsetX -= $gameMap.width();
+				offsetY += $gameMap.height();
+			} else if (bboxTests[ii].type == 7) {
+				offsetX += $gameMap.width();
+				offsetY -= $gameMap.height();
+			} else if (bboxTests[ii].type == 8) {
+				offsetX -= $gameMap.width(); offsetY -= $gameMap.height();
+			}
 
 			const mesh = $gameMap.collisionMesh(this._collisionType);
 			var mapColliders = Collider.polygonsWithinColliderList(
 				bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox,
 				0, 0, mesh);
 			if (mapColliders.length > 0) {
-					if (move.x !== 0) {
-						var sigMove = { x: move.x, y: 0 };
-						mapColliders.forEach(function(mapCollider) {
-							sigMove = Collider.move(owner._x, owner._y, collider, offsetX, offsetY, mapCollider, sigMove);
-						});
-						move.x = sigMove.x;
-					}
+				if (move.x !== 0) {
+					var sigMove = { x: move.x, y: 0 };
 					mapColliders.forEach(function(mapCollider) {
-						move = Collider.move(owner._x, owner._y, collider, offsetX, offsetY, mapCollider, move);
+						sigMove = Collider.move(owner._x, owner._y, collider, offsetX, offsetY, mapCollider, sigMove);
 					});
+					move.x = sigMove.x;
+				}
+				mapColliders.forEach(function(mapCollider) {
+					move = Collider.move(owner._x, owner._y, collider, offsetX, offsetY, mapCollider, move);
+				});
 			}
 		}
 	};
@@ -1971,14 +1996,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				var entryX = events[ii]._x;
 				var entryY = events[ii]._y;
 
-				if (loopMap[events[ii]] == 1) { entryX += $gameMap.width(); }
-				else if (loopMap[events[ii]] == 2) { entryX -= $gameMap.width(); }
-				else if (loopMap[events[ii]] == 3) { entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 4) { entryY -= $gameMap.height(); }
-				else if (loopMap[events[ii]] == 5) { entryX += $gameMap.width(); entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 6) { entryX -= $gameMap.width(); entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 7) { entryX += $gameMap.width(); entryY -= $gameMap.height(); }
-				else if (loopMap[events[ii]] == 8) { entryX -= $gameMap.width(); entryY -= $gameMap.height(); }
+				if (loopMap[events[ii]] == 1) {
+					entryX += $gameMap.width();
+				} else if (loopMap[events[ii]] == 2) {
+					entryX -= $gameMap.width();
+				} else if (loopMap[events[ii]] == 3) {
+					entryY += $gameMap.height();
+				} else if (loopMap[events[ii]] == 4) {
+					entryY -= $gameMap.height();
+				} else if (loopMap[events[ii]] == 5) {
+					entryX += $gameMap.width();
+					entryY += $gameMap.height();
+				} else if (loopMap[events[ii]] == 6) { 
+					entryX -= $gameMap.width(); 
+					entryY += $gameMap.height();
+				} else if (loopMap[events[ii]] == 7) {
+					entryX += $gameMap.width();
+					entryY -= $gameMap.height();
+				} else if (loopMap[events[ii]] == 8) {
+					entryX -= $gameMap.width();
+					entryY -= $gameMap.height(); 
+				}
 
 				if (events[ii].isNormalPriority() && Collider.intersect(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider())) {
 					// Normal priority player-touch/event-touch
@@ -2021,14 +2059,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				var entryX = events[ii]._x;
 				var entryY = events[ii]._y;
 
-				if (loopMap[events[ii]] == 1) { entryX += $gameMap.width(); }
-				else if (loopMap[events[ii]] == 2) { entryX -= $gameMap.width(); }
-				else if (loopMap[events[ii]] == 3) { entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 4) { entryY -= $gameMap.height(); }
-				else if (loopMap[events[ii]] == 5) { entryX += $gameMap.width(); entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 6) { entryX -= $gameMap.width(); entryY += $gameMap.height(); }
-				else if (loopMap[events[ii]] == 7) { entryX += $gameMap.width(); entryY -= $gameMap.height(); }
-				else if (loopMap[events[ii]] == 8) { entryX -= $gameMap.width(); entryY -= $gameMap.height(); }
+				if (loopMap[events[ii]] == 1) {
+					entryX += $gameMap.width(); 
+				} else if (loopMap[events[ii]] == 2) {
+					entryX -= $gameMap.width(); 
+				} else if (loopMap[events[ii]] == 3) {
+					entryY += $gameMap.height(); 
+				} else if (loopMap[events[ii]] == 4) {
+					entryY -= $gameMap.height(); 
+				} else if (loopMap[events[ii]] == 5) {
+					entryX += $gameMap.width();
+					entryY += $gameMap.height(); 
+				} else if (loopMap[events[ii]] == 6) {
+					entryX -= $gameMap.width();
+					entryY += $gameMap.height(); 
+				} else if (loopMap[events[ii]] == 7) {
+					entryX += $gameMap.width();
+					entryY -= $gameMap.height(); 
+				} else if (loopMap[events[ii]] == 8) {
+					entryX -= $gameMap.width();
+					entryY -= $gameMap.height(); 
+				}
 
 				if (events[ii]._trigger === 2) {
 					// Event touch is encasing
@@ -2638,14 +2689,26 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			var playerX = $gamePlayer._x;
 			var playerY = $gamePlayer._y;
 
-			if (loopMap == 1) { playerX += $gameMap.width(); }
-			else if (loopMap == 2) { playerX -= $gameMap.width(); }
-			else if (loopMap == 3) { playerY += $gameMap.height(); }
-			else if (loopMap == 4) { playerY -= $gameMap.height(); }
-			else if (loopMap == 5) { playerX += $gameMap.width(); playerY += $gameMap.height(); }
-			else if (loopMap == 6) { playerX -= $gameMap.width(); playerY += $gameMap.height(); }
-			else if (loopMap == 7) { playerX += $gameMap.width(); playerY -= $gameMap.height(); }
-			else if (loopMap == 8) { playerX -= $gameMap.width(); playerY -= $gameMap.height(); }
+			if (loopMap == 1) { playerX += $gameMap.width(); 
+			} else if (loopMap == 2) {
+				playerX -= $gameMap.width();
+			} else if (loopMap == 3) {
+				playerY += $gameMap.height();
+			} else if (loopMap == 4) {
+				playerY -= $gameMap.height();
+			} else if (loopMap == 5) {
+				playerX += $gameMap.width();
+				playerY += $gameMap.height();
+			} else if (loopMap == 6) { 
+				playerX -= $gameMap.width(); 
+				playerY += $gameMap.height();
+			} else if (loopMap == 7) { 
+				playerX += $gameMap.width(); 
+				playerY -= $gameMap.height();
+			} else if (loopMap == 8) { 
+				playerX -= $gameMap.width(); 
+				playerY -= $gameMap.height();
+			}
 
 			if (Collider.intersect(x, y, this.collider(), playerX, playerY, $gamePlayer.collider())) {
 				this.start();
@@ -2859,14 +2922,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			var entryX = character._x;
 			var entryY = character._y;
 
-			if (loopMap[character] == 1) { entryX += $gameMap.width(); }
-			else if (loopMap[character] == 2) { entryX -= $gameMap.width(); }
-			else if (loopMap[character] == 3) { entryY += $gameMap.height(); }
-			else if (loopMap[character] == 4) { entryY -= $gameMap.height(); }
-			else if (loopMap[character] == 5) { entryX += $gameMap.width(); entryY += $gameMap.height(); }
-			else if (loopMap[character] == 6) { entryX -= $gameMap.width(); entryY += $gameMap.height(); }
-			else if (loopMap[character] == 7) { entryX += $gameMap.width(); entryY -= $gameMap.height(); }
-			else if (loopMap[character] == 8) { entryX -= $gameMap.width(); entryY -= $gameMap.height(); }
+			if (loopMap[character] == 1) {
+				entryX += $gameMap.width();
+			} else if (loopMap[character] == 2) {
+				entryX -= $gameMap.width();
+			} else if (loopMap[character] == 3) {
+				entryY += $gameMap.height();
+			} else if (loopMap[character] == 4) {
+				entryY -= $gameMap.height();
+			} else if (loopMap[character] == 5) {
+				entryX += $gameMap.width();
+				entryY += $gameMap.height();
+			} else if (loopMap[character] == 6) {
+				entryX -= $gameMap.width();
+				entryY += $gameMap.height();
+			} else if (loopMap[character] == 7) {
+				entryX += $gameMap.width();
+				entryY -= $gameMap.height();
+			} else if (loopMap[character] == 8) {
+				entryX -= $gameMap.width();
+				entryY -= $gameMap.height();
+			}
 
 			return Collider.intersect(x, y, collider, entryX, entryY, character.collider());
 		});
@@ -2926,14 +3002,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			var entryX = characters[ii]._x;
 			var entryY = characters[ii]._y;
 
-			if (loopMap[characters[ii]] == 1) { entryX += this.width(); }
-			else if (loopMap[characters[ii]] == 2) { entryX -= this.width(); }
-			else if (loopMap[characters[ii]] == 3) { entryY += this.height(); }
-			else if (loopMap[characters[ii]] == 4) { entryY -= this.height(); }
-			else if (loopMap[characters[ii]] == 5) { entryX += this.width(); entryY += this.height(); }
-			else if (loopMap[characters[ii]] == 6) { entryX -= this.width(); entryY += this.height(); }
-			else if (loopMap[characters[ii]] == 7) { entryX += this.width(); entryY -= this.height(); }
-			else if (loopMap[characters[ii]] == 8) { entryX -= this.width(); entryY -= this.height(); }
+			if (loopMap[characters[ii]] == 1) {
+				entryX += this.width();
+			} else if (loopMap[characters[ii]] == 2) {
+				entryX -= this.width();
+			} else if (loopMap[characters[ii]] == 3) {
+				entryY += this.height();
+			} else if (loopMap[characters[ii]] == 4) {
+				entryY -= this.height();
+			} else if (loopMap[characters[ii]] == 5) {
+				entryX += this.width();
+				entryY += this.height();
+			} else if (loopMap[characters[ii]] == 6) {
+				entryX -= this.width();
+				entryY += this.height();
+			} else if (loopMap[characters[ii]] == 7) {
+				entryX += this.width();
+				entryY -= this.height();
+			} else if (loopMap[characters[ii]] == 8) {
+				entryX -= this.width();
+				entryY -= this.height();
+			}
 
 			if (Collider.intersect(x, y, collider, entryX, entryY, characters[ii].collider())) {
 				return true;
@@ -2969,14 +3058,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			var entryX = entry._x;
 			var entryY = entry._y;
 
-			if (loopMap[entry] == 1) { entryX += this.width(); }
-			else if (loopMap[entry] == 2) { entryX -= this.width(); }
-			else if (loopMap[entry] == 3) { entryY += this.height(); }
-			else if (loopMap[entry] == 4) { entryY -= this.height(); }
-			else if (loopMap[entry] == 5) { entryX += this.width(); entryY += this.height(); }
-			else if (loopMap[entry] == 6) { entryX -= this.width(); entryY += this.height(); }
-			else if (loopMap[entry] == 7) { entryX += this.width(); entryY -= this.height(); }
-			else if (loopMap[entry] == 8) { entryX -= this.width(); entryY -= this.height(); }
+			if (loopMap[entry] == 1) {
+				entryX += this.width();
+			} else if (loopMap[entry] == 2) {
+				entryX -= this.width();
+			} else if (loopMap[entry] == 3) {
+				entryY += this.height();
+			} else if (loopMap[entry] == 4) {
+				entryY -= this.height();
+			} else if (loopMap[entry] == 5) {
+				entryX += this.width();
+				entryY += this.height();
+			} else if (loopMap[entry] == 6) {
+				entryX -= this.width();
+				entryY += this.height();
+			} else if (loopMap[entry] == 7) {
+				entryX += this.width();
+				entryY -= this.height();
+			} else if (loopMap[entry] == 8) {
+				entryX -= this.width();
+				entryY -= this.height();
+			}
 
 			if (Collider.intersect(character._x, character._y, collider, entryX, entryY, entry.collider())) {
 				return false;
@@ -2987,14 +3089,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		for (var ii = 0; ii < bboxTests.length; ii++) {
 			var offsetX = 0;
 			var offsetY = 0;
-			if (bboxTests[ii].type == 1) { offsetX += this.width(); }
-			else if (bboxTests[ii].type == 2) { offsetX -= this.width(); }
-			else if (bboxTests[ii].type == 3) { offsetY += this.height(); }
-			else if (bboxTests[ii].type == 4) { offsetY -= this.height(); }
-			else if (bboxTests[ii].type == 5) { offsetX += this.width(); offsetY += this.height(); }
-			else if (bboxTests[ii].type == 6) { offsetX -= this.width(); offsetY += this.height(); }
-			else if (bboxTests[ii].type == 7) { offsetX += this.width(); offsetY -= this.height(); }
-			else if (bboxTests[ii].type == 8) { offsetX -= this.width(); offsetY -= this.height(); }
+			if (bboxTests[ii].type == 1) {
+				offsetX += this.width();
+			} else if (bboxTests[ii].type == 2) {
+				offsetX -= this.width();
+			} else if (bboxTests[ii].type == 3) {
+				offsetY += this.height(); 
+			} else if (bboxTests[ii].type == 4) {
+				offsetY -= this.height();
+			} else if (bboxTests[ii].type == 5) {
+				offsetX += this.width();
+				offsetY += this.height();
+			} else if (bboxTests[ii].type == 6) {
+				offsetX -= this.width();
+				offsetY += this.height();
+			} else if (bboxTests[ii].type == 7) {
+				offsetX += this.width();
+				offsetY -= this.height();
+			} else if (bboxTests[ii].type == 8) {
+				offsetX -= this.width();
+				offsetY -= this.height();
+			}
 
 			var mapColliders = Collider.polygonsWithinColliderList(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, 0, 0, collisionMesh);
 			if (mapColliders.length > 0) {
@@ -4586,47 +4701,42 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	PluginManager.warn = function(warningMsg){
 		const currentEventId = $gameMap._interpreter._eventId;
 		const currentEvent = $gameMap.event(currentEventId);
-		if(currentEvent.name)
+		if (currentEvent.name) {
 			console.warn(`EV${currentEventId.toString().padStart(3, '0')}(${currentEvent.name}): ${warningMsg}`);
-		else
+		} else {
 			console.warn(`EV${currentEventId.toString().padStart(3, '0')}: ${warningMsg}`);
-	}
-
-	PluginManager.registerCommand(pluginName, "setPlayerCollider", args => {
-		const presetCollider = Collider.getPreset(args.colliderPreset);
-		if(presetCollider){
-			$gamePlayer.setCollider(presetCollider);
 		}
-		else{
+	};
+
+	PluginManager.registerCommand(pluginName, 'setPlayerCollider', args => {
+		const presetCollider = Collider.getPreset(args.colliderPreset);
+		if (presetCollider) {
+			$gamePlayer.setCollider(presetCollider);
+		} else {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
-
 	});
 
-	PluginManager.registerCommand(pluginName, "setThisCollider", args => {
+	PluginManager.registerCommand(pluginName, 'setThisCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
-		if(presetCollider){
+		if (presetCollider) {
 			const eventId = $gameMap._interpreter._eventId;
 			const event = $gameMap.event(eventId);
-			if(event){
+			if (event) {
 				event.setCollider(presetCollider);
-			}
-			else{
+			} else {
 				PluginManager.warn(`This Event (${eventId}) not found!`);
 			}
-		}
-		else{
+		} else {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
-
 	});
 
-	PluginManager.registerCommand(pluginName, "setEventCollider", args => {
+	PluginManager.registerCommand(pluginName, 'setEventCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
-		if(presetCollider){
+		if (presetCollider) {
 			var eventId = args.eventId;
-			if(isNaN(eventId))
-			{
+			if (isNaN(eventId)) {
 				for (var ii = 0; ii < $dataMap.events.length; ii++) {
 					if ($dataMap.events[ii] && $dataMap.events[ii].name === eventId) {
 						eventId = $dataMap.events[ii].id;
@@ -4634,68 +4744,62 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					}
 				}
 			}
-			if(isNaN(eventId))
-			{
+			if (isNaN(eventId)) {
 				PluginManager.warn(`Event (${eventId}) not found!`);
 				return;
 			}
 			const event = $gameMap.event(eventId);
-			if(event){
+			if (event) {
 				event.setCollider(presetCollider);
-			}
-			else{
+			} else {
 				PluginManager.warn(`Event (${eventId}) not found!`);
 			}
-		}
-		else{
+		} else {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
 
 	});
 
-	PluginManager.registerCommand(pluginName, "setVehicleCollider", args => {
+	PluginManager.registerCommand(pluginName, 'setVehicleCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
-		if(!presetCollider){
+		if (!presetCollider) {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 			return;
 		}
 		const vehicle = $gameMap.vehicle(args.vehicleId);
-		if(!vehicle){
+		if (!vehicle) {
 			PluginManager.warn(`Vehicle (${args.vehicleId}) not found!`);
 			return;
 		}
 		vehicle.setCollider(presetCollider);
 	});
 
-	PluginManager.registerCommand(pluginName, "setFollowerCollider", args => {
+	PluginManager.registerCommand(pluginName, 'setFollowerCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
-		if(!presetCollider){
+		if (!presetCollider) {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 			return;
 		}
 		const follower = $gamePlayer.followers().follower(args.followerId - 1);
-		if(!follower){
+		if (!follower) {
 			PluginManager.warn(`Follower (${args.followerId}) not found!`);
 			return;
 		}
 		follower.setCollider(presetCollider);
 	});
 
-	PluginManager.registerCommand(pluginName, "setFollowersDistance", args => {
+	PluginManager.registerCommand(pluginName, 'setFollowersDistance', args => {
 		$gameSystem._followerDistance = args.distance;
 	});
 
-	PluginManager.registerCommand(pluginName, "setFollowersFollow", args => {
-		if(args.followerId === 'all'){
-			for(const follower of $gamePlayer.followers()._data)
-			{
+	PluginManager.registerCommand(pluginName, 'setFollowersFollow', args => {
+		if (args.followerId === 'all') {
+			for(const follower of $gamePlayer.followers()._data) {
 				follower.setFrozen(args.shouldFollow);
 			}
-		}
-		else{
+		} else {
 			const follower = $gamePlayer.followers().follower(args.followerId - 1);
-			if(!follower)
-			{
+			if (!follower) {
 				PluginManager.warn(`Follower (${args.followerId}) not found!`);
 				return;
 			}
@@ -4703,57 +4807,57 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	});
 
-	PluginManager.registerCommand(pluginName, "move", args => {
+	PluginManager.registerCommand(pluginName, 'move', args => {
 		var mover;
 		var skip = args.isSkippable === 'true';
 		var wait = args.wait === 'true';
 		const step = JSON.parse(args.moveCommand);
 			//Update mover if needed
-			if(!step.mvr){
-				if(!mover){
+			if (!step.mvr) {
+				if (!mover) {
 					PluginManager.warn(`Mover not set!`);
 					return;
 				}
-			}
-			else if(step.mvr === 'event'){
+			} else if (step.mvr === 'event') {
 				mover =  JSON.stringify(step.moverEventId);
-			}
-			else if(step.mvr.startsWith('follower')) // Lower follower number to be 0 based
-			{
+			} else if (step.mvr.startsWith('follower')) {
+				// Lower follower number to be 0 based
 				const followerNumber = step.mvr.substring('follower'.length);
 				step.mvr = concat(step.mvr.substring(0, 'follower'.length), (followerNumber - 1));
+			} else {
+				mover = step.mvr;
 			}
-			else mover = step.mvr;
 			
 			const subMoveArgs = ['move'];
 			subMoveArgs.push(mover);
 			subMoveArgs.push(step.dir);
-			if(step.dir === 'towards' || step.dir === 'away'){
+			if (step.dir === 'towards' || step.dir === 'away') {
 				var target = step.other;
-					if(step.other === 'event'){
+					if (step.other === 'event') {
 						target = JSON.stringify(step.moverEventId);
-					}
-					else if(step.other.startsWith('follower')) // Lower follower number to be 0 based
-					{
+					} else if (step.other.startsWith('follower')) {
+						// Lower follower number to be 0 based
 						const followerNumber = step.other.substring('follower'.length);
 						step.other = concat(step.other.substring(0, 'follower'.length), (followerNumber - 1));
 					}
 					subMoveArgs.push(target)
 			}
 			subMoveArgs.push(step.dist);
-			if(wait)
+			if (wait) {
 				subMoveArgs.push('wait');
-			if(skip)
+			}
+			if (skip) {
 				subMoveArgs.push('skip');
+			}
 			$gameMap._interpreter.altMovementMoveCharacter(subMoveArgs);
 	});
 
-	PluginManager.registerCommand(pluginName, "setTouchMouse", args => {
+	PluginManager.registerCommand(pluginName, 'setTouchMouse', args => {
 		$gameSystem._enableTouchMouse = args.value === 'true';
 	});
 
 	// Recalculate Collision Mesh, added by Tyruswoo
-	PluginManager.registerCommand(pluginName, "recalculateCollisionMesh", args => {
+	PluginManager.registerCommand(pluginName, 'recalculateCollisionMesh', args => {
 		$gameMap.recalculateCollisionMesh();
 	});
 
