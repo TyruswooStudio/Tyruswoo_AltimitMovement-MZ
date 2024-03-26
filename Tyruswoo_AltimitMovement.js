@@ -7,7 +7,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Scott Tyrus Washburn and Altimit Community Contributors
+ * Copyright (c) 2024 Altimit Community Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.8.0 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.9.0 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -61,16 +61,35 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * ============================================================================
  * Plugin command:
  *
- * Recalculate Collision Mesh         Informs AltimitMovement that it needs to
- *                                    recalculate the map's collision mesh.
- *                                    Use this script after completing any tile
- *                                    changes affecting passability, so that
- *                                    this plugin recognizes the changed tiles.
+ * Recalculate Collision Mesh
+ * Informs AltimitMovement that it needs to recalculate the map's collision
+ * mesh. Use this after completing any tile changes affecting passability,
+ * so that the AltimitMovement plugin recognizes the changed tiles.
+ * 
  * ============================================================================
  * Script calls (Advanced):
  *
- * $gameMap.recalculateCollisionMesh();     This is the script call run by the
- *                                          plugin command.
+ * $gameMap.recalculateCollisionMesh();
+ * This is the script call run by the plugin command.
+ * 
+ * ============================================================================
+ * Shape examples:
+ * 
+ * Rectangle (this example makes a tile-sized square)
+ * <rect x='0.0' y='0.0' width='1.0' height='1.0' />
+ *
+ * Circle (this example makes a tile-sized circle)
+ * <circle cx='0.5' cy='0.5' r='0.5' />
+ *
+ * Line (this example makes a line from top-left to bottom-right)
+ * <line x1='0' y1='0' x2='1' y2='1' />
+ *
+ * Polygon must be convex and clock-wise-winding (this example makes a triangle)
+ * <polygon points='0.0,1.0 0.5,0.0 1.0,1.0' />
+ *
+ * Regular polygon (this example makes a 5-pointed polygon; a pentagon)
+ * <regular cx='0.5' cy='0.5' rx='0.5' ry='0.5' p='5' />
+ *
  * ============================================================================
  * For more help using this plugin, see Tyruswoo.com.
  * ============================================================================
@@ -104,7 +123,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * ============================================================================
  * MIT License
  *
- * Copyright (c) 2023 Scott Tyrus Washburn and Altimit Community Contributors
+ * Copyright (c) 2024 Altimit Community Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to
@@ -454,8 +473,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @desc Forces recalculation of collision mesh. Use if tiles changed.
  */
 
- /*~struct~MoveStep:
- * 
+//=============================================================================
+// Struct Definitions
+// =============================================================================
+/*~struct~MoveStep:
+ *
  * @param mvr
  * @text Mover
  * @type select
