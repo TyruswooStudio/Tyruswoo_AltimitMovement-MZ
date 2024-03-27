@@ -659,7 +659,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//=========================================================================
 
 	const Game_System_initialize = Game_System.prototype.initialize;
-	Game_System.prototype.initialize = function () {
+	Game_System.prototype.initialize = function() {
 		Game_System_initialize.call(this);
 		this._eventColliders = [];
 		this._staticMoveAlignGrid = MOVE_ROUTE.ALIGN_GRID;
@@ -674,21 +674,117 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Interpreter
 	//=========================================================================
 
-	// alias method
-	const Game_Interpreter_updateWaitMode =
-		Game_Interpreter.prototype.updateWaitMode;
-	Game_Interpreter.prototype.updateWaitMode = function () {
-		if (this._waitMode === 'target') {
-			return this._character._moveTarget;
+	// Alias method
+	// Deprecated MV-style plugin command call
+	Tyruswoo.AltimitMovement.Game_Interpreter_pluginCommand =
+		Game_Interpreter.prototype.pluginCommand;
+	Game_Interpreter.prototype.pluginCommand = function(command, args) {
+		Tyruswoo.AltimitMovement.Game_Interpreter_pluginCommand.call(
+			this, command, args);
+		if (command === 'AltMovement') {
+			switch (args[0]) {
+			case 'collider':
+				this.altMovementCollider(args);
+				break;
+			case 'followers':
+				switch (args[1]) {
+				case 'set':
+					switch (args[2]) {
+					case 'distance':
+						$gameSystem._followerDistance = Number(args[3]);
+						break;
+					default:
+						var index = parseInt(args[2]);
+						switch (args[3]) {
+						case 'following':
+							if (args[4]) {
+								switch (args[4].toLowerCase()) {
+								case 'disable':
+								case 'off':
+								case 'false':
+								case 'no':
+									$gamePlayer.followers().follower(index).setFrozen(true);
+									break;
+								case 'enable':
+								case 'on':
+								case 'true':
+								case 'yes':
+									$gamePlayer.followers().follower(index).setFrozen(false);
+									break;
+								}
+							} else {
+								$gamePlayer.followers().follower(index).setFrozen(false);
+							}
+							break;
+						}
+						break;
+					}
+					break;
+				}
+				break;
+			case 'move':
+				this.altMovementMoveCharacter(args);
+				break;
+			case 'move_align':
+				switch (args[1]) {
+				case 'set':
+					switch (args[2].toLowerCase()) {
+					case 'disable':
+					case 'off':
+					case 'false':
+					case 'no':
+						$gameSystem._moveAlignGrid = false;
+						break;
+					case 'enable':
+					case 'on':
+					case 'true':
+					case 'yes':
+						$gameSystem._moveAlignGrid = true;
+						break;
+					}
+					break;
+				}
+				break;
+			case 'input':
+				switch (args[1]) {
+					case 'touch':
+					case 'mouse':
+						switch (args[2].toLowerCase()) {
+						case 'disable':
+						case 'off':
+						case 'false':
+						case 'no':
+							$gameSystem._enableTouchMouse = false;
+							break;
+						case 'enable':
+						case 'on':
+						case 'true':
+						case 'yes':
+							$gameSystem._enableTouchMouse = true;
+							break;
+						}
+						break;
+				}
+				break;
+			}
 		}
-		return Game_Interpreter_updateWaitMode.call(this);
 	};
 
-	//-------------------------------------------------------------------------
-	// Game_Interpreter extensions (new methods)
-	//-------------------------------------------------------------------------
+	// Alias method
+	Tyruswoo.AltimitMovement.Game_Interpreter_updateWaitMode =
+		Game_Interpreter.prototype.updateWaitMode;
+	Game_Interpreter.prototype.updateWaitMode = function() {
+		if ('target' == this._waitMode) {
+			return this._character._moveTarget;
+		}
+		return Tyruswoo.AltimitMovement.Game_Interpreter_updateWaitMode.call(this);
+	};
 
-	Game_Interpreter.prototype.altMovementStringArgs = function (args) {
+	//-----------------------------------------------------------------------------
+	// Game_Interpreter extensions (new methods)
+	//-----------------------------------------------------------------------------
+
+	Game_Interpreter.prototype.altMovementStringArgs = function(args) {
 		if (Array.isArray(args))
 			return args;
 		const str = args.split(' ');
@@ -710,37 +806,36 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return stringArgs;
 	};
 
-	Game_Interpreter.prototype.altMovementCommandToDirection = function (subject, command) {
-		const gc = Game_Character;
+	Game_Interpreter.prototype.altMovementCommandToDirection = function(subject, command) {
 		switch (command) {
-			case gc.ROUTE_MOVE_DOWN:
+			case Game_Character.ROUTE_MOVE_DOWN:
 				return 2;
-			case gc.ROUTE_MOVE_LEFT:
+			case Game_Character.ROUTE_MOVE_LEFT:
 				return 4;
-			case gc.ROUTE_MOVE_RIGHT:
+			case Game_Character.ROUTE_MOVE_RIGHT:
 				return 6;
-			case gc.ROUTE_MOVE_UP:
+			case Game_Character.ROUTE_MOVE_UP:
 				return 8;
-			case gc.ROUTE_MOVE_LOWER_L:
+			case Game_Character.ROUTE_MOVE_LOWER_L:
 				return 1;
-			case gc.ROUTE_MOVE_LOWER_R:
+			case Game_Character.ROUTE_MOVE_LOWER_R:
 				return 3;
-			case gc.ROUTE_MOVE_UPPER_L:
+			case Game_Character.ROUTE_MOVE_UPPER_L:
 				return 7;
-			case gc.ROUTE_MOVE_UPPER_R:
+			case Game_Character.ROUTE_MOVE_UPPER_R:
 				return 9;
-			case gc.ROUTE_MOVE_RANDOM:
+			case Game_Character.ROUTE_MOVE_RANDOM:
 				return 1 + Math.randomInt(8);
-			case gc.ROUTE_MOVE_FORWARD:
+			case Game_Character.ROUTE_MOVE_FORWARD:
 				return subject._direction;
-			case gc.ROUTE_MOVE_BACKWARD:
+			case Game_Character.ROUTE_MOVE_BACKWARD:
 				return subject.reverseDir(subject._direction);
 			default:
 				return 5;
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementCharacterEdgeDxDy = function (subject, dx, dy) {
+	Game_Interpreter.prototype.altMovementCharacterEdgeDxDy = function(subject, dx, dy) {
 		let stepDistance;
 		const box = subject.collider().aabbox;
 		if (dx && dy) {
@@ -781,7 +876,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return stepDistance;
 	};
 
-	Game_Interpreter.prototype.altMovementProcessMoveCommand = function (subject, command, distance, options, object) {
+	Game_Interpreter.prototype.altMovementProcessMoveCommand = function(subject, command, distance, options, object) {
 		$gameMap.refreshIfNeeded();
 		this._character = subject;
 		if (options.wait) {
@@ -829,7 +924,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementMoveCharacter = function (args) {
+	Game_Interpreter.prototype.altMovementMoveCharacter = function(args) {
 		args = this.altMovementStringArgs(args);
 		const subject = this.altMovementGetTargetCharacter(args[1]);
 		const command = this.altMovementGetMoveCommand(args[2]);
@@ -859,7 +954,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementCollider = function (args) {
+	Game_Interpreter.prototype.altMovementCollider = function(args) {
 		args = this.altMovementStringArgs(args);
 		switch (args[1]) {
 			case 'set':
@@ -868,7 +963,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementColliderSet = function (args) {
+	Game_Interpreter.prototype.altMovementColliderSet = function(args) {
 		const target = this.altMovementGetTargetCharacter(args[2]);
 		if (!target) {
 			return;
@@ -883,7 +978,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementGetMoveCommand = function (cmdStr) {
+	Game_Interpreter.prototype.altMovementGetMoveCommand = function(cmdStr) {
 		switch (cmdStr) {
 			case 'down_left':
 			case 'bottom_left':
@@ -983,7 +1078,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Interpreter.prototype.altMovementGetTargetCharacter = function (target) {
+	Game_Interpreter.prototype.altMovementGetTargetCharacter = function(target) {
 		if (target.startsWith('"') && target.endsWith('"')) {
 			// Event name
 			const eventName = target.substring(1, target.length - 1);
@@ -1084,7 +1179,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_CharacterBase.prototype.moveDiagonally = function (horz, vert) {
+	Game_CharacterBase.prototype.moveDiagonally = function(horz, vert) {
 		let vy = Direction.isUp(vert) ? -1 : Direction.isDown(vert) ? 1 : 0;
 		let vx = Direction.isLeft(horz) ? -1 : Direction.isRight(horz) ? 1 : 0;
 		if (this._circularMovement) {
@@ -1097,14 +1192,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_CharacterBase_isMoving = Game_CharacterBase.prototype.isMoving;
-	Game_CharacterBase.prototype.isMoving = function () {
+	Game_CharacterBase.prototype.isMoving = function() {
 		return Game_CharacterBase_isMoving.call(this) || this._isMoving;
 	};
 
 	// alias method
 	const Game_CharacterBase_updateAnimation = 
 		Game_CharacterBase.prototype.updateAnimation;
-	Game_CharacterBase.prototype.updateAnimation = function () {
+	Game_CharacterBase.prototype.updateAnimation = function() {
 		Game_CharacterBase_updateAnimation.call(this);
 		this._wasMoving = this._isMoving;
 		this._isMoving = this._x !== this._realX || this._y !== this._realY;
@@ -1114,7 +1209,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_CharacterBase.prototype.isOnBush = function () {
+	Game_CharacterBase.prototype.isOnBush = function() {
 		const aabbox = this.collider().aabbox;
 		// If middle is in bush
 		if ($gameMap.isBush($gameMap.roundX(this._x + (aabbox.left + aabbox.right) / 2), $gameMap.roundY(this._y + (aabbox.top + aabbox.bottom) / 2))) {
@@ -1127,7 +1222,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_CharacterBase.prototype.canPass = function (x, y, d) {
+	Game_CharacterBase.prototype.canPass = function(x, y, d) {
 		if (this.isThrough() || this.isDebugThrough()) {
 			return true;
 		}
@@ -1140,7 +1235,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_CharacterBase.prototype.canPassDiagonally = function (x, y, horz, vert) {
+	Game_CharacterBase.prototype.canPassDiagonally = function(x, y, horz, vert) {
 		if (this.isThrough() || this.isDebugThrough()) {
 			return true;
 		}
@@ -1154,14 +1249,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_CharacterBase_setDirection = Game_CharacterBase.prototype.setDirection;
-	Game_CharacterBase.prototype.setDirection = function (d) {
+	Game_CharacterBase.prototype.setDirection = function(d) {
 		Game_CharacterBase_setDirection.call(this, d);
 		this._direction8 = this._direction;
 	};
 
 	// alias method
 	const Game_CharacterBase_screenX = Game_CharacterBase.prototype.screenX;
-	Game_CharacterBase.prototype.screenX = function () {
+	Game_CharacterBase.prototype.screenX = function() {
 		const round = Math.round;
 		Math.round = Math.floor;
 		const val = Game_CharacterBase_screenX.call(this);
@@ -1171,7 +1266,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_CharacterBase_screenY = Game_CharacterBase.prototype.screenY;
-	Game_CharacterBase.prototype.screenY = function () {
+	Game_CharacterBase.prototype.screenY = function() {
 		const round = Math.round;
 		Math.round = Math.floor;
 		const val = Game_CharacterBase_screenY.call(this);
@@ -1185,14 +1280,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Object.defineProperties(Game_CharacterBase.prototype, {
 		stepDistance: {
-			get: function () {
+			get: function() {
 				return this.distancePerFrame();
 			},
 			configurable: true,
 		},
 	});
 
-	Game_CharacterBase.prototype.collidableWith = function (character) {
+	Game_CharacterBase.prototype.collidableWith = function(character) {
 		if (!character)
 			return false;
 		if (character === this)
@@ -1261,7 +1356,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} return vector;
 	}
 
-	Game_CharacterBase.prototype.moveVectorCharacters = function (characters, move) {
+	Game_CharacterBase.prototype.moveVectorCharacters = function(characters, move) {
 		characters.forEach((character) => {
 			const characterVector = { x: character._x, y: character._y };
 			const moveVector = getLoopMapCorrection(characterVector, character.loopMap);
@@ -1275,7 +1370,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return move;
 	};
 
-	Game_CharacterBase.prototype.moveVectorMap = function (bboxTests, move, vx, vy) {
+	Game_CharacterBase.prototype.moveVectorMap = function(bboxTests, move, vx, vy) {
 		for (let ii = 0; ii < bboxTests.length; ii++) {
 			const moveVector = getLoopMapCorrection({ x: 0, y: 0 }, bboxTests[ii].type);
 			const offsetX = moveVector.x;
@@ -1319,7 +1414,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return move;
 	}
 
-	Game_CharacterBase.prototype.testMove = function (vx, vy) {
+	Game_CharacterBase.prototype.testMove = function(vx, vy) {
 		let characterCollided = false;
 		if (this.isThrough() || this.isDebugThrough()) {
 			return {
@@ -1371,7 +1466,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		};
 	};
 
-	Game_CharacterBase.prototype.moveVector = function (vx, vy) {
+	Game_CharacterBase.prototype.moveVector = function(vx, vy) {
 		const { move, characterCollided } = this.testMove(vx, vy);
 		const length = Math.sqrt(move.x * move.x + move.y * move.y);
 		if (length > Collider.I_PRECISION) {
@@ -1455,7 +1550,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	}
 
-	Game_CharacterBase.prototype.setDirectionVector = function (vx, vy) {
+	Game_CharacterBase.prototype.setDirectionVector = function(vx, vy) {
 		if (this.isDirectionFixed()) {
 			return;
 		}
@@ -1476,31 +1571,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this._direction8 = direction8FromDirection(direction);
 	};
 
-	Game_CharacterBase.prototype.checkEventTriggerTouchFrontVector = function (vx, vy) {
+	Game_CharacterBase.prototype.checkEventTriggerTouchFrontVector = function(vx, vy) {
 		this.checkEventTriggerTouch(this._x + vx, this._y + vy);
 	};
 
-	Game_CharacterBase.prototype.regionId = function () {
+	Game_CharacterBase.prototype.regionId = function() {
 		if (this._collider !== undefined) {
 			return $gameMap.regionId(this._x + this._collider?.x || 0, this._y + this._collider?.y || 0);
 		}
 		return $gameMap.regionId(this._x, this._y);
 	};
 
-	Game_CharacterBase.prototype.align = function () {
+	Game_CharacterBase.prototype.align = function() {
 		this._x = this._x | 0;
 		this._y = this._y | 0;
 	};
 
-	Game_CharacterBase.prototype.collider = function () {
+	Game_CharacterBase.prototype.collider = function() {
 		return this._collider || Collider.sharedTile();
 	};
 
-	Game_CharacterBase.prototype.setCollider = function (collider) {
+	Game_CharacterBase.prototype.setCollider = function(collider) {
 		this._collider = collider;
 	};
 
-	Game_CharacterBase.prototype.direction8 = function () {
+	Game_CharacterBase.prototype.direction8 = function() {
 		return this._direction8;
 	};
 
@@ -1509,7 +1604,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//=========================================================================
 
 	// replacement method
-	Game_Character.prototype.updateRoutineMove = function () {
+	Game_Character.prototype.updateRoutineMove = function() {
 		if (this._moveTarget) {
 			this.continueProcessMoveCommand();
 			const moveRoute = this._moveRoute;
@@ -1531,7 +1626,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Character.prototype.moveRandom = function () {
+	Game_Character.prototype.moveRandom = function() {
 		if (this._moveTarget) {
 			return;
 		}
@@ -1546,7 +1641,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Character.prototype.moveTowardCharacter = function (character) {
+	Game_Character.prototype.moveTowardCharacter = function(character) {
 		let vx = character.x - this.x;
 		let vy = character.y - this.y;
 		const length = Math.sqrt(vx * vx + vy * vy);
@@ -1562,7 +1657,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Character.prototype.moveAwayFromCharacter = function (character) {
+	Game_Character.prototype.moveAwayFromCharacter = function(character) {
 		let vx = character.x - this.x;
 		let vy = character.y - this.y;
 		const length = Math.sqrt(vx * vx + vy * vy);
@@ -1578,7 +1673,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// alias method
 	const Game_Character_processMoveCommand = 
 		Game_Character.prototype.processMoveCommand;
-	Game_Character.prototype.processMoveCommand = function (command) {
+	Game_Character.prototype.processMoveCommand = function(command) {
 		const gc = Game_Character;
 		switch (command.code) {
 			case gc.ROUTE_MOVE_DOWN:
@@ -1675,7 +1770,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_Player_initMembers = Game_Player.prototype.initMembers;
-	Game_Player.prototype.initMembers = function () {
+	Game_Player.prototype.initMembers = function() {
 		Game_Player_initMembers.call(this);
 		this._collider = Collider.createFromXML(PLAYER.COLLIDER_LIST);
 		this._circularMovement = PLAYER.CIRCULAR_MOVEMENT;
@@ -1685,13 +1780,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Player.prototype.checkEventTriggerTouch =
 		Game_CharacterBase.prototype.checkEventTriggerTouch;
 	const Game_Player_encounterProgressValue = Game_Player.prototype.encounterProgressValue;
-	Game_Player.prototype.encounterProgressValue = function () {
+	Game_Player.prototype.encounterProgressValue = function() {
 		return this.stepDistance * Game_Player_encounterProgressValue.call(this);
 	};
 
 	// alias method
 	const Game_Player_clearTransferInfo = Game_Player.prototype.clearTransferInfo;
-	Game_Player.prototype.clearTransferInfo = function () {
+	Game_Player.prototype.clearTransferInfo = function() {
 		Game_Player_clearTransferInfo.call(this);
 		this._moveTarget = false;
 		this._moveTargetSkippable = false;
@@ -1700,7 +1795,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const TouchInput_SetupEventHandlers = TouchInput._setupEventHandlers;
-	TouchInput._setupEventHandlers = function () {
+	TouchInput._setupEventHandlers = function() {
 		document.addEventListener('dblclick', () => {
 			$gameTemp._doubleClicked = true;
 		});
@@ -1709,7 +1804,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_Player_updateDashing = Game_Player.prototype.updateDashing;
-	Game_Player.prototype.updateDashing = function () {
+	Game_Player.prototype.updateDashing = function() {
 		if ($gameTemp._doubleClicked) {
 			this._dashing = true;
 			return;
@@ -1718,7 +1813,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// alias method
-	Game_Player.prototype.update = function (sceneActive) {
+	Game_Player.prototype.update = function(sceneActive) {
 		const lastScrolledX = this.scrolledX();
 		const lastScrolledY = this.scrolledY();
 		const wasMoving = this._wasMoving;
@@ -1736,7 +1831,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// alias method
-	Game_Player.prototype.getInputDirection = function () {
+	Game_Player.prototype.getInputDirection = function() {
 		return Input.dir8;
 	};
 
@@ -1744,7 +1839,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	function getTouchedCharacter() {
 		const touchedCharacters = $gameMap
 			.getCharactersUnderPoint($gameTemp.destinationX(), $gameTemp.destinationY())
-			.filter(function (character) {
+			.filter(function(character) {
 			// Filter out events that player cannot reach
 			return !(character instanceof Game_Event &&
 				character._eventId &&
@@ -1768,7 +1863,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return $gameMap.boat();
 		}
 		// Only care about events now
-		return touchedCharacters.find(function (character) {
+		return touchedCharacters.find(function(character) {
 			return (character instanceof Game_Event &&
 				!!character._eventId &&
 				character._trigger === 0);
@@ -1776,7 +1871,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	}
 
 	// new method
-	Game_Player.prototype.moveByInputTouch = function () {
+	Game_Player.prototype.moveByInputTouch = function() {
 		if ($gameSystem._enableTouchMouse && $gameTemp.isDestinationValid()) {
 			const characterTarget = getTouchedCharacter();
 			if (characterTarget === $gamePlayer) {
@@ -1881,7 +1976,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.moveByInput = function () {
+	Game_Player.prototype.moveByInput = function() {
 		if ($gameSystem._staticEnableTouchMouse != INPUT_CONFIG.ENABLE_TOUCH_MOUSE) {
 			$gameSystem._staticEnableTouchMouse = INPUT_CONFIG.ENABLE_TOUCH_MOUSE;
 			$gameSystem._enableTouchMouse = INPUT_CONFIG.ENABLE_TOUCH_MOUSE;
@@ -1904,7 +1999,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.checkEventTriggerHere = function (triggers) {
+	Game_Player.prototype.checkEventTriggerHere = function(triggers) {
 		if (!this.canStartLocalEvents())
 			return;
 		const collider = this.collider();
@@ -1920,7 +2015,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				? this.stepDistance
 				: 0;
 		// Gather any solid characters within the "here" bounding box
-		const events = $gameMap.events().filter(function (event) {
+		const events = $gameMap.events().filter(function(event) {
 			for (let ii = 0; ii < bboxTests.length; ii++) {
 				if (event.isTriggerIn(triggers)) {
 					if (event.isNormalPriority()) {
@@ -1962,7 +2057,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.checkEventTriggerThere = function (triggers) {
+	Game_Player.prototype.checkEventTriggerThere = function(triggers) {
 		if (!this.canStartLocalEvents())
 			return;
 		const vx = Direction.isLeft(this._direction)
@@ -1978,7 +2073,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		const collider = this.collider();
 		const bboxTests = $gameMap.getAABBoxTests(this, vx, vy);
 		// Gather any solid characters within the "there" bounding box
-		const gameMapEventsThere = $gameMap.events().filter(function (event) {
+		const gameMapEventsThere = $gameMap.events().filter(function(event) {
 			for (let ii = 0; ii < bboxTests.length; ii++) {
 				if (event.isTriggerIn(triggers) &&
 					event.isNormalPriority() &&
@@ -2018,7 +2113,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				const x3 = $gameMap.roundXWithDirection(tiles[ii][0], this._direction);
 				const y3 = $gameMap.roundYWithDirection(tiles[ii][1], this._direction);
 				// Gather any solid characters within the "over counter" bounding box
-				events = events.concat($gameMap.events().filter(function (event) {
+				events = events.concat($gameMap.events().filter(function(event) {
 					if (event.isTriggerIn(triggers) &&
 						event.isNormalPriority() &&
 						Collider.aabboxCheck(x3, y3, Collider.sharedTile().aabbox, event._x, event._y, event.collider().aabbox)) {
@@ -2048,10 +2143,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.startMapEvent = function (x, y, triggers, normal) {
+	Game_Player.prototype.startMapEvent = function(x, y, triggers, normal) {
 		if ($gameMap.isEventRunning())
 			return;
-		$gameMap.eventsXy(x, y).forEach(function (event) {
+		$gameMap.eventsXy(x, y).forEach(function(event) {
 			if (event.isTriggerIn(triggers) && event.isNormalPriority() === normal) {
 				event.start();
 			}
@@ -2059,17 +2154,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.moveStraight = function (d) {
+	Game_Player.prototype.moveStraight = function(d) {
 		Game_Character.prototype.moveStraight.call(this, d);
 	};
 
 	// replacement method
-	Game_Player.prototype.moveDiagonally = function (horz, vert) {
+	Game_Player.prototype.moveDiagonally = function(horz, vert) {
 		Game_Character.prototype.moveDiagonally.call(this, horz, vert);
 	};
 
 	// replacement method
-	Game_Player.prototype.getOnVehicle = function () {
+	Game_Player.prototype.getOnVehicle = function() {
 		const vx = Direction.isLeft(this._direction)
 			? -0.5
 			: Direction.isRight(this._direction)
@@ -2127,7 +2222,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.getOffVehicle = function () {
+	Game_Player.prototype.getOffVehicle = function() {
 		if (!this.vehicle().isLandOk(this.x, this.y, this.direction()))
 			return this._vehicleGettingOff;
 		if (this.isInAirship()) {
@@ -2180,7 +2275,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Player.prototype.updateVehicleGetOff = function () {
+	Game_Player.prototype.updateVehicleGetOff = function() {
 		if (!(!this.areFollowersGathering() &&
 			this.vehicle().isLowest() &&
 			this._collisionType !== CollisionMesh.WALK))
@@ -2196,12 +2291,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-------------------------------------------------------------------------
 	// Game_Event collider extensions (new methods)
 	//-------------------------------------------------------------------------
-	Game_Player.prototype.actionWidth = function () {
+	Game_Player.prototype.actionWidth = function() {
 		const bbox = this.collider().aabbox;
 		const width = bbox.right - bbox.left;
 		return width < 1 ? width : 1;
 	};
-	Game_Player.prototype.actionHeight = function () {
+	Game_Player.prototype.actionHeight = function() {
 		const bbox = this.collider().aabbox;
 		const height = bbox.bottom - bbox.top;
 		return height < 1 ? height : 1;
@@ -2211,14 +2306,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Follower
 	//=========================================================================
 
-	Game_Follower.prototype.initMembers = function () {
+	Game_Follower.prototype.initMembers = function() {
 		Game_Character.prototype.initMembers.call(this);
 		this._collider = Collider.createFromXML(FOLLOWERS.COLLIDER_LIST);
 		this._isFrozen = false;
 		this._circularMovement = FOLLOWERS.CIRCULAR_MOVEMENT;
 	};
 
-	Game_Follower.prototype.chaseCharacter = function (character) {
+	Game_Follower.prototype.chaseCharacter = function(character) {
 		if (this._moveTarget || this._isFrozen) {
 			return;
 		}
@@ -2306,7 +2401,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-------------------------------------------------------------------------
 	// Game_Follower extension (new method)
 	//-------------------------------------------------------------------------
-	Game_Follower.prototype.setFrozen = function (frozen) {
+	Game_Follower.prototype.setFrozen = function(frozen) {
 		this._isFrozen = frozen;
 	};
 
@@ -2314,7 +2409,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Followers
 	//=========================================================================
 
-	Game_Followers.prototype.update = function () {
+	Game_Followers.prototype.update = function() {
 		if (this.areGathering()) {
 			const direction = $gamePlayer.direction();
 			const visibleFollowers = this.visibleFollowers();
@@ -2336,7 +2431,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} else {
 			this.updateMove();
 		}
-		this.visibleFollowers().forEach(function (follower) {
+		this.visibleFollowers().forEach(function(follower) {
 			follower.update();
 		}, this);
 		if ($gameSystem._staticFollowerDistance != FOLLOWERS.DISTANCE) {
@@ -2345,13 +2440,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Followers.prototype.gather = function () {
+	Game_Followers.prototype.gather = function() {
 		this._gathering = true;
 		this._targetX = $gamePlayer._x;
 		this._targetY = $gamePlayer._y;
 	};
 
-	Game_Followers.prototype.areGathered = function () {
+	Game_Followers.prototype.areGathered = function() {
 		let screenRadius = Math.sqrt(Graphics.width * Graphics.width + Graphics.height * Graphics.height) / 2;
 		screenRadius /=
 			Math.sqrt($gameMap.tileWidth() * $gameMap.tileWidth() +
@@ -2380,7 +2475,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-------------------------------------------------------------------------
 	// Game_Followers extensions (new methods)
 	//-------------------------------------------------------------------------
-	Game_Followers.prototype.contains = function (item) {
+	Game_Followers.prototype.contains = function(item) {
 		return this._data.indexOf(item) >= 0;
 	};
 
@@ -2389,7 +2484,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//=========================================================================
 
 	const Game_Vehicle_initialize = Game_Vehicle.prototype.initialize;
-	Game_Vehicle.prototype.initialize = function (type) {
+	Game_Vehicle.prototype.initialize = function(type) {
 		Game_Vehicle_initialize.call(this, type);
 		if (this.isAirship()) {
 			this._collider = Collider.createFromXML(VEHICLES.AIRSHIP_COLLIDER_LIST);
@@ -2402,7 +2497,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Vehicle.prototype.isLandOk = function (x, y, d) {
+	Game_Vehicle.prototype.isLandOk = function(x, y, d) {
 		if (this.isAirship()) {
 			$gamePlayer._collider = this._passengerCollider; // Reset colliders temporarily
 			// Check rough tiles under colliders
@@ -2474,14 +2569,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_Event_setupPageSettings = Game_Event.prototype.setupPageSettings;
-	Game_Event.prototype.setupPageSettings = function () {
+	Game_Event.prototype.setupPageSettings = function() {
 		Game_Event_setupPageSettings.call(this);
 		this.collider();
 	};
 
 	// alias method
 	const Game_Event_start = Game_Event.prototype.start;
-	Game_Event.prototype.start = function () {
+	Game_Event.prototype.start = function() {
 		if (this._lastFrame === Graphics.frameCount) {
 			return;
 		}
@@ -2493,7 +2588,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Event collider extensions (new methods)
 	//-------------------------------------------------------------------------
 
-	Game_Event.prototype.getStoredCollider = function () {
+	Game_Event.prototype.getStoredCollider = function() {
 		const mapId = $gameMap.mapId();
 		if (!$gameSystem._eventColliders[mapId])
 			return undefined;
@@ -2510,7 +2605,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return undefined;
 	}
 
-	Game_Event.prototype.getNoteCollider = function () {
+	Game_Event.prototype.getNoteCollider = function() {
 		const note = this.event().note;
 		if (note === '')
 			return undefined;
@@ -2521,7 +2616,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Collider.createFromXML(xmlParser(note));
 	};
 
-	Game_Event.prototype.getCommentCollider = function () {
+	Game_Event.prototype.getCommentCollider = function() {
 		const comments = this.page()
 			.list.filter((l) => l.code === 108 || l.code === 408)
 			.map((l) => l.parameters[0]);
@@ -2537,7 +2632,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Event.prototype.getPresetCollider = function () {
+	Game_Event.prototype.getPresetCollider = function() {
 		const dataEvent = $dataMap.events[this.eventId()];
 		const presetId = dataEvent ? dataEvent.meta.collider : null;
 		if (presetId) {
@@ -2550,14 +2645,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Event.prototype.getDefaultCollider = function () {
+	Game_Event.prototype.getDefaultCollider = function() {
 		if (this.isTile() || !this.characterName() || this.isObjectCharacter()) {
 			return Collider.createFromXML(EVENT.TILE_COLLIDER_LIST);
 		}
 		return Collider.createFromXML(EVENT.CHARACTER_COLLIDER_LIST);
 	};
 
-	Game_Event.prototype.collider = function () {
+	Game_Event.prototype.collider = function() {
 		const page = this.page();
 		if (!page)
 			return Collider.null();
@@ -2573,7 +2668,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return page._collider;
 	};
 
-	Game_Event.prototype.setCollider = function (collider) {
+	Game_Event.prototype.setCollider = function(collider) {
 		const pages = this.event().pages;
 		for (let ii = 0; ii < pages.length; ii++) {
 			pages[ii]._collider = collider;
@@ -2581,7 +2676,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		$gameSystem._eventColliders[$gameMap.mapId()][this.eventId()] = collider;
 	};
 
-	Game_Event.prototype.checkEventTriggerTouch = function (x, y) {
+	Game_Event.prototype.checkEventTriggerTouch = function(x, y) {
 		if (!(this._trigger === 2 &&
 			!$gameMap.isEventRunning() &&
 			!this.isJumping() &&
@@ -2613,7 +2708,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_Interpreter_command101 = Game_Interpreter.prototype.command101;
-	Game_Interpreter.prototype.command101 = function (params) {
+	Game_Interpreter.prototype.command101 = function(params) {
 		$gamePlayer._touchTarget = null;
 		return Game_Interpreter_command101.call(this, params);
 	};
@@ -2624,7 +2719,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	// alias method
 	const Game_Map_setup = Game_Map.prototype.setup;
-	Game_Map.prototype.setup = function (mapId) {
+	Game_Map.prototype.setup = function(mapId) {
 		Game_Map_setup.call(this, mapId);
 		if ($gameSystem._eventColliders[mapId])
 			return;
@@ -2632,7 +2727,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Map.prototype.tileId = function (x, y, z) {
+	Game_Map.prototype.tileId = function(x, y, z) {
 		x = x | 0;
 		y = y | 0;
 		const width = $dataMap.width;
@@ -2641,7 +2736,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Map.prototype.canvasToMapX = function (x) {
+	Game_Map.prototype.canvasToMapX = function(x) {
 		const tileWidth = this.tileWidth();
 		const originX = this._displayX * tileWidth;
 		const mapX = (originX + x) / tileWidth;
@@ -2649,7 +2744,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Game_Map.prototype.canvasToMapY = function (y) {
+	Game_Map.prototype.canvasToMapY = function(y) {
 		const tileHeight = this.tileHeight();
 		const originY = this._displayY * tileHeight;
 		const mapY = (originY + y) / tileHeight;
@@ -2660,7 +2755,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Map extensions (new methods)
 	//-------------------------------------------------------------------------
 
-	Game_Map.prototype.directionX = function (ax, bx) {
+	Game_Map.prototype.directionX = function(ax, bx) {
 		if (this.isLoopHorizontal()) {
 			const dxA = bx - ax;
 			const dxB = bx - this.width() - ax;
@@ -2672,7 +2767,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Map.prototype.directionY = function (ay, by) {
+	Game_Map.prototype.directionY = function(ay, by) {
 		if (this.isLoopVertical()) {
 			const dyA = by - ay;
 			const dyB = by - this.height() - ay;
@@ -2684,13 +2779,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	Game_Map.prototype.collisionMesh = function (collisionType) {
+	Game_Map.prototype.collisionMesh = function(collisionType) {
 		collisionType = collisionType || CollisionMesh.WALK;
 		return CollisionMesh.getMesh(this.mapId(), collisionType);
 	};
 
-	Game_Map.prototype.getCharactersUnderPoint = function (x, y) {
-		return this.characters().filter(function (entry) {
+	Game_Map.prototype.getCharactersUnderPoint = function(x, y) {
+		return this.characters().filter(function(entry) {
 			if (!entry) {
 				return false;
 			}
@@ -2708,13 +2803,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		});
 	};
 
-	Game_Map.prototype.getCharactersUnder = function (character, x, y) {
+	Game_Map.prototype.getCharactersUnder = function(character, x, y) {
 		const vx = x - character.x;
 		const vy = y - character.y;
 		const collider = character.collider();
 		const bboxTests = this.getAABBoxTests(character, vx, vy);
 		// Gather any solid characters within the movement bounding box
-		let characters = this.characters().filter(function (entry) {
+		let characters = this.characters().filter(function(entry) {
 			if (!entry) {
 				return false;
 			}
@@ -2726,7 +2821,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 			return false;
 		});
-		characters = characters.filter(function (character) {
+		characters = characters.filter(function(character) {
 			const characterVector = { x: character._x, y: character._y };
 			const moveVector = getLoopMapCorrection(characterVector, character.loopMap);
 			const entryX = moveVector.x;
@@ -2736,7 +2831,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return characters;
 	};
 
-	Game_Map.prototype.getTilesUnder = function (character, vx, vy) {
+	Game_Map.prototype.getTilesUnder = function(character, vx, vy) {
 		vx = vx || 0;
 		vy = vy || 0;
 		const collider = character.collider();
@@ -2758,13 +2853,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return tiles;
 	};
 
-	Game_Map.prototype.touchesCharacters = function (character, x, y) {
+	Game_Map.prototype.touchesCharacters = function(character, x, y) {
 		const vx = x - character.x;
 		const vy = y - character.y;
 		const collider = character.collider();
 		const bboxTests = this.getAABBoxTests(character, vx, vy);
 		// Gather any solid characters within the movement bounding box
-		const characters = $gameMap.characters().filter(function (entry) {
+		const characters = $gameMap.characters().filter(function(entry) {
 			if (character.collidableWith(entry)) {
 				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, entry._x, entry._y, entry.collider().aabbox)) {
@@ -2788,13 +2883,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return false;
 	};
 
-	Game_Map.prototype.canMoveOn = function (character, x, y, collisionMesh) {
+	Game_Map.prototype.canMoveOn = function(character, x, y, collisionMesh) {
 		const collider = character.collider();
 		const xd = x - character._x;
 		const yd = y - character._y;
 		const bboxTests = this.getAABBoxTests(character, xd, yd);
 		// Gather any solid characters within the movement bounding box
-		const characters = $gameMap.characters().filter(function (entry) {
+		const characters = $gameMap.characters().filter(function(entry) {
 			if (character.collidableWith(entry)) {
 				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, entry._x, entry._y, entry.collider().aabbox)) {
@@ -2833,14 +2928,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Game_Map.prototype.isAABBoxValid = function (x, y, aabbox) {
+	Game_Map.prototype.isAABBoxValid = function(x, y, aabbox) {
 		return (aabbox.left + x >= 0 &&
 			aabbox.right + x <= this.width() &&
 			aabbox.top + y >= 0 &&
 			aabbox.bottom + y <= this.height());
 	};
 
-	Game_Map.prototype.canWalk = function (character, x, y) {
+	Game_Map.prototype.canWalk = function(character, x, y) {
 		// Passability test
 		if (!this.checkPassage(x, y, 0x0f)) {
 			return false;
@@ -2848,7 +2943,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this.canMoveOn(character, x, y, CollisionMesh.getMesh(this.mapId(), CollisionMesh.WALK));
 	};
 
-	Game_Map.prototype.getAABBoxTests = function (character, vx, vy) {
+	Game_Map.prototype.getAABBoxTests = function(character, vx, vy) {
 		let aabbox = character.collider().aabbox;
 		if (vx || vy) {
 			// Extend aabbox for vectors
@@ -2920,7 +3015,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return bboxTests;
 	};
 
-	Game_Map.prototype.characters = function (player = true) {
+	Game_Map.prototype.characters = function(player = true) {
 		return [
 			...this.events(),
 			...(player ? [$gamePlayer] : []),
@@ -2941,7 +3036,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//=========================================================================
 
 	// replacement method
-	Sprite_Destination.prototype.createBitmap = function () {
+	Sprite_Destination.prototype.createBitmap = function() {
 		const tileWidth = $gameMap.tileWidth();
 		const tileHeight = $gameMap.tileHeight();
 		this.bitmap = new Bitmap(tileWidth, tileHeight);
@@ -2952,7 +3047,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Sprite_Destination.prototype.update = function () {
+	Sprite_Destination.prototype.update = function() {
 		Sprite.prototype.update.call(this);
 		if ($gamePlayer._touchTarget) {
 			this.updatePosition();
@@ -2965,7 +3060,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// replacement method
-	Sprite_Destination.prototype.updatePosition = function () {
+	Sprite_Destination.prototype.updatePosition = function() {
 		const tileWidth = $gameMap.tileWidth();
 		const tileHeight = $gameMap.tileHeight();
 		const x = $gamePlayer._touchTarget?.x ?? 0;
@@ -2993,7 +3088,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		mesh: [],
 	};
 
-	CollisionMesh.getMesh = function (mapId, type) {
+	CollisionMesh.getMesh = function(mapId, type) {
 		type = type || CollisionMesh.WALK;
 
 		// Tyruswoo changed this condition to enable collision mesh recalc.
@@ -3029,11 +3124,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return CollisionMesh.meshInMemory.mesh[type];
 	};
 
-	CollisionMesh.makeCollisionMesh = function (gameMap, passFunc) {
+	CollisionMesh.makeCollisionMesh = function(gameMap, passFunc) {
 		// Make collision mask
 		const collisionGrid = [];
 		if (!passFunc) {
-			passFunc = function () {
+			passFunc = function() {
 				return true;
 			};
 		}
@@ -3204,7 +3299,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return collisionMesh;
 	};
 
-	CollisionMesh.tileDColliders = function (gameMap, colliders) {
+	CollisionMesh.tileDColliders = function(gameMap, colliders) {
 		if (!gameMap.tiledData)
 			return;
 		const tileWidth = gameMap.tileWidth();
@@ -3274,7 +3369,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	CollisionMesh.addTileDCollisionObject = function (x, y, object, scale, tileWidth, tileHeight, colliders) {
+	CollisionMesh.addTileDCollisionObject = function(x, y, object, scale, tileWidth, tileHeight, colliders) {
 		x += object.x / tileWidth;
 		y += object.y / tileHeight;
 		if (object.polygon) {
@@ -3406,7 +3501,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Collider.I_PRECISION = 1 / Collider.PRECISION;
 	Collider.PRESETS = {};
 
-	Collider.createList = function () {
+	Collider.createList = function() {
 		return {
 			type: Collider.LIST,
 			colliders: [],
@@ -3419,7 +3514,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		};
 	};
 
-	Collider.addToList = function (list, collider) {
+	Collider.addToList = function(list, collider) {
 		if (!list.colliders)
 			list.colliders = [];
 		list.colliders.push(collider);
@@ -3441,12 +3536,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				: list.aabbox.bottom;
 	};
 
-	Collider.getPreset = function (id) {
+	Collider.getPreset = function(id) {
 		Collider.importPresets();
 		return Collider.PRESETS[id] || null;
 	};
 
-	Collider.createFromXML = function (xml) {
+	Collider.createFromXML = function(xml) {
 		const xmlDoc = typeof xml === 'string'
 			? DOM_PARSER.parseFromString(xml, 'text/xml')
 			: xml;
@@ -3565,7 +3660,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Collider.null(); // VELEE:
 	};
 
-	Collider.createRect = function (x, y, width, height) {
+	Collider.createRect = function(x, y, width, height) {
 		return Collider.createPolygon([
 			[x, y],
 			[x + width, y],
@@ -3574,14 +3669,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		]);
 	};
 
-	Collider.createLine = function (x1, y1, x2, y2) {
+	Collider.createLine = function(x1, y1, x2, y2) {
 		return Collider.createPolygon([
 			[x1, y1],
 			[x2, y2],
 		]);
 	};
 
-	Collider.createCircle = function (x, y, radius) {
+	Collider.createCircle = function(x, y, radius) {
 		return {
 			type: Collider.CIRCLE,
 			x: x,
@@ -3596,14 +3691,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		};
 	};
 
-	Collider.createPolygon = function (vertices) {
+	Collider.createPolygon = function(vertices) {
 		const aabbox = {
 			left: Number.POSITIVE_INFINITY,
 			top: Number.POSITIVE_INFINITY,
 			right: Number.NEGATIVE_INFINITY,
 			bottom: Number.NEGATIVE_INFINITY,
 		};
-		vertices.forEach(function (vertex) {
+		vertices.forEach(function(vertex) {
 			if (vertex[0] < aabbox.left) {
 				aabbox.left = vertex[0];
 			}
@@ -3621,7 +3716,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return { type: Collider.POLYGON, vertices, aabbox, x: 0, y: 0 }; // VELEE:
 	};
 
-	Collider.createRegularPolygon = function (x, y, sx, sy, points) {
+	Collider.createRegularPolygon = function(x, y, sx, sy, points) {
 		if (!points || points < 3) {
 			return Collider.createCircle(x, y, Math.sqrt(sx * sx + sy * sy));
 		}
@@ -3637,14 +3732,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Collider.createPolygon(vertices);
 	};
 
-	Collider.null = function () {
+	Collider.null = function() {
 		if (!Collider._null) {
 			Collider._null = Collider.createPolygon([]);
 		}
 		return Collider._null;
 	};
 
-	Collider.sharedTile = function () {
+	Collider.sharedTile = function() {
 		if (!Collider._sharedTile) {
 			Collider._sharedTile = Collider.createPolygon([
 				[0, 0],
@@ -3656,42 +3751,42 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Collider._sharedTile;
 	};
 
-	Collider.sharedCircle = function () {
+	Collider.sharedCircle = function() {
 		if (!Collider._sharedCircle) {
 			Collider._sharedCircle = Collider.createCircle(0.5, 0.5, 0.5);
 		}
 		return Collider._sharedCircle;
 	};
 
-	Collider.sharedCharacter = function () {
+	Collider.sharedCharacter = function() {
 		if (!Collider._sharedCharacter) {
 			Collider._sharedCharacter = Collider.createCircle(0.5, 0.7, 0.25);
 		}
 		return Collider._sharedCharacter;
 	};
 
-	Collider.sharedAirship = function () {
+	Collider.sharedAirship = function() {
 		if (!Collider._sharedAirship) {
 			Collider._sharedAirship = Collider.createCircle(0.5, 0.5, 0.25);
 		}
 		return Collider._sharedAirship;
 	};
 
-	Collider.sharedShip = function () {
+	Collider.sharedShip = function() {
 		if (!Collider._sharedShip) {
 			Collider._sharedShip = Collider.createCircle(0.5, 0.5, 0.5);
 		}
 		return Collider._sharedShip;
 	};
 
-	Collider.sharedBoat = function () {
+	Collider.sharedBoat = function() {
 		if (!Collider._sharedBoat) {
 			Collider._sharedBoat = Collider.createCircle(0.5, 0.5, 1 / 3);
 		}
 		return Collider._sharedBoat;
 	};
 
-	Collider.polygonsWithinColliderList = function (ax, ay, aabbox, bx, by, bc) {
+	Collider.polygonsWithinColliderList = function(ax, ay, aabbox, bx, by, bc) {
 		let polygons = [];
 		if (!bc.colliders)
 			return polygons;
@@ -3707,7 +3802,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return polygons;
 	};
 
-	Collider.encaseCircleCircle = function (ax, ay, ac, bx, by, bc) {
+	Collider.encaseCircleCircle = function(ax, ay, ac, bx, by, bc) {
 		if (!(ac.x && ac.y && bc.x && bc.y && ac.radius && bc.radius))
 			return false;
 		ax = ax + ac.x;
@@ -3724,7 +3819,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return false;
 	};
 
-	Collider.intersectCircleCircle = function (ax, ay, ac, bx, by, bc) {
+	Collider.intersectCircleCircle = function(ax, ay, ac, bx, by, bc) {
 		if (!(ac.x && ac.y && bc.x && bc.y && ac.radius && bc.radius))
 			return false;
 		ax = ax + ac.x;
@@ -3741,7 +3836,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return false;
 	};
 
-	Collider.moveCircleCircle = function (ax, ay, ac, bx, by, bc, vector) {
+	Collider.moveCircleCircle = function(ax, ay, ac, bx, by, bc, vector) {
 		if (!(ac.x && ac.y && bc.x && bc.y && ac.radius && bc.radius))
 			return vector;
 		ax = ax + ac.x;
@@ -3761,7 +3856,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return vector;
 	};
 
-	Collider.encaseCirclePolygon = function (ax, ay, ac, bx, by, bc) {
+	Collider.encaseCirclePolygon = function(ax, ay, ac, bx, by, bc) {
 		if (!(ac.x && ac.y && ac.radius && bc.vertices))
 			return false;
 		const aradius = ac.radius + Collider.I_PRECISION;
@@ -3840,7 +3935,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Collider.intersectCirclePolygon = function (ax, ay, ac, bx, by, bc) {
+	Collider.intersectCirclePolygon = function(ax, ay, ac, bx, by, bc) {
 		if (!(ac.x && ac.y && ac.radius && bc.vertices))
 			return false;
 		const aradius = ac.radius;
@@ -3921,7 +4016,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Collider.moveCirclePolygon = function (ax, ay, ac, bx, by, bc, vector) {
+	Collider.moveCirclePolygon = function(ax, ay, ac, bx, by, bc, vector) {
 		if (!(ac.x && ac.y && ac.radius && bc.vertices))
 			return vector;
 		const aradius = ac.radius;
@@ -4020,7 +4115,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return vector;
 	};
 
-	Collider.encasePolygonCircle = function (ax, ay, ac, bx, by, bc) {
+	Collider.encasePolygonCircle = function(ax, ay, ac, bx, by, bc) {
 		if (!(bc.x && bc.y && bc.radius && ac.vertices))
 			return false;
 		const aradius = bc.radius - Collider.I_PRECISION;
@@ -4099,11 +4194,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Collider.intersectPolygonCircle = function (ax, ay, ac, bx, by, bc) {
+	Collider.intersectPolygonCircle = function(ax, ay, ac, bx, by, bc) {
 		return Collider.intersectCirclePolygon(bx, by, bc, ax, ay, ac);
 	};
 
-	Collider.movePolygonCircle = function (ax, ay, ac, bx, by, bc, vector) {
+	Collider.movePolygonCircle = function(ax, ay, ac, bx, by, bc, vector) {
 		let ivector = {
 			x: -vector.x,
 			y: -vector.y,
@@ -4114,7 +4209,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return vector;
 	};
 
-	Collider.encasePolygonPolygon = function (ax, ay, ac, bx, by, bc) {
+	Collider.encasePolygonPolygon = function(ax, ay, ac, bx, by, bc) {
 		let jj;
 		const colliders = [bc, ac];
 		if (!(ac.vertices && bc.vertices))
@@ -4163,7 +4258,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Collider.intersectPolygonPolygon = function (ax, ay, ac, bx, by, bc) {
+	Collider.intersectPolygonPolygon = function(ax, ay, ac, bx, by, bc) {
 		let jj;
 		const colliders = [bc, ac];
 		for (let cc = 0; cc < 2; cc++) {
@@ -4211,7 +4306,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
-	Collider.movePolygonPolygon = function (ax, ay, ac, bx, by, bc, vector) {
+	Collider.movePolygonPolygon = function(ax, ay, ac, bx, by, bc, vector) {
 		let correctionDistance = 0; // VELEE:
 		let correctionX = 0; // VELEE:
 		let correctionY = 0; // VELEE:
@@ -4285,7 +4380,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 * @param  {Collider} bc Collider B
 	 * @return {Boolean} true if A encases B
 	 */
-	Collider.encase = function (ax, ay, ac, bx, by, bc) {
+	Collider.encase = function(ax, ay, ac, bx, by, bc) {
 		if (ac.type == Collider.LIST) {
 			if (!ac.colliders)
 				return false;
@@ -4335,7 +4430,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 * @param  {Collider} bc Collider B
 	 * @return {Boolean} true if touching, false otherwise
 	 */
-	Collider.intersect = function (ax, ay, ac, bx, by, bc) {
+	Collider.intersect = function(ax, ay, ac, bx, by, bc) {
 		if (ac.type == Collider.LIST) {
 			if (!ac.colliders)
 				return false;
@@ -4386,7 +4481,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 * @param  {Vector}   vector Input movement vector A to B
 	 * @return {Vector} New movement vector
 	 */
-	Collider.move = function (ax, ay, ac, bx, by, bc, vector) {
+	Collider.move = function(ax, ay, ac, bx, by, bc, vector) {
 		if (ac.type == Collider.LIST) {
 			if (!ac.colliders)
 				return vector;
@@ -4428,7 +4523,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return vector;
 	};
 
-	Collider.treeFromArray = function (colliders) {
+	Collider.treeFromArray = function(colliders) {
 		while (colliders.length > 1) {
 			let shortestDist = Number.POSITIVE_INFINITY;
 			let closestNode = -1;
@@ -4480,7 +4575,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 * @param  {Number}   vy Adjustment vector of A to B
 	 * @return {Boolean}  True is AABBoxes intersect
 	 */
-	Collider.aabboxCheck = function (ax, ay, ac, bx, by, bc, vx, vy) {
+	Collider.aabboxCheck = function(ax, ay, ac, bx, by, bc, vx, vy) {
 		vx = vx || 0;
 		vy = vy || 0;
 		const left = ax + ac.left + (vx < 0 ? vx : 0);
@@ -4521,23 +4616,23 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Direction.UP = 8;
 	Direction.UP_RIGHT = 9;
 
-	Direction.isUp = function (d) {
+	Direction.isUp = function(d) {
 		return d >= 7;
 	};
 
-	Direction.isRight = function (d) {
+	Direction.isRight = function(d) {
 		return d % 3 == 0;
 	};
 
-	Direction.isDown = function (d) {
+	Direction.isDown = function(d) {
 		return d <= 3;
 	};
 
-	Direction.isLeft = function (d) {
+	Direction.isLeft = function(d) {
 		return (d + 2) % 3 == 0;
 	};
 
-	Direction.fromVector = function (vx, vy) {
+	Direction.fromVector = function(vx, vy) {
 		if (vx && vy) {
 			if (vy < 0) {
 				if (vx < 0) {
@@ -4562,12 +4657,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Direction.DOWN;
 	};
 
-	Direction.normalize = function (vx, vy, length) {
+	Direction.normalize = function(vx, vy, length) {
 		length = length || Math.sqrt(vx * vx + vy * vy);
 		return { x: vx / length, y: vy / length, l: length };
 	};
 
-	Direction.normalizeSquare = function (vx, vy, length) {
+	Direction.normalizeSquare = function(vx, vy, length) {
 		const angle = Math.atan2(vy, vx);
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
