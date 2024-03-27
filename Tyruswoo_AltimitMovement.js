@@ -729,8 +729,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Interpreter overrides
 	//-----------------------------------------------------------------------------
 
-	// TODO: Ensure all commands are registered MZ-style.
 	// Alias method
+	// Deprecated MV-style plugin command call
 	Tyruswoo.AltimitMovement.Game_Interpreter_pluginCommand =
 		Game_Interpreter.prototype.pluginCommand;
 	Game_Interpreter.prototype.pluginCommand = function(command, args) {
@@ -862,71 +862,69 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Interpreter.prototype.altMovementCommandToDirection = function(command) {
-		var gc = Game_Character;
 		switch (command) {
-		case gc.ROUTE_MOVE_DOWN:
-			return 2;
-		case gc.ROUTE_MOVE_LEFT:
-			return 4;
-		case gc.ROUTE_MOVE_RIGHT:
-			return 6;
-		case gc.ROUTE_MOVE_UP:
-			return 8;
-		case gc.ROUTE_MOVE_LOWER_L:
-			return 1;
-		case gc.ROUTE_MOVE_LOWER_R:
-			return 3;
-		case gc.ROUTE_MOVE_UPPER_L:
-			return 7;
-		case gc.ROUTE_MOVE_UPPER_R:
-			return 9;
-		case gc.ROUTE_MOVE_RANDOM:
-			return 1 + Math.randomInt(8);
-		case gc.ROUTE_MOVE_FORWARD:
-			return subject._direction;
-		case gc.ROUTE_MOVE_BACKWARD:
-			return subject.reverseDir(subject._direction);
-		default:
-			return 5;
+			case Game_Character.ROUTE_MOVE_DOWN:
+				return 2;
+			case Game_Character.ROUTE_MOVE_LEFT:
+				return 4;
+			case Game_Character.ROUTE_MOVE_RIGHT:
+				return 6;
+			case Game_Character.ROUTE_MOVE_UP:
+				return 8;
+			case Game_Character.ROUTE_MOVE_LOWER_L:
+				return 1;
+			case Game_Character.ROUTE_MOVE_LOWER_R:
+				return 3;
+			case Game_Character.ROUTE_MOVE_UPPER_L:
+				return 7;
+			case Game_Character.ROUTE_MOVE_UPPER_R:
+				return 9;
+			case Game_Character.ROUTE_MOVE_RANDOM:
+				return 1 + Math.randomInt(8);
+			case Game_Character.ROUTE_MOVE_FORWARD:
+				return subject._direction;
+			case Game_Character.ROUTE_MOVE_BACKWARD:
+				return subject.reverseDir(subject._direction);
+			default:
+				return 5;
 		}
 	};
 
 	Game_Interpreter.prototype.altMovementCharacterEdgeDxDy = function(subject, dx, dy) {
-		var stepDistance;
-		var box = subject.collider().aabbox;
+		let stepDistance;
+		const box = subject.collider().aabbox;
 		if (dx && dy) {
-			var xd;
+			let xd;
 			if (dx < 0) {
-				var px = subject.x + box.left;
+				const px = subject.x + box.left;
 				xd = Math.floor(px) - px;
 			} else {
-				var px = subject.x + box.right;
+				const px = subject.x + box.right;
 				xd = Math.ceil(px) - px;
 			}
-			var yd;
+			let yd;
 			if (dy < 0) {
-				var py = subject.y + box.top;
+				const py = subject.y + box.top;
 				yd = Math.floor(py) - py;
 			} else {
-				var py = subject.y + box.bottom;
+				const py = subject.y + box.bottom;
 				yd = Math.ceil(py) - py;
 			}
-
 			stepDistance = xd < yd ? xd : yd;
 		} else if (dx) {
 			if (dx < 0) {
-				var px = subject.x + box.left;
+				const px = subject.x + box.left;
 				stepDistance = Math.floor(px) - px;
 			} else {
-				var px = subject.x + box.right;
+				const px = subject.x + box.right;
 				stepDistance = Math.ceil(px) - px;
 			}
 		} else {
 			if (dy < 0) {
-				var py = subject.y + box.top;
+				const py = subject.y + box.top;
 				stepDistance = Math.floor(py) - py;
 			} else {
-				var py = subject.y + box.bottom;
+				const py = subject.y + box.bottom;
 				stepDistance = Math.ceil(py) - py;
 			}
 		}
@@ -4701,8 +4699,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	PluginManager.warn = function(warningMsg){
 		const currentEventId = $gameMap._interpreter._eventId;
 		const currentEvent = $gameMap.event(currentEventId);
-		if (currentEvent.name) {
-			console.warn(`EV${currentEventId.toString().padStart(3, '0')}(${currentEvent.name}): ${warningMsg}`);
+		if (currentEvent.characterName()) {
+			console.warn(`EV${currentEventId
+				.toString()
+				.padStart(3, '0')}(${currentEvent.characterName()}): ${warningMsg}`);
 		} else {
 			console.warn(`EV${currentEventId.toString().padStart(3, '0')}: ${warningMsg}`);
 		}
@@ -4735,9 +4735,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	PluginManager.registerCommand(pluginName, 'setEventCollider', args => {
 		const presetCollider = Collider.getPreset(args.colliderPreset);
 		if (presetCollider) {
-			var eventId = args.eventId;
+			let eventId = args.eventId;
 			if (isNaN(eventId)) {
-				for (var ii = 0; ii < $dataMap.events.length; ii++) {
+				for (let ii = 0; ii < $dataMap.events.length; ii++) {
 					if ($dataMap.events[ii] && $dataMap.events[ii].name === eventId) {
 						eventId = $dataMap.events[ii].id;
 						break;
@@ -4757,7 +4757,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} else {
 			PluginManager.warn(`Preset Collider (${args.colliderPreset}) not found!`);
 		}
-
 	});
 
 	PluginManager.registerCommand(pluginName, 'setVehicleCollider', args => {
@@ -4794,7 +4793,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	PluginManager.registerCommand(pluginName, 'setFollowersFollow', args => {
 		if (args.followerId === 'all') {
-			for(const follower of $gamePlayer.followers()._data) {
+			for (const follower of $gamePlayer.followers()._data) {
 				follower.setFrozen(args.shouldFollow);
 			}
 		} else {
@@ -4808,9 +4807,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	});
 
 	PluginManager.registerCommand(pluginName, 'move', args => {
-		var mover;
-		var skip = args.isSkippable === 'true';
-		var wait = args.wait === 'true';
+		let mover;
+		const skip = args.isSkippable === 'true';
+		const wait = args.wait === 'true';
 		const step = JSON.parse(args.moveCommand);
 			//Update mover if needed
 			if (!step.mvr) {
