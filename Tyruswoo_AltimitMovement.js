@@ -1360,31 +1360,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_CharacterBase.prototype.moveVectorCharacters = function(owner, collider, characters, loopMap, move) {
 		characters.forEach(function(character) {
-			let characterX = character._x;
-			let characterY = character._y;
-
-			if (loopMap[character] == 1) {
-				characterX += $gameMap.width(); 
-			} else if (loopMap[character] == 2) {
-				characterX -= $gameMap.width(); 
-			} else if (loopMap[character] == 3) {
-				characterY += $gameMap.height();
-			} else if (loopMap[character] == 4) {
-				characterY -= $gameMap.height(); 
-			} else if (loopMap[character] == 5) {
-				characterX += $gameMap.width();
-				characterY += $gameMap.height();
-			} else if (loopMap[character] == 6) {
-				characterX -= $gameMap.width();
-				characterY += $gameMap.height();
-			} else if (loopMap[character] == 7) {
-				characterX += $gameMap.width();
-				characterY -= $gameMap.height();
-			} else if (loopMap[character] == 8) {
-				characterX -= $gameMap.width();
-				characterY -= $gameMap.height();
-			}
-
+			const characterVector = { x: character._x, y: character._y };
+			const moveVector = $gameMap.getLoopMapCorrection(characterVector, character.loopMap);
+			const characterX = moveVector.x;
+			const characterY = moveVector.y;
 			move = Collider.move(owner._x, owner._y, collider, characterX, characterY, character.collider(), move);
 			if (move.x === 0 && move.y === 0) {
 				return;
@@ -1394,29 +1373,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_CharacterBase.prototype.moveVectorMap = function(owner, collider, bboxTests, move, vx, vy) {
 		for (let ii = 0; ii < bboxTests.length; ii++) {
-			let offsetX = 0;
-			let offsetY = 0;
-			if (bboxTests[ii].type == 1) { 
-				offsetX += $gameMap.width();
-			} else if (bboxTests[ii].type == 2) {
-				offsetX -= $gameMap.width();
-			} else if (bboxTests[ii].type == 3) {
-				offsetY += $gameMap.height();
-			} else if (bboxTests[ii].type == 4) {
-				offsetY -= $gameMap.height();
-			} else if (bboxTests[ii].type == 5) {
-				offsetX += $gameMap.width();
-				offsetY += $gameMap.height();
-			} else if (bboxTests[ii].type == 6) {
-				offsetX -= $gameMap.width();
-				offsetY += $gameMap.height();
-			} else if (bboxTests[ii].type == 7) {
-				offsetX += $gameMap.width();
-				offsetY -= $gameMap.height();
-			} else if (bboxTests[ii].type == 8) {
-				offsetX -= $gameMap.width(); offsetY -= $gameMap.height();
-			}
-
+			const moveVector = $gameMap.getLoopMapCorrection(
+				{ x: 0, y: 0 }, bboxTests[ii].type);
+			const offsetX = moveVector.x;
+			const offsetY = moveVector.y;
 			const mesh = $gameMap.collisionMesh(this._collisionType);
 			const mapColliders = Collider.polygonsWithinColliderList(
 				bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox,
@@ -2057,34 +2017,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 			// Test collision with characters
 			for (let ii = 0; ii < events.length; ii++) {
-				var entryX = events[ii]._x;
-				var entryY = events[ii]._y;
-
-				if (loopMap[events[ii]] == 1) {
-					entryX += $gameMap.width();
-				} else if (loopMap[events[ii]] == 2) {
-					entryX -= $gameMap.width();
-				} else if (loopMap[events[ii]] == 3) {
-					entryY += $gameMap.height();
-				} else if (loopMap[events[ii]] == 4) {
-					entryY -= $gameMap.height();
-				} else if (loopMap[events[ii]] == 5) {
-					entryX += $gameMap.width();
-					entryY += $gameMap.height();
-				} else if (loopMap[events[ii]] == 6) { 
-					entryX -= $gameMap.width(); 
-					entryY += $gameMap.height();
-				} else if (loopMap[events[ii]] == 7) {
-					entryX += $gameMap.width();
-					entryY -= $gameMap.height();
-				} else if (loopMap[events[ii]] == 8) {
-					entryX -= $gameMap.width();
-					entryY -= $gameMap.height(); 
-				}
-
-				if (events[ii].isNormalPriority() && Collider.intersect(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider())) {
+				const eventVector = { x: events[ii]._x, y: events[ii]._y };
+				const moveVector = $gameMap.getLoopMapCorrection(
+					eventVector, events[ii].loopMap);
+				const entryX = moveVector.x;
+				const entryY = moveVector.y;
+				if (events[ii].isNormalPriority() &&
+				Collider.intersect(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider())) {
 					// Normal priority player-touch/event-touch
 					events[ii].start();
+					// veleeupdate: this._touchTarget = null;
 				} else if (events[ii]._trigger === 2) {
 					// Event touch is encasing
 					if (Collider.encase(entryX, entryY, events[ii].collider(), this._x, this._y, collider) || Collider.encase(this._x, this._y, collider, entryX, entryY, events[ii].collider())) {
@@ -2120,34 +2062,19 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 			// Test collision with characters
 			for (let ii = 0; ii < events.length; ii++) {
-				var entryX = events[ii]._x;
-				var entryY = events[ii]._y;
-
-				if (loopMap[events[ii]] == 1) {
-					entryX += $gameMap.width(); 
-				} else if (loopMap[events[ii]] == 2) {
-					entryX -= $gameMap.width(); 
-				} else if (loopMap[events[ii]] == 3) {
-					entryY += $gameMap.height(); 
-				} else if (loopMap[events[ii]] == 4) {
-					entryY -= $gameMap.height(); 
-				} else if (loopMap[events[ii]] == 5) {
-					entryX += $gameMap.width();
-					entryY += $gameMap.height(); 
-				} else if (loopMap[events[ii]] == 6) {
-					entryX -= $gameMap.width();
-					entryY += $gameMap.height(); 
-				} else if (loopMap[events[ii]] == 7) {
-					entryX += $gameMap.width();
-					entryY -= $gameMap.height(); 
-				} else if (loopMap[events[ii]] == 8) {
-					entryX -= $gameMap.width();
-					entryY -= $gameMap.height(); 
-				}
+				const eventVector = {
+					x: events[ii]._x,
+					y: events[ii]._y
+				};
+				const moveVector = $gameMap.getLoopMapCorrection(
+					eventVector, events[ii].loopMap);
+				const entryX = moveVector.x;
+				const entryY = moveVector.y;
 
 				if (events[ii]._trigger === 2) {
 					// Event touch is encasing
-					if (Collider.encase(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider()) || Collider.encase(entryX, entryY, events[ii].collider(), this._x + vx, this._y + vy, collider)) {
+					if (Collider.encase(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider()) ||
+					Collider.encase(entryX, entryY, events[ii].collider(), this._x + vx, this._y + vy, collider)) {
 						events[ii].start();
 					}
 				} else if (Collider.intersect(this._x + vx, this._y + vy, collider, entryX, entryY, events[ii].collider())) {
@@ -2758,30 +2685,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				return;
 			}
 
-			var playerX = $gamePlayer._x;
-			var playerY = $gamePlayer._y;
-
-			if (loopMap == 1) { playerX += $gameMap.width(); 
-			} else if (loopMap == 2) {
-				playerX -= $gameMap.width();
-			} else if (loopMap == 3) {
-				playerY += $gameMap.height();
-			} else if (loopMap == 4) {
-				playerY -= $gameMap.height();
-			} else if (loopMap == 5) {
-				playerX += $gameMap.width();
-				playerY += $gameMap.height();
-			} else if (loopMap == 6) { 
-				playerX -= $gameMap.width(); 
-				playerY += $gameMap.height();
-			} else if (loopMap == 7) { 
-				playerX += $gameMap.width(); 
-				playerY -= $gameMap.height();
-			} else if (loopMap == 8) { 
-				playerX -= $gameMap.width(); 
-				playerY -= $gameMap.height();
-			}
-
+			const playerVector = { x: $gamePlayer._x, y: $gamePlayer._y };
+			const moveVector = $gameMap.getLoopMapCorrection(playerVector, loopMap);
+			const playerX = moveVector.x;
+			const playerY = moveVector.y;
 			if (Collider.intersect(x, y, this.collider(), playerX, playerY, $gamePlayer.collider())) {
 				this.start();
 			}
@@ -2989,31 +2896,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		});
 
 		characters = characters.filter(function(character) {
-			const entryX = character._x;
-			const entryY = character._y;
-
-			if (loopMap[character] == 1) {
-				entryX += $gameMap.width();
-			} else if (loopMap[character] == 2) {
-				entryX -= $gameMap.width();
-			} else if (loopMap[character] == 3) {
-				entryY += $gameMap.height();
-			} else if (loopMap[character] == 4) {
-				entryY -= $gameMap.height();
-			} else if (loopMap[character] == 5) {
-				entryX += $gameMap.width();
-				entryY += $gameMap.height();
-			} else if (loopMap[character] == 6) {
-				entryX -= $gameMap.width();
-				entryY += $gameMap.height();
-			} else if (loopMap[character] == 7) {
-				entryX += $gameMap.width();
-				entryY -= $gameMap.height();
-			} else if (loopMap[character] == 8) {
-				entryX -= $gameMap.width();
-				entryY -= $gameMap.height();
-			}
-
+			const characterVector = { x: character._x, y: character._y };
+			const moveVector = $gameMap.getLoopMapCorrection(
+				characterVector, character.loopMap);
+			const entryX = moveVector.x;
+			const entryY = moveVector.y;
 			return Collider.intersect(x, y, collider, entryX, entryY, character.collider());
 		});
 
@@ -3065,30 +2952,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		// Test collision with characters
 		for (let ii = 0; ii < characters.length; ii++) {
-			const entryX = characters[ii]._x;
-			const entryY = characters[ii]._y;
-
-			if (loopMap[characters[ii]] == 1) {
-				entryX += this.width();
-			} else if (loopMap[characters[ii]] == 2) {
-				entryX -= this.width();
-			} else if (loopMap[characters[ii]] == 3) {
-				entryY += this.height();
-			} else if (loopMap[characters[ii]] == 4) {
-				entryY -= this.height();
-			} else if (loopMap[characters[ii]] == 5) {
-				entryX += this.width();
-				entryY += this.height();
-			} else if (loopMap[characters[ii]] == 6) {
-				entryX -= this.width();
-				entryY += this.height();
-			} else if (loopMap[characters[ii]] == 7) {
-				entryX += this.width();
-				entryY -= this.height();
-			} else if (loopMap[characters[ii]] == 8) {
-				entryX -= this.width();
-				entryY -= this.height();
-			}
+			const characterVector = { x: characters[ii]._x, y: characters[ii]._y };
+			const moveVector = $gameMap.getLoopMapCorrection(
+				characterVector, character[ii].loopMap);
+			const entryX = moveVector.x;
+			const entryY = moveVector.y;
 
 			if (Collider.intersect(x, y, collider, entryX, entryY, characters[ii].collider())) {
 				return true;
@@ -3119,31 +2987,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		// Test collision with characters
 		for (let ii = 0; ii < characters.length; ii++) {
 			const entry = characters[ii];
-			const entryX = entry._x;
-			const entryY = entry._y;
-
-			if (loopMap[entry] == 1) {
-				entryX += this.width();
-			} else if (loopMap[entry] == 2) {
-				entryX -= this.width();
-			} else if (loopMap[entry] == 3) {
-				entryY += this.height();
-			} else if (loopMap[entry] == 4) {
-				entryY -= this.height();
-			} else if (loopMap[entry] == 5) {
-				entryX += this.width();
-				entryY += this.height();
-			} else if (loopMap[entry] == 6) {
-				entryX -= this.width();
-				entryY += this.height();
-			} else if (loopMap[entry] == 7) {
-				entryX += this.width();
-				entryY -= this.height();
-			} else if (loopMap[entry] == 8) {
-				entryX -= this.width();
-				entryY -= this.height();
-			}
-
+			const characterVector = { x: entry._x, y: entry._y };
+			const moveVector = $gameMap.getLoopMapCorrection(
+				characterVector, character.loopMap);
+			const entryX = moveVector.x;
+			const entryY = moveVector.y;
 			if (Collider.intersect(character._x, character._y, collider, entryX, entryY, entry.collider())) {
 				return false;
 			}
@@ -3151,30 +2999,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		// Test collision with map
 		for (let ii = 0; ii < bboxTests.length; ii++) {
-			const offsetX = 0;
-			const offsetY = 0;
-			if (bboxTests[ii].type == 1) {
-				offsetX += this.width();
-			} else if (bboxTests[ii].type == 2) {
-				offsetX -= this.width();
-			} else if (bboxTests[ii].type == 3) {
-				offsetY += this.height(); 
-			} else if (bboxTests[ii].type == 4) {
-				offsetY -= this.height();
-			} else if (bboxTests[ii].type == 5) {
-				offsetX += this.width();
-				offsetY += this.height();
-			} else if (bboxTests[ii].type == 6) {
-				offsetX -= this.width();
-				offsetY += this.height();
-			} else if (bboxTests[ii].type == 7) {
-				offsetX += this.width();
-				offsetY -= this.height();
-			} else if (bboxTests[ii].type == 8) {
-				offsetX -= this.width();
-				offsetY -= this.height();
-			}
-
+			const moveVector = $gameMap.getLoopMapCorrection(
+				{ x: 0, y: 0 }, bboxTests[ii].type);
+			const offsetX = moveVector.x;
+			const offsetY = moveVector.y;
 			const mapColliders = Collider.polygonsWithinColliderList(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, 0, 0, collisionMesh);
 			if (mapColliders.length > 0) {
 				for (let jj = 0; jj < mapColliders.length; jj++) {
@@ -3189,7 +3017,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Map.prototype.isAABBoxValid = function(x, y, aabbox) {
-		return aabbox.left + x >= 0 && aabbox.right + x <= this.width() && aabbox.top + y >= 0 && aabbox.bottom + y <= this.height();
+		return aabbox.left + x >= 0 &&
+			aabbox.right + x <= this.width() &&
+			aabbox.top + y >= 0 &&
+			aabbox.bottom + y <= this.height();
 	};
 
 	Game_Map.prototype.canWalk = function(character, x, y) {
@@ -3235,6 +3066,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this._events.concat($gamePlayer, this._vehicles, $gamePlayer._followers._data);
 	};
 
+	// helper method from VeLee's build
 	Game_Map.prototype.getLoopMapCorrection = function(vector, loopMap) {
 		if (loopMap == 1) {
 			vector.x += this.width();
