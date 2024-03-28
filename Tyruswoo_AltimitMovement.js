@@ -1396,7 +1396,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			const moveVector = getLoopMapCorrection({ x: 0, y: 0 }, bboxTests[ii].type);
 			const offsetX = moveVector.x;
 			const offsetY = moveVector.y;
-			const mapColliders = Collider.polygonsWithinColliderList(bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox, offsetX, offsetY, $gameMap.collisionMesh(this._collisionType));
+			const mapColliders = Collider.polygonsWithinColliderList(
+				bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox,
+				offsetX, offsetY, $gameMap.collisionMesh(this._collisionType));
 			if (mapColliders.length > 0) {
 				if (move.x !== 0) {
 					let sigMove = { x: move.x, y: 0 };
@@ -2109,7 +2111,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		for (let ii = 0; ii < gameMapEventsThere.length; ii++) {
 			const eventVector = {
 				x: gameMapEventsThere[ii]._x,
-				y: gameMapEventsThere[ii]._y,
+				y: gameMapEventsThere[ii]._y
 			};
 			const moveVector = getLoopMapCorrection(eventVector, gameMapEventsThere[ii].loopMap);
 			const entryX = moveVector.x;
@@ -2117,7 +2119,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			if (gameMapEventsThere[ii]._trigger === 2) {
 				// Event touch is encasing
 				if (Collider.encase(this._x + vx, this._y + vy, collider, entryX, entryY, gameMapEventsThere[ii].collider()) ||
-					Collider.encase(entryX, entryY, gameMapEventsThere[ii].collider(), this._x + vx, this._y + vy, collider)) {
+				Collider.encase(entryX, entryY, gameMapEventsThere[ii].collider(), this._x + vx, this._y + vy, collider)) {
 					gameMapEventsThere[ii].start();
 				}
 			} else if (Collider.intersect(this._x + vx, this._y + vy, collider, entryX, entryY, gameMapEventsThere[ii].collider())) {
