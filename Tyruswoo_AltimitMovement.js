@@ -3235,6 +3235,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this._events.concat($gamePlayer, this._vehicles, $gamePlayer._followers._data);
 	};
 
+	Game_Map.prototype.getLoopMapCorrection = function(vector, loopMap) {
+		if (loopMap == 1) {
+			vector.x += this.width();
+		} else if (loopMap == 2) {
+			vector.x -= this.width();
+		} else if (loopMap == 3) {
+			vector.y += this.height();
+		} else if (loopMap == 4) {
+			vector.y -= this.height();
+		} else if (loopMap == 5) {
+			vector.x += this.width();
+			vector.y += this.height();
+		} else if (loopMap == 6) {
+			vector.x -= this.width();
+			vector.y += this.height();
+		} else if (loopMap == 7) {
+			vector.x += this.width();
+			vector.y -= this.height();
+		} else if (loopMap == 8) {
+			vector.x -= this.width();
+			vector.y -= this.height();
+		}
+		return vector;
+	};
+
 	//=============================================================================
 	// Sprite_Destination
 	//=============================================================================
