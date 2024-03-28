@@ -609,7 +609,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			CIRCULAR_MOVEMENT: (PARAMETERS['followers_circular_movement'] != 'false'),
 		};
 
-		var colliderList = PARAMETERS['followers_collider_list'];
+		let colliderList = PARAMETERS['followers_collider_list'];
 		if (colliderList) {
 			FOLLOWERS.COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
@@ -626,21 +626,21 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		VEHICLES = {};
 
-		var colliderList = PARAMETERS['vehicles_boat_collider_list'];
+		let colliderList = PARAMETERS['vehicles_boat_collider_list'];
 		if (colliderList) {
 			VEHICLES.BOAT_COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
 			VEHICLES.BOAT_COLLIDER_LIST = "<collider><circle cx='0.5' cy='0.5' r='0.333' /></collider>";
 		}
 
-		var colliderList = PARAMETERS['vehicles_ship_collider_list'];
+		colliderList = PARAMETERS['vehicles_ship_collider_list'];
 		if (colliderList) {
 			VEHICLES.SHIP_COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
 			VEHICLES.SHIP_COLLIDER_LIST = "<collider><circle cx='0.5' cy='0.5' r='0.5' /></collider>";
 		}
 
-		var colliderList = PARAMETERS['vehicles_airship_collider_list'];
+		colliderList = PARAMETERS['vehicles_airship_collider_list'];
 		if (colliderList) {
 			VEHICLES.AIRSHIP_COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
@@ -657,14 +657,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		EVENT = {};
 
-		var colliderList = PARAMETERS['event_character_collider_list'];
+		let colliderList = PARAMETERS['event_character_collider_list'];
 		if (colliderList) {
 			EVENT.CHARACTER_COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
 			EVENT.CHARACTER_COLLIDER_LIST = "<collider><circle cx='0.5' cy='0.7' r='0.25' /></collider>";
 		}
 
-		var colliderList = PARAMETERS['event_tile_collider_list'];
+		colliderList = PARAMETERS['event_tile_collider_list'];
 		if (colliderList) {
 			EVENT.TILE_COLLIDER_LIST = '<collider>' + JSON.parse(colliderList) + '</collider>';
 		} else {
@@ -679,7 +679,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	var PRESETS;
 	(function() {
 
-		var presets = PARAMETERS['presets'];
+		let presets = PARAMETERS['presets'];
 		if (presets) {
 			PRESETS = JSON.parse(presets);
 		} else {
@@ -846,7 +846,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		var args = [];
 		var readingPart = false;
 		var part = '';
-		for (var ii = 0; ii < str.length; ii++) {
+		for (let ii = 0; ii < str.length; ii++) {
 			if (str.charAt(ii) === ' ' && !readingPart) {
 				args.push(part);
 				part = '';
@@ -941,13 +941,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		subject._moveTarget = true;
 
 		if (object) {
-			var dx = object.x - subject.x;
-			var dy = object.y - subject.y;
-			var length = Math.sqrt(dx * dx + dy * dy);
+			let dx = object.x - subject.x;
+			let dy = object.y - subject.y;
+			const length = Math.sqrt(dx * dx + dy * dy);
 			dx /= length;
 			dy /= length;
-
-			var stepDistance;
+			let stepDistance;
 			if ('edge' == distance) {
 				stepDistance = this.altMovementCharacterEdgeDxDy(subject, dx, dy);
 			} else {
@@ -961,17 +960,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			subject._moveTargetX = subject.x + dx * stepDistance;
 			subject._moveTargetY = subject.y + dy * stepDistance;
 		} else {
-			var direction = this.altMovementCommandToDirection(command);
-			var dx = Direction.isLeft(direction) ? -1 : (Direction.isRight(direction) ? 1 : 0);
-			var dy = Direction.isUp(direction) ? -1 : (Direction.isDown(direction) ? 1 : 0);
+			const direction = this.altMovementCommandToDirection(command);
+			const dx = Direction.isLeft(direction) ? -1 : (Direction.isRight(direction) ? 1 : 0);
+			const dy = Direction.isUp(direction) ? -1 : (Direction.isDown(direction) ? 1 : 0);
 
-			var stepDistance;
+			let stepDistance;
 			if ('edge' == distance) {
 				stepDistance = this.altMovementCharacterEdgeDxDy(subject, dx, dy);
 			} else {
 				stepDistance = Number(distance);
 			}
-
 			subject._moveTargetX = subject.x + dx * stepDistance;
 			subject._moveTargetY = subject.y + dy * stepDistance;
 		}
@@ -980,8 +978,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Interpreter.prototype.altMovementMoveCharacter = function(args) {
 		args = this.altMovementStringArgs(args);
 
-		var subject = this.altMovementGetTargetCharacter(args[1]);
-		var command = this.altMovementGetMoveCommand(args[2]);
+		const subject = this.altMovementGetTargetCharacter(args[1]);
+		const command = this.altMovementGetMoveCommand(args[2]);
 		switch (command) {
 			case Game_Character.ROUTE_MOVE_AWAY:
 			case Game_Character.ROUTE_MOVE_TOWARD:
@@ -1012,12 +1010,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Interpreter.prototype.altMovementColliderSet = function(args) {
-		var target = this.altMovementGetTargetCharacter(args[2]);
+		const target = this.altMovementGetTargetCharacter(args[2]);
 		if (!target) {
 			return;
 		}
 
-		var presetIndex = Number(args[3]);
+		const presetIndex = Number(args[3]);
 		if (isNaN(presetIndex)) {
 			target.setCollider(Collider.getPreset(args[3].substring(1, args[3].length - 1)));
 			target._hasCustomCollider = true;
@@ -1029,39 +1027,98 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Interpreter.prototype.altMovementGetMoveCommand = function(cmdStr) {
 		switch (cmdStr) {
-			case 'down_left': case 'bottom_left': case 'lower_left': case 'lower_l':
-			case 'left_down': case 'left_bottom': case 'left_lower': case 'l_lower':
-			case 'south_west': case 'west_south': case '1': case '↙':
+			case 'down_left':
+			case 'bottom_left':
+			case 'lower_left':
+			case 'lower_l':
+			case 'left_down':
+			case 'left_bottom':
+			case 'left_lower':
+			case 'l_lower':
+			case 'south_west':
+			case 'west_south':
+			case '1':
+			case '↙':
 				return Game_Character.ROUTE_MOVE_LOWER_L;
-			case 'down': case 'bottom': case 'lower': case 'south': case '2': case '↓':
+			case 'down':
+			case 'bottom':
+			case 'lower':
+			case 'south':
+			case '2':
+			case '↓':
 				return Game_Character.ROUTE_MOVE_DOWN;
-			case 'down_right': case 'bottom_right': case 'lower_right': case 'lower_r':
-			case 'right_down': case 'right_bottom': case 'right_lower': case 'r_lower':
-			case 'south_east': case 'east_south': case '3': case '↘':
+			case 'down_right':
+			case 'bottom_right':
+			case 'lower_right':
+			case 'lower_r':
+			case 'right_down':
+			case 'right_bottom':
+			case 'right_lower':
+			case 'r_lower':
+			case 'south_east':
+			case 'east_south':
+			case '3':
+			case '↘':
 				return Game_Character.ROUTE_MOVE_LOWER_R;
-			case 'left': case 'west': case '4': case '←':
+			case 'left':
+			case 'west':
+			case '4':
+			case '←':
 				return Game_Character.ROUTE_MOVE_LEFT;
-			case 'right': case 'east': case '6': case '→':
+			case 'right':
+			case 'east':
+			case '6':
+			case '→':
 				return Game_Character.ROUTE_MOVE_RIGHT;
-			case 'up_left': case 'top_left': case 'upper_left': case 'upper_l':
-			case 'left_up': case 'left_top': case 'left_upper': case 'l_upper':
-			case 'north_west': case 'west_north': case '7': case '↖':
+			case 'up_left':
+			case 'top_left':
+			case 'upper_left':
+			case 'upper_l':
+			case 'left_up':
+			case 'left_top':
+			case 'left_upper':
+			case 'l_upper':
+			case 'north_west':
+			case 'west_north':
+			case '7':
+			case '↖':
 				return Game_Character.ROUTE_MOVE_UPPER_L;
-			case 'up': case 'top': case 'upper': case 'north': case '8': case '↑':
+			case 'up':
+			case 'top':
+			case 'upper':
+			case 'north':
+			case '8':
+			case '↑':
 				return Game_Character.ROUTE_MOVE_UP;
-			case 'up_right': case 'top_right': case 'upper_right': case 'upper_r':
-			case 'right_up': case 'right_top': case 'right_upper': case 'r_upper':
-			case 'north_east': case 'east_north': case '9': case '↗':
+			case 'up_right':
+			case 'top_right':
+			case 'upper_right':
+			case 'upper_r':
+			case 'right_up':
+			case 'right_top':
+			case 'right_upper':
+			case 'r_upper':
+			case 'north_east':
+			case 'east_north':
+			case '9':
+			case '↗':
 				return Game_Character.ROUTE_MOVE_UPPER_R;
-			case 'away': case 'away_from':
+			case 'away':
+			case 'away_from':
 				return Game_Character.ROUTE_MOVE_AWAY;
-			case 'toward': case 'towards': case 'toward_to':
+			case 'toward':
+			case 'towards':
+			case 'toward_to':
 				return Game_Character.ROUTE_MOVE_TOWARD;
-			case 'forward': case 'forwards':
+			case 'forward':
+			case 'forwards':
 				return Game_Character.ROUTE_MOVE_FORWARD;
-			case 'backward': case 'backwards': case 'back':
+			case 'backward':
+			case 'backwards':
+			case 'back':
 				return Game_Character.ROUTE_MOVE_BACKWARD;
-			case 'random': case 'randomly':
+			case 'random':
+			case 'randomly':
 				return Game_Character.ROUTE_MOVE_RANDOM;
 			default:
 				return null;
@@ -1071,8 +1128,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Interpreter.prototype.altMovementGetTargetCharacter = function(target) {
 		if (target.startsWith('\"') && target.endsWith('\"')) {
 			// Event name
-			var eventName = target.substring(1, target.length - 1);
-			for (var ii = 0; ii < $dataMap.events.length; ii++) {
+			const eventName = target.substring(1, target.length - 1);
+			for (let ii = 0; ii < $dataMap.events.length; ii++) {
 				if ($dataMap.events[ii] && $dataMap.events[ii].name === eventName) {
 					return $gameMap.event($dataMap.events[ii].id);
 				}
@@ -1081,7 +1138,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			// System name
 			switch (target) {
 				case 'this':
-					var eventId = this._eventId;
+					const eventId = this._eventId;
 					// This Event ID #
 					return $gameMap.event(eventId);
 				case 'player':
@@ -1094,11 +1151,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					return $gameMap.airship();
 				default:
 					if (target.startsWith('follower')) {
-						var index = Number(target.substring(8));
+						const index = Number(target.substring(8));
 						// Follower index
 						return $gamePlayer.followers().follower(index);
 					} else {
-						var eventId = Number(target);
+						const eventId = Number(target);
 						// Event ID #
 						return $gameMap.event(eventId);
 					}
@@ -1116,9 +1173,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Game_CharacterBase.prototype.update;
 	Game_CharacterBase.prototype.update = function() {
 		if (this._moveTarget) {
-			var dx = $gameMap.directionX(this._x, this._moveTargetX);
-			var dy = $gameMap.directionY(this._y, this._moveTargetY);
-			var length = Math.sqrt(dx * dx + dy * dy);
+			let dx = $gameMap.directionX(this._x, this._moveTargetX);
+			let dy = $gameMap.directionY(this._y, this._moveTargetY);
+			const length = Math.sqrt(dx * dx + dy * dy);
 			if (length <= this.stepDistance) {
 				this._moveTarget = false;
 				this._moveTargetSkippable = false;
@@ -1141,8 +1198,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Tyruswoo.AltimitMovement.Game_CharacterBase_update.call(this);
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.isOnLadder = function() {
-		var aabbox = this.collider().aabbox;
+		const aabbox = this.collider().aabbox;
 		if (aabbox.left >= 0 && aabbox.right <= 1) {
 			// To use ladder the bounding box must fit on a tile
 			return false;
@@ -1157,28 +1215,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return false;
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.moveStraight = function(d) {
-		var vy = Direction.isUp(d) ? -1 : (Direction.isDown(d) ? 1 : 0);
-		var vx = Direction.isLeft(d) ? -1 : (Direction.isRight(d) ? 1 : 0);
+		let vy = Direction.isUp(d) ? -1 : Direction.isDown(d) ? 1 : 0;
+		let vx = Direction.isLeft(d) ? -1 : Direction.isRight(d) ? 1 : 0;
 		if (this._circularMovement) {
-			var length = Math.sqrt(vx * vx + vy * vy);
+			const length = Math.sqrt(vx * vx + vy * vy);
 			vx /= length;
 			vy /= length;
 		}
 		this.moveVector(vx * this.stepDistance, vy * this.stepDistance);
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.moveDiagonally = function(horz, vert) {
-		var vy = Direction.isUp(vert) ? -1 : (Direction.isDown(vert) ? 1 : 0);
-		var vx = Direction.isLeft(horz) ? -1 : (Direction.isRight(horz) ? 1 : 0);
+		let vy = Direction.isUp(vert) ? -1 : Direction.isDown(vert) ? 1 : 0;
+		let vx = Direction.isLeft(horz) ? -1 : Direction.isRight(horz) ? 1 : 0;
 		if (this._circularMovement) {
-			var length = Math.sqrt(vx * vx + vy * vy);
+			const length = Math.sqrt(vx * vx + vy * vy);
 			vx /= length;
 			vy /= length;
 		}
 		this.moveVector(vx * this.stepDistance, vy * this.stepDistance);
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_CharacterBase_isMoving = 
 		Game_CharacterBase.prototype.isMoving;
 	Game_CharacterBase.prototype.isMoving = function() {
@@ -1186,6 +1247,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			this._isMoving;
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_CharacterBase_updateAnimation = 
 		Game_CharacterBase.prototype.updateAnimation;
 	Game_CharacterBase.prototype.updateAnimation = function() {
@@ -1197,8 +1259,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.isOnBush = function() {
-		var aabbox = this.collider().aabbox;
+		const aabbox = this.collider().aabbox;
 		// If middle is in bush
 		if ($gameMap.isBush($gameMap.roundX(this._x + (aabbox.left + aabbox.right) / 2), $gameMap.roundY(this._y + (aabbox.top + aabbox.bottom) / 2))) {
 			// If bottom middle is in bush
@@ -1209,27 +1272,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return false;
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.canPass = function(x, y, d) {
 		if (this.isThrough() || this.isDebugThrough()) {
-				return true;
+			return true;
 		}
-
-		var x2 = $gameMap.roundXWithDirection(x, d);
-		var y2 = $gameMap.roundYWithDirection(y, d);
+		const x2 = $gameMap.roundXWithDirection(x, d);
+		const y2 = $gameMap.roundYWithDirection(y, d);
 		if (!$gameMap.canWalk(this, x2, y2)) {
 			return false;
 		}
-
 		return true;
 	};
 
+	// replacement method
 	Game_CharacterBase.prototype.canPassDiagonally = function(x, y, horz, vert) {
 		if (this.isThrough() || this.isDebugThrough()) {
 				return true;
 		}
 
-		var x2 = $gameMap.roundXWithDirection(x, horz);
-		var y2 = $gameMap.roundYWithDirection(y, vert);
+		const x2 = $gameMap.roundXWithDirection(x, horz);
+		const y2 = $gameMap.roundYWithDirection(y, vert);
 		if (!$gameMap.canWalk(this, x2, y2)) {
 			return false;
 		}
@@ -1237,6 +1300,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_CharacterBase_setDirection = 
 		Game_CharacterBase.prototype.setDirection;
 	Game_CharacterBase.prototype.setDirection = function(d) {
@@ -1244,22 +1308,24 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this._direction8 = this._direction;
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_CharacterBase_screenX = 
 		Game_CharacterBase.prototype.screenX;
 	Game_CharacterBase.prototype.screenX = function() {
-		var round = Math.round;
+		const round = Math.round;
 		Math.round = Math.floor;
-		var val = Tyruswoo.AltimitMovement.Game_CharacterBase_screenX.call(this);
+		const val = Tyruswoo.AltimitMovement.Game_CharacterBase_screenX.call(this);
 		Math.round = round;
 		return val;
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_CharacterBase_screenY = 
 		Game_CharacterBase.prototype.screenY;
 	Game_CharacterBase.prototype.screenY = function() {
-		var round = Math.round;
+		const round = Math.round;
 		Math.round = Math.floor;
-		var val = Tyruswoo.AltimitMovement.Game_CharacterBase_screenY.call(this);
+		const val = Tyruswoo.AltimitMovement.Game_CharacterBase_screenY.call(this);
 		Math.round = round;
 		return val;
 	};
@@ -1294,8 +1360,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_CharacterBase.prototype.moveVectorCharacters = function(owner, collider, characters, loopMap, move) {
 		characters.forEach(function(character) {
-			var characterX = character._x;
-			var characterY = character._y;
+			let characterX = character._x;
+			let characterY = character._y;
 
 			if (loopMap[character] == 1) {
 				characterX += $gameMap.width(); 
@@ -1327,9 +1393,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_CharacterBase.prototype.moveVectorMap = function(owner, collider, bboxTests, move, vx, vy) {
-		for (var ii = 0; ii < bboxTests.length; ii++) {
-			var offsetX = 0;
-			var offsetY = 0;
+		for (let ii = 0; ii < bboxTests.length; ii++) {
+			let offsetX = 0;
+			let offsetY = 0;
 			if (bboxTests[ii].type == 1) { 
 				offsetX += $gameMap.width();
 			} else if (bboxTests[ii].type == 2) {
@@ -1352,12 +1418,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 
 			const mesh = $gameMap.collisionMesh(this._collisionType);
-			var mapColliders = Collider.polygonsWithinColliderList(
+			const mapColliders = Collider.polygonsWithinColliderList(
 				bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox,
 				0, 0, mesh);
 			if (mapColliders.length > 0) {
 				if (move.x !== 0) {
-					var sigMove = { x: move.x, y: 0 };
+					let sigMove = { x: move.x, y: 0 };
 					mapColliders.forEach(function(mapCollider) {
 						sigMove = Collider.move(owner._x, owner._y, collider, offsetX, offsetY, mapCollider, sigMove);
 					});
@@ -1404,7 +1470,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					return false;
 				}
 				if (owner.collidableWith(character)) {
-					for (var ii = 0; ii < bboxTests.length; ii++) {
+					for (let ii = 0; ii < bboxTests.length; ii++) {
 						if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, character._x, character._y, character.collider().aabbox, vx, vy)) {
 							loopMap[character] = bboxTests[ii].type;
 							return true;
@@ -1434,7 +1500,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		// Special ladder behaviour
 		if (this.isOnLadder() && (this.isInAirship ? !this.isInAirship() : true)) {
-			var tileX = Math.round(this._x);
+			const tileX = Math.round(this._x);
 			if (!$gameMap.isPassable(tileX, this._y + move.y, Direction.LEFT)) {
 				if (!$gameMap.isPassable(tileX, this._y + move.y, Direction.RIGHT)) {
 					move.x = tileX - this._x;
@@ -1442,7 +1508,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 		}
 
-		var length = Math.sqrt(move.x * move.x + move.y * move.y);
+		const length = Math.sqrt(move.x * move.x + move.y * move.y);
 		if (length > Collider.I_PRECISION) {
 			this._x = $gameMap.roundX(this._x + move.x);
 			this._y = $gameMap.roundY(this._y + move.y);
@@ -1498,8 +1564,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		if (!direct) {
-			var dx = vx > 0 ? Direction.RIGHT : (vx ? Direction.LEFT : 0);
-			var dy = vy > 0 ? Direction.DOWN : (vy ? Direction.UP : 0);
+			const dx = vx > 0 ? Direction.RIGHT : (vx ? Direction.LEFT : 0);
+			const dy = vy > 0 ? Direction.DOWN : (vy ? Direction.UP : 0);
 			if (dx && dy) {
 				if (this._direction === this.reverseDir(dx)) {
 					this.setDirection(dx);
@@ -1571,7 +1637,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-----------------------------------------------------------------------------
 	Game_Character.prototype.updateRoutineMove = function() {
 		if (this._moveTarget) {
-			var moveRoute = this._moveRoute;
+			const moveRoute = this._moveRoute;
 			if (!moveRoute.skippable || this._wasMoving) {
 				return;
 			}
@@ -1580,7 +1646,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			this._waitCount--;
 		} else {
 			this.setMovementSuccess(true);
-			var command = this._moveRoute.list[this._moveRouteIndex];
+			const command = this._moveRoute.list[this._moveRouteIndex];
 			if (command) {
 				this.processMoveCommand(command);
 				this.advanceMoveRouteIndex();
@@ -1593,9 +1659,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return;
 		}
 
-		var d = 1 + Math.randomInt(8);
-		var vx = Direction.isLeft(d) ? -1 : (Direction.isRight(d) ? 1 : 0);
-		var vy = Direction.isUp(d) ? -1 : (Direction.isDown(d) ? 1 : 0);
+		const d = 1 + Math.randomInt(8);
+		const vx = Direction.isLeft(d) ? -1 : (Direction.isRight(d) ? 1 : 0);
+		const vy = Direction.isUp(d) ? -1 : (Direction.isDown(d) ? 1 : 0);
 
 		this.setDirectionVector(vx, vy);
 		this._moveTarget = true;
@@ -1605,9 +1671,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Character.prototype.moveTowardCharacter = function(character) {
-		var vx = character.x - this.x;
-		var vy = character.y - this.y;
-		var length = Math.sqrt(vx * vx + vy * vy);
+		let vx = character.x - this.x;
+		let vy = character.y - this.y;
+		const length = Math.sqrt(vx * vx + vy * vy);
 		if (length > this.stepDistance) {
 			this.setDirectionVector(vx, vy);
 			vx /= length;
@@ -1620,9 +1686,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Character.prototype.moveAwayFromCharacter = function(character) {
-		var vx = character.x - this.x;
-		var vy = character.y - this.y;
-		var length = Math.sqrt(vx * vx + vy * vy);
+		let vx = character.x - this.x;
+		let vy = character.y - this.y;
+		const length = Math.sqrt(vx * vx + vy * vy);
 		this.setDirectionVector(-vx, -vy);
 		vx /= length;
 		vy /= length;
@@ -1635,8 +1701,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Tyruswoo.AltimitMovement.Game_Character_processMoveCommand = 
 		Game_Character.prototype.processMoveCommand;
 	Game_Character.prototype.processMoveCommand = function(command) {
-		var gc = Game_Character;
-		var params = command.parameters;
+		const gc = Game_Character;
+		let params = command.parameters;
 		switch (command.code) {
 		case gc.ROUTE_MOVE_DOWN:
 			this._moveTarget = true;
@@ -1681,8 +1747,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		case gc.ROUTE_MOVE_FORWARD:
 			this._wasDirectionFixed = this.isDirectionFixed();
 			this.setDirectionFix(true);
-			var vx = Direction.isLeft(this._direction) ? -1 : (Direction.isRight(this._direction) ? 1 : 0);
-			var vy = Direction.isUp(this._direction) ? -1 : (Direction.isDown(this._direction) ? 1 : 0);
+			let vx = Direction.isLeft(this._direction) ? -1 : (Direction.isRight(this._direction) ? 1 : 0);
+			let vy = Direction.isUp(this._direction) ? -1 : (Direction.isDown(this._direction) ? 1 : 0);
 			this._moveTarget = true;
 			this._moveTargetX = (this._x + vx);
 			this._moveTargetY = (this._y + vy);
@@ -1690,11 +1756,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		case gc.ROUTE_MOVE_BACKWARD:
 			this._wasDirectionFixed = this.isDirectionFixed();
 			this.setDirectionFix(true);
-			var vx = Direction.isLeft(this._direction) ? -1 : (Direction.isRight(this._direction) ? 1 : 0);
-			var vy = Direction.isUp(this._direction) ? -1 : (Direction.isDown(this._direction) ? 1 : 0);
+			let vxb = Direction.isLeft(this._direction) ? -1 : (Direction.isRight(this._direction) ? 1 : 0);
+			let vyb = Direction.isUp(this._direction) ? -1 : (Direction.isDown(this._direction) ? 1 : 0);
 			this._moveTarget = true;
-			this._moveTargetX = (this._x - vx);
-			this._moveTargetY = (this._y - vy);
+			this._moveTargetX = (this._x - vxb);
+			this._moveTargetY = (this._y - vyb);
 			break;
 		default:
 			Tyruswoo.AltimitMovement.Game_Character_processMoveCommand.call(
@@ -1746,9 +1812,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Player.prototype.update = function(sceneActive) {
-		var lastScrolledX = this.scrolledX();
-		var lastScrolledY = this.scrolledY();
-		var wasMoving = this._wasMoving;
+		const lastScrolledX = this.scrolledX();
+		const lastScrolledY = this.scrolledY();
+		const wasMoving = this._wasMoving;
 		this.updateDashing();
 		if (sceneActive) {
 			this.moveByInput();
@@ -1783,7 +1849,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				var didMove = false;
 				var didTurn = false;
 				if (gamepads) {
-					for (var ii = 0; ii < gamepads.length; ii++) {
+					for (let ii = 0; ii < gamepads.length; ii++) {
 						var gamepad = gamepads[ii];
 						if (gamepad && gamepad.connected) {
 							if (!didMove) {
@@ -1971,7 +2037,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			// Gather any solid characters within the "here" bounding box
 			var loopMap = {};
 			var events = $gameMap.events().filter(function(event) {
-				for (var ii = 0; ii < bboxTests.length; ii++) {
+				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (event.isTriggerIn(triggers)) {
 						if (event.isNormalPriority()) {
 							if (Collider.aabboxCheck(bboxTests[ii].x + vx, bboxTests[ii].y + vy, bboxTests[ii].aabbox, event._x, event._y, event.collider().aabbox)) {
@@ -1990,7 +2056,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			});
 
 			// Test collision with characters
-			for (var ii = 0; ii < events.length; ii++) {
+			for (let ii = 0; ii < events.length; ii++) {
 				var entryX = events[ii]._x;
 				var entryY = events[ii]._y;
 
@@ -2033,17 +2099,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Player.prototype.checkEventTriggerThere = function(triggers) {
 		if (this.canStartLocalEvents()) {
-			var vx = Direction.isLeft(this._direction) ? -this.actionWidth() : (Direction.isRight(this._direction) ? this.actionWidth() : 0);
-			var vy = Direction.isUp(this._direction) ? -this.actionHeight() : (Direction.isDown(this._direction) ? this.actionHeight() : 0);
+			const vx = Direction.isLeft(this._direction) ? -this.actionWidth() : (Direction.isRight(this._direction) ? this.actionWidth() : 0);
+			const vy = Direction.isUp(this._direction) ? -this.actionHeight() : (Direction.isDown(this._direction) ? this.actionHeight() : 0);
 
-			var collider = this.collider();
-			var bboxTests = $gameMap.getAABBoxTests(this, vx, vy);
+			const collider = this.collider();
+			const bboxTests = $gameMap.getAABBoxTests(this, vx, vy);
 			var player = this;
 
 			// Gather any solid characters within the "there" bounding box
 			var loopMap = {};
 			var events = $gameMap.events().filter(function(event) {
-				for (var ii = 0; ii < bboxTests.length; ii++) {
+				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (event.isTriggerIn(triggers) && event.isNormalPriority() && Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, event._x, event._y, event.collider().aabbox)) {
 						loopMap[event] = bboxTests[ii].type;
 						return true;
@@ -2053,7 +2119,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			});
 
 			// Test collision with characters
-			for (var ii = 0; ii < events.length; ii++) {
+			for (let ii = 0; ii < events.length; ii++) {
 				var entryX = events[ii]._x;
 				var entryY = events[ii]._y;
 
@@ -2093,7 +2159,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				// Check for counters
 				var events = [];
 				var tiles = $gameMap.getTilesUnder(this, vx, vy);
-				for (var ii = 0; ii < tiles.length; ii++) {
+				for (let ii = 0; ii < tiles.length; ii++) {
 					if ($gameMap.isCounter(tiles[ii][0], tiles[ii][1])) {
 						var x3 = $gameMap.roundXWithDirection(tiles[ii][0], this._direction);
 						var y3 = $gameMap.roundYWithDirection(tiles[ii][1], this._direction);
@@ -2114,7 +2180,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 				var closest;
 				var dist = Number.POSITIVE_INFINITY;
-				for (var ii = 0; ii < events.length; ii++) {
+				for (let ii = 0; ii < events.length; ii++) {
 					var entryX = events[ii]._x;
 					var entryY = events[ii]._y;
 
@@ -2151,29 +2217,32 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Player.prototype.getOnVehicle = function() {
-		var vx = Direction.isLeft(this._direction) ? -0.5 : (Direction.isRight(this._direction) ? 0.5 : 0);
-		var vy = Direction.isUp(this._direction) ? -0.5 : (Direction.isDown(this._direction) ? 0.5 : 0);
-		var bboxTests = $gameMap.getAABBoxTests(this, vx, vy);
+		const vx = Direction.isLeft(this._direction) ? -0.5 : (Direction.isRight(this._direction) ? 0.5 : 0);
+		const vy = Direction.isUp(this._direction) ? -0.5 : (Direction.isDown(this._direction) ? 0.5 : 0);
+		const bboxTests = $gameMap.getAABBoxTests(this, vx, vy);
 
-		var vehicle;
-		var airship = $gameMap.airship();
-		var ship = $gameMap.ship();
-		var boat = $gameMap.boat();
+		let vehicle;
+		const airship = $gameMap.airship();
+		const ship = $gameMap.ship();
+		const boat = $gameMap.boat();
 
-		for (var ii = 0; ii < bboxTests.length; ii++) {
-			if (!!airship && airship._mapId === $gameMap.mapId() && Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, airship._x, airship._y, airship.collider().aabbox)) {
+		for (let ii = 0; ii < bboxTests.length; ii++) {
+			if (!!airship && airship._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, airship._x, airship._y, airship.collider().aabbox)) {
 				this._vehicleType = 'airship';
 				this._collisionType = CollisionMesh.AIRSHIP;
 				vehicle = airship;
 				break;
 			}
-			if (!!ship && ship._mapId === $gameMap.mapId() && Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, ship._x, ship._y, ship.collider().aabbox)) {
+			if (!!ship && ship._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, ship._x, ship._y, ship.collider().aabbox)) {
 				this._vehicleType = 'ship';
 				this._collisionType = CollisionMesh.SHIP;
 				vehicle = ship;
 				break;
 			}
-			if (!!boat && boat._mapId === $gameMap.mapId() && Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, boat._x, boat._y, boat.collider().aabbox)) {
+			if (!!boat && boat._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, boat._x, boat._y, boat.collider().aabbox)) {
 				this._vehicleType = 'boat';
 				this._collisionType = CollisionMesh.BOAT;
 				vehicle = boat;
@@ -2181,21 +2250,20 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 		}
 
-		if (this.isInVehicle()) {
+		if (vehicle && this.isInVehicle()) {
 			this._vehicleGettingOn = true;
 			vehicle._passengerCollider = this.collider();
 			this._collider = vehicle.collider();
 
-			var dx = $gameMap.directionX(this._x, vehicle._x);
-			var dy = $gameMap.directionY(this._y, vehicle._y);
+			const dx = $gameMap.directionX(this._x, vehicle._x);
+			const dy = $gameMap.directionY(this._y, vehicle._y);
 
-			var wasThrough = this.isThrough();
+			const wasThrough = this.isThrough();
 			this.setThrough(true);
 			this.moveVector(dx, dy);
 			this.setThrough(wasThrough);
 			this.gatherFollowers();
 		}
-
 		return this._vehicleGettingOn;
 	};
 
@@ -2205,27 +2273,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				this.setDirection(2);
 			}
 
-			var vhx = this.vehicle().x;
-			var vhy = this.vehicle().y;
-			var vhd = this.vehicle().direction();
+			const vhx = this.vehicle().x;
+			const vhy = this.vehicle().y;
+			const vhd = this.vehicle().direction();
 			for (const follower of this._followers._data) {
-					follower._x = vhx;
-					follower._y = vhy;
-					follower._realX = vhx;
-					follower._realY = vhy;
-					follower.setDirection(vhd);
+				follower._x = vhx;
+				follower._y = vhy;
+				follower._realX = vhx;
+				follower._realY = vhy;
+				follower.setDirection(vhd);
 			}
 
 			// this._followers.synchronize(this.vehicle().x, this.vehicle().y, this.vehicle().direction());
 			this.vehicle().getOff();
 
 			if (!this.isInAirship()) {
-				var vehicleBox = this.vehicle().collider().aabbox;
-				var passengerBox = this.vehicle()._passengerCollider.aabbox;
-				var d = this.direction();
+				const vehicleBox = this.vehicle().collider().aabbox;
+				const passengerBox = this.vehicle()._passengerCollider.aabbox;
+				const d = this.direction();
 
 				// Get disembark direction
-				var vx;
+				let vx;
 				if (Direction.isLeft(d)) {
 					vx = Math.floor((-passengerBox.right + vehicleBox.left) * 64) / 64;
 				} else if (Direction.isRight(d)) {
@@ -2233,7 +2301,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				} else {
 					vx = 0;
 				}
-				var vy;
+				let vy;
 				if (Direction.isUp(d)) {
 					vy = Math.floor((-passengerBox.bottom + vehicleBox.top) * 64) / 64;
 				} else if (Direction.isDown(d)) {
@@ -2259,7 +2327,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Player.prototype.updateVehicleGetOff = function() {
-		if (!this.areFollowersGathering() && this.vehicle().isLowest() && this._collisionType !== CollisionMesh.WALK) {
+		if (!this.areFollowersGathering() && this.vehicle().isLowest() &&
+		this._collisionType !== CollisionMesh.WALK) {
 			this._collider = this.vehicle()._passengerCollider;
 			this.vehicle()._passengerCollider = undefined;
 			this._collisionType = CollisionMesh.WALK;
@@ -2274,22 +2343,21 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-----------------------------------------------------------------------------
 
 	Game_Player.prototype.actionWidth = function() {
-		var bbox = this.collider().aabbox;
-		var width = bbox.right - bbox.left;
+		const bbox = this.collider().aabbox;
+		const width = bbox.right - bbox.left;
 		return width < 1 ? width : 1;
 	};
 
 	Game_Player.prototype.actionHeight = function() {
-		var bbox = this.collider().aabbox;
-		var height = bbox.bottom - bbox.top;
+		const bbox = this.collider().aabbox;
+		const height = bbox.bottom - bbox.top;
 		return height < 1 ? height : 1;
 	};
-
-
+	
 	//=============================================================================
-	// Game_Interpreter
+	// Game_Follower
 	//=============================================================================
-	// Game_Interpreter overrides
+	// Game_Follower overrides
 	//-----------------------------------------------------------------------------
 
 	Game_Follower.prototype.initMembers = function() {
@@ -2304,61 +2372,61 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return;
 		}
 
-		var displayWidth = Graphics.width / $gameMap.tileWidth();
-		var displayHeight = Graphics.height / $gameMap.tileHeight();
+		const displayWidth = Graphics.width / $gameMap.tileWidth();
+		const displayHeight = Graphics.height / $gameMap.tileHeight();
 
-		var aabbox = this.collider().aabbox;
-		var width = aabbox.right - aabbox.left;
-		var height = aabbox.bottom - aabbox.top;
+		const aabbox = this.collider().aabbox;
+		const width = aabbox.right - aabbox.left;
+		const height = aabbox.bottom - aabbox.top;
 
-		var ax = this._x + (aabbox.left + aabbox.right) / 2;
-		var ay = this._y + (aabbox.top + aabbox.bottom) / 2;
+		const ax = this._x + (aabbox.left + aabbox.right) / 2;
+		const ay = this._y + (aabbox.top + aabbox.bottom) / 2;
 
 		// Teleportation
-		var midX = $gameMap.canvasToMapX(Graphics.width / 2);
-		var dmX = $gameMap.directionX(ax, midX);
+		const midX = $gameMap.canvasToMapX(Graphics.width / 2);
+		const dmX = $gameMap.directionX(ax, midX);
 		if (dmX > displayWidth + width) {
 			// Off left edge
-			var tx = $gameMap.canvasToMapX(0) - width;
+			const tx = $gameMap.canvasToMapX(0) - width;
 			if ($gameMap.canWalk(this, tx, this._y)) {
 				this.setPosition(tx, this._y);
 			}
 		} else if (dmX < -displayWidth - width) {
 			// Off right edge
-			var tx = $gameMap.canvasToMapX(Graphics.width) + width;
+			const tx = $gameMap.canvasToMapX(Graphics.width) + width;
 			if ($gameMap.canWalk(this, tx, this._y)) {
 				this.setPosition(tx, this._y);
 			}
 		}
-		var midY = $gameMap.canvasToMapY(Graphics.height / 2);
-		var dmY = $gameMap.directionY(ay, midY);
+		const midY = $gameMap.canvasToMapY(Graphics.height / 2);
+		const dmY = $gameMap.directionY(ay, midY);
 		if (dmY > displayHeight + height) {
 			// Off top edge
-			var ty = $gameMap.canvasToMapY(0) - height;
+			const ty = $gameMap.canvasToMapY(0) - height;
 			if ($gameMap.canWalk(this, this._x, ty)) {
 				this.setPosition(this._x, ty);
 			}
 		} else if (dmY < -displayHeight - height) {
 			// Off bottom edge
-			var ty = $gameMap.canvasToMapY(Graphics.height) + height;
+			const ty = $gameMap.canvasToMapY(Graphics.height) + height;
 			if ($gameMap.canWalk(this, this._x, ty)) {
 				this.setPosition(this._x, ty);
 			}
 		}
 
-		var characterBox = character.collider().aabbox;
-		var cWidth = characterBox.right - characterBox.left;
-		var cHeight = characterBox.bottom - characterBox.top;
+		const characterBox = character.collider().aabbox;
+		const cWidth = characterBox.right - characterBox.left;
+		const cHeight = characterBox.bottom - characterBox.top;
 
-		var bx = character._x + (characterBox.left + characterBox.right) / 2;
-		var by = character._y + (characterBox.top + characterBox.bottom) / 2;
+		const bx = character._x + (characterBox.left + characterBox.right) / 2;
+		const by = character._y + (characterBox.top + characterBox.bottom) / 2;
 
-		var dx = $gameMap.directionX(ax, bx);
-		var dy = $gameMap.directionY(ay, by);
+		let dx = $gameMap.directionX(ax, bx);
+		let dy = $gameMap.directionY(ay, by);
 
-		var distance = Math.sqrt(dx * dx + dy * dy);
-		var radius = (this.collider().type === Collider.CIRCLE ? this.collider().radius : (width > height ? width : height) / 2);
-		var characterRadius = (character.collider().type === Collider.CIRCLE ? character.collider().radius : (cWidth > cHeight ? cWidth : cHeight) / 2);
+		const distance = Math.sqrt(dx * dx + dy * dy);
+		const radius = (this.collider().type === Collider.CIRCLE ? this.collider().radius : (width > height ? width : height) / 2);
+		const characterRadius = (character.collider().type === Collider.CIRCLE ? character.collider().radius : (cWidth > cHeight ? cWidth : cHeight) / 2);
 
 		if (distance > (radius + characterRadius) * $gameSystem._followerDistance) {
 			// Chase if far away
@@ -2373,7 +2441,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			if (this._circularMovement) {
 				this.moveVector(dx * this.stepDistance, dy * this.stepDistance);
 			} else {
-				var vector = Direction.normalizeSquare(dx, dy);
+				const vector = Direction.normalizeSquare(dx, dy);
 				this.moveVector(vector.x * this.stepDistance, vector.y * this.stepDistance);
 			}
 
@@ -2383,8 +2451,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (this.isOnLadder()) {
 			this.setDirection(8);
 		} else if (!this._wasMoving) {
-			var adx = Math.abs(dx);
-			var ady = Math.abs(dy);
+			const adx = Math.abs(dx);
+			const ady = Math.abs(dy);
 			if (adx > ady) {
 				this.setDirectionVector(dx, 0);
 			} else if (ady > adx) {
@@ -2409,15 +2477,15 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Followers.prototype.update = function() {
 			if (this.areGathering()) {
-				var direction = $gamePlayer.direction();
-				var visibleFollowers = this.visibleFollowers();
-				for (var ii = 0; ii < visibleFollowers.length; ii++) {
-					var follower = visibleFollowers[ii];
+				const direction = $gamePlayer.direction();
+				const visibleFollowers = this.visibleFollowers();
+				for (let ii = 0; ii < visibleFollowers.length; ii++) {
+					const follower = visibleFollowers[ii];
 
-					var dx = $gameMap.directionX(follower._x, this._targetX);
-					var dy = $gameMap.directionY(follower._y, this._targetY);
+					let dx = $gameMap.directionX(follower._x, this._targetX);
+					let dy = $gameMap.directionY(follower._y, this._targetY);
 
-					var distance = Math.sqrt(dx * dx + dy * dy);
+					const distance = Math.sqrt(dx * dx + dy * dy);
 					dx /= distance;
 					dy /= distance;
 
@@ -2450,17 +2518,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Followers.prototype.areGathered = function() {
-		var screenRadius = Math.sqrt(Graphics.width * Graphics.width + Graphics.height * Graphics.height) / 2;
+		let screenRadius = Math.sqrt(Graphics.width * Graphics.width + Graphics.height * Graphics.height) / 2;
 		screenRadius /= Math.sqrt($gameMap.tileWidth() * $gameMap.tileWidth() + $gameMap.tileHeight() * $gameMap.tileHeight()) / 2;
 
-		var visibleFollowers = this.visibleFollowers();
-		for (var ii = 0; ii < visibleFollowers.length; ii++) {
-			var follower = visibleFollowers[ii];
+		const visibleFollowers = this.visibleFollowers();
+		for (let ii = 0; ii < visibleFollowers.length; ii++) {
+			const follower = visibleFollowers[ii];
 
-			var dx = $gameMap.directionX(follower._realX, this._targetX);
-			var dy = $gameMap.directionY(follower._realY, this._targetY);
+			const dx = $gameMap.directionX(follower._realX, this._targetX);
+			const dy = $gameMap.directionY(follower._realY, this._targetY);
 
-			var distance = Math.sqrt(dx * dx + dy * dy);
+			const distance = Math.sqrt(dx * dx + dy * dy);
 			if (distance > screenRadius) {
 				// Don't count if off screen
 				continue;
@@ -2510,12 +2578,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (this.isAirship()) {
 			$gamePlayer._collider = this._passengerCollider; // Reset colliders temporarily
 			// Check rough tiles under colliders
-			var tiles = $gameMap.getTilesUnder(this).concat($gameMap.getTilesUnder($gamePlayer));
-			var canWalk = true;
-			for (var ii = 0; ii < tiles.length; ii++) {
+			const tiles = $gameMap.getTilesUnder(this).concat($gameMap.getTilesUnder($gamePlayer));
+			let canWalk = true;
+			for (let ii = 0; ii < tiles.length; ii++) {
 				if (!$gameMap.isAirshipLandOk(tiles[ii][0], tiles[ii][1])) {
-						canWalk = false;
-						break;
+					canWalk = false;
+					break;
 				}
 			}
 			if (canWalk && ($gameMap.touchesCharacters(this, x, y) || $gameMap.touchesCharacters($gamePlayer, x, y))) {
@@ -2524,13 +2592,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			$gamePlayer._collider = this.collider(); // Undo player collider reset
 			return canWalk;
 		} else {
-			var vehicleBox = this.collider().aabbox;
-			var passengerBox = this._passengerCollider.aabbox;
+			const vehicleBox = this.collider().aabbox;
+			const passengerBox = this._passengerCollider.aabbox;
 
 			// Get disembark direction
-			var tw = $gameMap.tileWidth();
-			var th = $gameMap.tileHeight();
-			var vx;
+			const tw = $gameMap.tileWidth();
+			const th = $gameMap.tileHeight();
+			let vx;
 			if (Direction.isLeft(d)) {
 				vx = Math.floor((-passengerBox.right + vehicleBox.left) * 64) / 64;
 			} else if (Direction.isRight(d)) {
@@ -2538,7 +2606,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			} else {
 				vx = 0;
 			}
-			var vy;
+			let vy;
 			if (Direction.isUp(d)) {
 				vy = Math.floor((-passengerBox.bottom + vehicleBox.top) * 64) / 64;
 			} else if (Direction.isDown(d)) {
@@ -2547,13 +2615,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				vy = 0;
 			}
 
-			var reverseDirection = this.reverseDir(d);
+			const reverseDirection = this.reverseDir(d);
 			$gamePlayer._collider = this._passengerCollider; // Reset colliders temporarily
 
 			// Check rough tiles under player
-			var tiles = $gameMap.getTilesUnder($gamePlayer, vx, vy);
-			var canWalk = true;
-			for (var ii = 0; ii < tiles.length; ii++) {
+			const tiles = $gameMap.getTilesUnder($gamePlayer, vx, vy);
+			let canWalk = true;
+			for (let ii = 0; ii < tiles.length; ii++) {
 				if (!$gameMap.isAABBoxValid(tiles[ii][0], tiles[ii][1], vehicleBox) || !$gameMap.isAABBoxValid(tiles[ii][0], tiles[ii][1], passengerBox)) {
 					canWalk = false;
 					break;
@@ -2577,6 +2645,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Event overrides
 	//-----------------------------------------------------------------------------
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_Event_setupPageSettings = 
 		Game_Event.prototype.setupPageSettings;
 	Game_Event.prototype.setupPageSettings = function() {
@@ -2584,6 +2653,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this.collider();
 	};
 
+	// alias method
 	Tyruswoo.AltimitMovement.Game_Event_start = Game_Event.prototype.start;
 	Game_Event.prototype.start = function() {
 		if (this._lastFrame === Graphics.frameCount) {
@@ -2592,6 +2662,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Tyruswoo.AltimitMovement.Game_Event_start.call(this);
 		this._lastFrame = Graphics.frameCount + 1;
 	};
+
+	//-----------------------------------------------------------------------------
+	// Game_Event collider extensions (new methods)
+	//-----------------------------------------------------------------------------
 
 	Game_Event.prototype.collider = function() {
 		var page = this.page();
@@ -2606,7 +2680,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 			if (!page._collider) {
 				var comments = [];
-				for (var ii = 0; ii < page.list.length; ii++) {
+				for (let ii = 0; ii < page.list.length; ii++) {
 					if (page.list[ii].code === 108 || page.list[ii].code === 408) {
 						comments.push(page.list[ii].parameters[0]);
 					}
@@ -2614,12 +2688,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				if (comments.length > 0) {
 					var xmlDoc = DOM_PARSER.parseFromString('<doc>' + comments.join('\n') + '</doc>', 'text/xml');
 					var childNodes = xmlDoc.childNodes[0].childNodes;
-					for (var ii = 0; ii < childNodes.length; ii++) {
+					for (let ii = 0; ii < childNodes.length; ii++) {
 						if (childNodes[ii].nodeName === 'collider') {
 							var collider = Collider.createFromXML(xmlDoc.childNodes[0]);
 							if (collider === Collider.null()) {
 								var childChilds = childNodes[ii].childNodes;
-								for (var jj = 0; jj < childChilds.length; jj++) {
+								for (let jj = 0; jj < childChilds.length; jj++) {
 									if (childChilds[jj].nodeName === 'preset') {
 										page._collider = Collider.getPreset(childChilds[jj].innerHTML.trim());
 										break;
@@ -2635,10 +2709,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 
 			if (!page._collider) {
-				var dataEvent = $dataMap.events[this.eventId()];
-				var presetId = dataEvent ? dataEvent.meta.collider : null;
+				const dataEvent = $dataMap.events[this.eventId()];
+				const presetId = dataEvent ? dataEvent.meta.collider : null;
 				if (presetId) {
-					var asNum = +presetId;
+					const asNum = +presetId;
 					if (isNaN(asNum)) {
 						page._collider = Collider.getPreset(presetId.trim());
 					} else {
@@ -2662,8 +2736,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Event.prototype.setCollider = function(collider) {
-		var pages = this.event().pages;
-		for (var ii = 0; ii < pages.length; ii++) {
+		const pages = this.event().pages;
+		for (let ii = 0; ii < pages.length; ii++) {
 			pages[ii]._collider = collider;
 		}
 		$gameSystem._eventColliders[$gameMap.mapId()][this.eventId()] = collider;
@@ -2673,7 +2747,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (this._trigger === 2 && !$gameMap.isEventRunning() && !this.isJumping() && this.isNormalPriority()) {
 			var bboxTests = $gameMap.getAABBoxTests(this, x - this._x, y - this._y);
 			var loopMap = -1;
-			for (var ii = 0; ii < bboxTests.length; ii++) {
+			for (let ii = 0; ii < bboxTests.length; ii++) {
 				if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, $gamePlayer._x, $gamePlayer._y, $gamePlayer.collider().aabbox)) {
 					loopMap = bboxTests[ii].type;
 					break;
@@ -2784,22 +2858,22 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Map.prototype.tileId = function(x, y, z) {
 		x = x | 0;
 		y = y | 0;
-		var width = $dataMap.width;
-		var height = $dataMap.height;
+		const width = $dataMap.width;
+		const height = $dataMap.height;
 		return $dataMap.data[(z * height + y) * width + x] || 0;
 	};
 
 	Game_Map.prototype.canvasToMapX = function(x) {
-		var tileWidth = this.tileWidth();
-		var originX = this._displayX * tileWidth;
-		var mapX = (originX + x) / tileWidth;
+		const tileWidth = this.tileWidth();
+		const originX = this._displayX * tileWidth;
+		const mapX = (originX + x) / tileWidth;
 		return this.roundX(mapX);
 	};
 
 	Game_Map.prototype.canvasToMapY = function(y) {
-		var tileHeight = this.tileHeight();
-		var originY = this._displayY * tileHeight;
-		var mapY = (originY + y) / tileHeight;
+		const tileHeight = this.tileHeight();
+		const originY = this._displayY * tileHeight;
+		const mapY = (originY + y) / tileHeight;
 		return this.roundY(mapY);
 	};
 
@@ -2843,10 +2917,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Map.prototype.directionX = function(ax, bx) {
 		if (this.isLoopHorizontal()) {
-			var dxA = bx - ax;
-			var dxB = (bx - this.width()) - ax;
-			var dxC = (bx + this.width()) - ax;
-			dx = Math.abs(dxA) < Math.abs(dxB) ? dxA : dxB;
+			const dxA = bx - ax;
+			const dxB = bx - this.width() - ax;
+			const dxC = bx + this.width() - ax;
+			const dx = Math.abs(dxA) < Math.abs(dxB) ? dxA : dxB;
 			return Math.abs(dx) < Math.abs(dxC) ? dx : dxC;
 		} else {
 			return bx - ax;
@@ -2855,10 +2929,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Map.prototype.directionY = function(ay, by) {
 		if (this.isLoopVertical()) {
-			var dyA = by - ay;
-			var dyB = (by - this.height()) - ay;
-			var dyC = (by + this.height()) - ay;
-			dy = Math.abs(dyA) < Math.abs(dyB) ? dyA : dyB;
+			const dyA = by - ay;
+			const dyB = by - this.height() - ay;
+			const dyC = by + this.height() - ay;
+			const dy = Math.abs(dyA) < Math.abs(dyB) ? dyA : dyB;
 			return Math.abs(dy) < Math.abs(dyC) ? dy : dyC;
 		} else {
 			return by - ay;
@@ -2880,7 +2954,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			if (!entry) {
 				return false;
 			}
-			var aabbox = entry.collider().aabbox;
+			const aabbox = entry.collider().aabbox;
 			if (x < entry._x + aabbox.left) {
 				return false;
 			} else if (x > entry._x + aabbox.right) {
@@ -2895,19 +2969,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Map.prototype.getCharactersUnder = function(character, x, y) {
-		var vx = x - character.x;
-		var vy = y - character.y;
-
-		var collider = character.collider();
-		var bboxTests = this.getAABBoxTests(character, vx, vy);
-
+		const vx = x - character.x;
+		const vy = y - character.y;
+		const collider = character.collider();
+		const bboxTests = this.getAABBoxTests(character, vx, vy);
 		// Gather any solid characters within the movement bounding box
-		var loopMap = {};
-		var characters = this.characters().filter(function(entry) {
+		let loopMap = {};
+		let characters = this.characters().filter(function(entry) {
 			if (!entry) {
 				return false;
 			}
-			for (var ii = 0; ii < bboxTests.length; ii++) {
+			for (let ii = 0; ii < bboxTests.length; ii++) {
 				if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, entry._x, entry._y, entry.collider().aabbox)) {
 					loopMap[entry] = bboxTests[ii].type;
 					return true;
@@ -2917,8 +2989,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		});
 
 		characters = characters.filter(function(character) {
-			var entryX = character._x;
-			var entryY = character._y;
+			const entryX = character._x;
+			const entryY = character._y;
 
 			if (loopMap[character] == 1) {
 				entryX += $gameMap.width();
@@ -2952,40 +3024,36 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		vx = vx || 0;
 		vy = vy || 0;
 
-		var collider = character.collider();
-		var bboxTests = this.getAABBoxTests(character, vx, vy);
-		var tiles = [];
+		const collider = character.collider();
+		const bboxTests = this.getAABBoxTests(character, vx, vy);
+		const tiles = [];
 
 		// Test collision with map
-		var left = Math.floor(character._x + vx + collider.aabbox.left);
-		var top = Math.floor(character._y + vy + collider.aabbox.top);
-		var right = Math.ceil(character._x + vx + collider.aabbox.right - Number.EPSILON);
-		var bottom = Math.ceil(character._y + vy + collider.aabbox.bottom - Number.EPSILON);
-
-		var tileCollider = Collider.sharedTile();
-		for (var yy = top; yy < bottom; yy++) {
-			for (var xx = left; xx < right; xx++) {
+		const left = Math.floor(character._x + vx + collider.aabbox.left);
+		const top = Math.floor(character._y + vy + collider.aabbox.top);
+		const right = Math.ceil(character._x + vx + collider.aabbox.right - Number.EPSILON);
+		const bottom = Math.ceil(character._y + vy + collider.aabbox.bottom - Number.EPSILON);
+		const tileCollider = Collider.sharedTile();
+		for (let yy = top; yy < bottom; yy++) {
+			for (let xx = left; xx < right; xx++) {
 				if (Collider.intersect(character._x + vx, character._y + vy, collider, xx, yy, tileCollider)) {
 					tiles.push([xx, yy]);
 				}
 			}
 		}
-
 		return tiles;
 	};
 
 	Game_Map.prototype.touchesCharacters = function(character, x, y) {
-		var vx = x - character.x;
-		var vy = y - character.y;
-
-		var collider = character.collider();
-		var bboxTests = this.getAABBoxTests(character, vx, vy);
-
+		const vx = x - character.x;
+		const vy = y - character.y;
+		const collider = character.collider();
+		const bboxTests = this.getAABBoxTests(character, vx, vy);
 		// Gather any solid characters within the movement bounding box
-		var loopMap = {};
-		var characters = $gameMap.characters().filter(function(entry) {
+		let loopMap = {};
+		const characters = $gameMap.characters().filter(function(entry) {
 			if (character.collidableWith(entry)) {
-				for (var ii = 0; ii < bboxTests.length; ii++) {
+				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, entry._x, entry._y, entry.collider().aabbox)) {
 						loopMap[entry] = bboxTests[ii].type;
 						return true;
@@ -2996,9 +3064,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		});
 
 		// Test collision with characters
-		for (var ii = 0; ii < characters.length; ii++) {
-			var entryX = characters[ii]._x;
-			var entryY = characters[ii]._y;
+		for (let ii = 0; ii < characters.length; ii++) {
+			const entryX = characters[ii]._x;
+			const entryY = characters[ii]._y;
 
 			if (loopMap[characters[ii]] == 1) {
 				entryX += this.width();
@@ -3026,21 +3094,19 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				return true;
 			}
 		}
-
 		return false;
 	};
 
 	Game_Map.prototype.canMoveOn = function(character, x, y, collisionMesh) {
-		var collider = character.collider();
-		var xd = x - character._x;
-		var yd = y - character._y;
-		var bboxTests = this.getAABBoxTests(character, xd, yd);
-
+		const collider = character.collider();
+		const xd = x - character._x;
+		const yd = y - character._y;
+		const bboxTests = this.getAABBoxTests(character, xd, yd);
 		// Gather any solid characters within the movement bounding box
-		var loopMap = {};
-		var characters = $gameMap.characters().filter(function(entry) {
+		let loopMap = {};
+		const characters = $gameMap.characters().filter(function(entry) {
 			if (character.collidableWith(entry)) {
-				for (var ii = 0; ii < bboxTests.length; ii++) {
+				for (let ii = 0; ii < bboxTests.length; ii++) {
 					if (Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, entry._x, entry._y, entry.collider().aabbox)) {
 						loopMap[entry] = bboxTests[ii].type;
 						return true;
@@ -3051,10 +3117,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		});
 
 		// Test collision with characters
-		for (var ii = 0; ii < characters.length; ii++) {
-			var entry = characters[ii];
-			var entryX = entry._x;
-			var entryY = entry._y;
+		for (let ii = 0; ii < characters.length; ii++) {
+			const entry = characters[ii];
+			const entryX = entry._x;
+			const entryY = entry._y;
 
 			if (loopMap[entry] == 1) {
 				entryX += this.width();
@@ -3084,9 +3150,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		// Test collision with map
-		for (var ii = 0; ii < bboxTests.length; ii++) {
-			var offsetX = 0;
-			var offsetY = 0;
+		for (let ii = 0; ii < bboxTests.length; ii++) {
+			const offsetX = 0;
+			const offsetY = 0;
 			if (bboxTests[ii].type == 1) {
 				offsetX += this.width();
 			} else if (bboxTests[ii].type == 2) {
@@ -3109,9 +3175,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				offsetY -= this.height();
 			}
 
-			var mapColliders = Collider.polygonsWithinColliderList(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, 0, 0, collisionMesh);
+			const mapColliders = Collider.polygonsWithinColliderList(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, 0, 0, collisionMesh);
 			if (mapColliders.length > 0) {
-				for (var jj = 0; jj < mapColliders.length; jj++) {
+				for (let jj = 0; jj < mapColliders.length; jj++) {
 					if (Collider.intersect(x, y, collider, offsetX, offsetY, mapColliders[jj])) {
 						return false;
 					}
@@ -3135,7 +3201,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Map.prototype.getAABBoxTests = function(character, vx, vy) {
-		var aabbox = character.collider().aabbox;
+		let aabbox = character.collider().aabbox;
 		if (vx || vy) {
 			// Extend aabbox for vectors
 			aabbox = {
@@ -3147,7 +3213,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		// Construct aabbox tests for map edges
-		var bboxTests = [ { x: character._x, y: character._y, aabbox: aabbox, type: 0 } ];
+		const bboxTests = [ { x: character._x, y: character._y, aabbox: aabbox, type: 0 } ];
 		if (this.isLoopHorizontal()) {
 			bboxTests.push({ x: character._x - this.width(), y: character._y, aabbox: aabbox, type: 1 });
 			bboxTests.push({ x: character._x + this.width(), y: character._y, aabbox: aabbox, type: 2 });
@@ -3169,7 +3235,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this._events.concat($gamePlayer, this._vehicles, $gamePlayer._followers._data);
 	};
 
-
 	//=============================================================================
 	// Sprite_Destination
 	//=============================================================================
@@ -3177,8 +3242,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	//-----------------------------------------------------------------------------
 
 	Sprite_Destination.prototype.createBitmap = function() {
-		var tileWidth = $gameMap.tileWidth();
-		var tileHeight = $gameMap.tileHeight();
+		const tileWidth = $gameMap.tileWidth();
+		const tileHeight = $gameMap.tileHeight();
 		this.bitmap = new Bitmap(tileWidth, tileHeight);
 		this.bitmap.drawCircle(tileWidth / 2, tileHeight / 2, (tileWidth < tileHeight ? tileWidth : tileHeight) / 2, 'white');
 		this.anchor.x = 0.5;
@@ -3188,7 +3253,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Sprite_Destination.prototype.update = function() {
 		Sprite.prototype.update.call(this);
-		if ($gamePlayer._touchTarget){
+		if ($gamePlayer._touchTarget) {
 			this.updatePosition();
 			this.updateAnimation();
 			this.visible = true;
@@ -3199,10 +3264,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Sprite_Destination.prototype.updatePosition = function() {
-		var tileWidth = $gameMap.tileWidth();
-		var tileHeight = $gameMap.tileHeight();
-		var x = $gamePlayer._touchTarget.x;
-		var y = $gamePlayer._touchTarget.y;
+		const tileWidth = $gameMap.tileWidth();
+		const tileHeight = $gameMap.tileHeight();
+		const x = $gamePlayer._touchTarget?.x ?? 0;
+		const y = $gamePlayer._touchTarget?.y ?? 0;
 		this.x = ($gameMap.adjustX(x) + 0.5) * tileWidth;
 		this.y = ($gameMap.adjustY(y) + 0.5) * tileHeight;
 	};
@@ -3247,17 +3312,20 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		CollisionMesh.meshInMemory.mapId = mapId;
-		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] = CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
+		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] =
+			CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
 		if (!gameMap.boat().isTransparent()) {
-			CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] = CollisionMesh.makeCollisionMesh(gameMap, gameMap.isBoatPassable);
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isBoatPassable);
 		}
 		if (!gameMap.ship().isTransparent()) {
-			CollisionMesh.meshInMemory.mesh[CollisionMesh.SHIP] = CollisionMesh.makeCollisionMesh(gameMap, gameMap.isShipPassable);
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.SHIP] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isShipPassable);
 		}
 		if (!gameMap.airship().isTransparent()) {
-			CollisionMesh.meshInMemory.mesh[CollisionMesh.AIRSHIP] = CollisionMesh.makeCollisionMesh(gameMap);
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.AIRSHIP] =
+				CollisionMesh.makeCollisionMesh(gameMap);
 		}
-
 		return CollisionMesh.meshInMemory.mesh[type];
 	};
 
@@ -3267,7 +3335,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (object.polygon) {
 			// Polygon
 			var polygon = [];
-			for (var ii = 0; ii < object.polygon.length; ii++) {
+			for (let ii = 0; ii < object.polygon.length; ii++) {
 				polygon[ii] = [
 					x + (object.polygon[ii].x / tileWidth),
 					y + (object.polygon[ii].y / tileHeight)
@@ -3284,7 +3352,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				]);
 			} else {
 				polylines = Collider.createList();
-				for (var ii = 0; ii < (object.polyline.length - 1); ii++) {
+				for (let ii = 0; ii < (object.polyline.length - 1); ii++) {
 					Collider.addToList(polylines, Collider.createPolygon([
 						[x + (object.polyline[ii].x / tileWidth), y + (object.polyline[ii].y / tileWidth)],
 						[x + (object.polyline[ii + 1].x / tileHeight), y + (object.polyline[ii + 1].y / tileHeight)]
@@ -3296,32 +3364,32 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			// Ellipse
 			if (object.width == object.height) {
 				// Circle
-				var rad = (object.width / tileWidth) / 2;
+				const rad = (object.width / tileWidth) / 2;
 				colliders.push(Collider.createCircle(x + rad, y + rad, rad));
 			} else {
 				// Regular polygon
-				var rx = (object.width / tileWidth) / 2;
-				var ry = (object.height / tileHeight) / 2;
-				var points = (object.properties && object.properties.points) ? object.properties.points : 8;
+				const rx = (object.width / tileWidth) / 2;
+				const ry = (object.height / tileHeight) / 2;
+				const points = (object.properties && object.properties.points) ? object.properties.points : 8;
 				colliders.push(Collider.createRegularPolygon(x + rx, y + ry, rx, ry, points));
 			}
 		} else {
 			// Rect
-			var w = object.width / tileWidth;
-			var h = object.height / tileHeight;
+			const w = object.width / tileWidth;
+			const h = object.height / tileHeight;
 			colliders.push(Collider.createRect(x, y, w, h));
 		}
 	};
 
 	CollisionMesh.makeCollisionMesh = function(gameMap, passFunc) {
 		// Make collision mask
-		var collisionGrid = [];
+		const collisionGrid = [];
 		if (!passFunc) {
 			passFunc = function(x, y, d) { return true; };
 		}
-		for (var xx = 0; xx < gameMap.width(); xx++) {
+		for (let xx = 0; xx < gameMap.width(); xx++) {
 			collisionGrid[xx] = [];
-			for (var yy = 0; yy < gameMap.height(); yy++) {
+			for (let yy = 0; yy < gameMap.height(); yy++) {
 				collisionGrid[xx][yy] = 0;
 				if (!passFunc.call(gameMap, xx, yy, Direction.UP)) {
 					collisionGrid[xx][yy] |= (0x1 << 0);
@@ -3337,43 +3405,51 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				}
 			}
 		}
-
-		var colliders = [];
-		var d = 2;
-
+		const colliders = [];
+		const d = 2;
 		// Non-looping sides
 		if (!gameMap.isLoopHorizontal()) {
-			var q = gameMap.isLoopVertical() ? 0 : d;
-			colliders.push(Collider.createPolygon(
-				[ [ 0, 0 ], [ 0, gameMap.height() ], [ -d, gameMap.height() + q ] , [ -d, -q ]  ]
-			));
-			colliders.push(Collider.createPolygon(
-				[ [ gameMap.width(), gameMap.height() ], [ gameMap.width(), 0 ], [ gameMap.width() + d, -q ], [ gameMap.width() + d, gameMap.height() + q ] ]
-			));
+			const q = gameMap.isLoopVertical() ? 0 : d;
+			colliders.push(Collider.createPolygon([
+				[0, 0],
+				[0, gameMap.height()],
+				[-d, gameMap.height() + q],
+				[-d, -q]
+			]));
+			colliders.push(Collider.createPolygon([
+				[gameMap.width(), gameMap.height()],
+				[gameMap.width(), 0],
+				[gameMap.width() + d, -q],
+				[gameMap.width() + d, gameMap.height() + q] 
+			]));
 		}
 		if (!gameMap.isLoopVertical()) {
-			var q = gameMap.isLoopHorizontal() ? 0 : d;
-			colliders.push(Collider.createPolygon(
-				[ [ gameMap.width(), 0 ], [ 0, 0 ], [ -q, -d ], [ gameMap.width() + q, -d ] ]
-			));
-			colliders.push(Collider.createPolygon(
-				[ [ 0, gameMap.height() ], [ gameMap.width(), gameMap.height() ], [ gameMap.width() + q, gameMap.height() + d ], [ -q, gameMap.height() + d ] ]
-			));
+			const q = gameMap.isLoopHorizontal() ? 0 : d;
+			colliders.push(Collider.createPolygon([
+				[gameMap.width(), 0],
+				[0, 0],
+				[-q, -d],
+				[gameMap.width() + q, -d]
+			]));
+			colliders.push(Collider.createPolygon([
+				[0, gameMap.height()],
+				[gameMap.width(), gameMap.height()],
+				[gameMap.width() + q, gameMap.height() + d],
+				[-q, gameMap.height() + d]
+			]));
 		}
 
 		// Build tiles (Fixes some cases for humpy corner collision)
-		for (var yy = 0; yy < gameMap.height(); yy++) {
-			var top = gameMap.roundY(yy - 1);
-			var bottom = gameMap.roundY(yy + 1);
-			for (var xx = 0; xx < gameMap.width(); xx++) {
+		for (let yy = 0; yy < gameMap.height(); yy++) {
+			const top = gameMap.roundY(yy - 1);
+			const bottom = gameMap.roundY(yy + 1);
+			for (let xx = 0; xx < gameMap.width(); xx++) {
 				if (collisionGrid[xx][yy] !== 0xf) {
 					continue;
 				}
-
-				var left = gameMap.roundX(xx - 1);
-				var right = gameMap.roundX(xx + 1);
-
-				var open = 0;
+				const left = gameMap.roundX(xx - 1);
+				const right = gameMap.roundX(xx + 1);
+				let open = 0;
 				if (left < 0 || collisionGrid[left][yy] == 0) {
 					open++;
 				}
@@ -3390,22 +3466,23 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				if (open === 4) {
 					collisionGrid[xx][yy] = 0;
 					colliders.push(Collider.createPolygon([
-						[ xx, yy ],
-						[ xx + 1, yy ],
-						[ xx + 1, yy + 1 ],
-						[ xx, yy + 1 ],
+						[xx, yy],
+						[xx + 1, yy],
+						[xx + 1, yy + 1],
+						[xx, yy + 1],
 					]));
 				}
 			}
 		}
 
 		// Build horizontal lines
-		var horizontalLine = null;
-		var hColliders = [];
-		for (var yy = 0; yy < gameMap.height(); yy++) {
-			for (var xx = 0; xx < gameMap.width(); xx++) {
-				var y2 = gameMap.roundY(yy - 1);
-				if ((collisionGrid[xx][yy] & (0x1 << 0) || (y2 >= 0 && collisionGrid[xx][y2] & (0x1 << 2)))) {
+		let horizontalLine = null;
+		const hColliders = [];
+		for (let yy = 0; yy < gameMap.height(); yy++) {
+			for (let xx = 0; xx < gameMap.width(); xx++) {
+				const y2 = gameMap.roundY(yy - 1);
+				if (collisionGrid[xx][yy] & (0x1 << 0) ||
+				(y2 >= 0 && collisionGrid[xx][y2] & (0x1 << 2))) {
 					// Can't move up or down
 					// Is a horizontal line
 					if (!horizontalLine) {
@@ -3426,12 +3503,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		// Build vertical lines
-		var verticalLine = null;
-		var vColliders = [];
-		for (var xx = 0; xx < gameMap.width(); xx++) {
-			for (var yy = 0; yy < gameMap.height(); yy++) {
-				var x2 = gameMap.roundX(xx - 1);
-				if ((collisionGrid[xx][yy] & (0x1 << 1) || (x2 >= 0 && collisionGrid[x2][yy] & (0x1 << 3)))) {
+		let verticalLine = null;
+		const vColliders = [];
+		for (let xx = 0; xx < gameMap.width(); xx++) {
+			for (let yy = 0; yy < gameMap.height(); yy++) {
+				const x2 = gameMap.roundX(xx - 1);
+				if (collisionGrid[xx][yy] & (0x1 << 1) ||
+				(x2 >= 0 && collisionGrid[x2][yy] & (0x1 << 3))) {
 					// Can't move left or right
 					// Is a vertical line
 					if (!verticalLine) {
@@ -3444,6 +3522,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					verticalLine = null;
 				}
 			}
+
 			if (!!verticalLine) {
 				vColliders.push(Collider.createPolygon(verticalLine));
 				// vColliders.push(Collider.createPolygon([[verticalLine[1][0], verticalLine[1][1]], [verticalLine[0][0], verticalLine[0][1]]]));
@@ -3453,18 +3532,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		// TileD colliders
 		if (gameMap.tiledData) {
-			var tileWidth = gameMap.tileWidth();
-			var tileHeight = gameMap.tileHeight();
-			var scale = (gameMap.isHalfTile && gameMap.isHalfTile()) ? 2 : 1;
-			var tilesetColliders = [];
+			const tileWidth = gameMap.tileWidth();
+			const tileHeight = gameMap.tileHeight();
+			const scale = (gameMap.isHalfTile && gameMap.isHalfTile()) ? 2 : 1;
+			const tilesetColliders = [];
 
 			// Build tile colliders
-			var tilesets = gameMap.tiledData.tilesets;
-			for (var ii = 0; ii < tilesets.length; ii++) {
+			const tilesets = gameMap.tiledData.tilesets;
+			for (let ii = 0; ii < tilesets.length; ii++) {
 				tilesetColliders[ii] = {};
 
-				var tiles = tilesets[ii].tiles;
-				for (var key in tiles) {
+				const tiles = tilesets[ii].tiles;
+				for (let key in tiles) {
 					if (tiles[key].objectgroup) {
 						tilesetColliders[ii][key] = tiles[key].objectgroup.objects;
 					}
@@ -3472,23 +3551,23 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 
 			// Place tile colliders
-			for (var ii = 0; ii < gameMap.tiledData.layers.length; ii++) {
-				var layer = gameMap.tiledData.layers[ii];
-				for (var yy = 0; yy < layer.height; yy++) {
-					var row = yy * layer.width;
-					for (var xx = 0; xx < layer.width; xx++) {
-						var tileId = layer.data[row + xx];
+			for (let ii = 0; ii < gameMap.tiledData.layers.length; ii++) {
+				const layer = gameMap.tiledData.layers[ii];
+				for (let yy = 0; yy < layer.height; yy++) {
+					const row = yy * layer.width;
+					for (let xx = 0; xx < layer.width; xx++) {
+						let tileId = layer.data[row + xx];
 						if (tileId === 0) {
 							continue;
 						}
 						tileId++;
 
 						// Find tileset belonging to tileId
-						var tilesetId = -1;
-						var firstId = 0;
-						for (var jj = 0; jj < gameMap.tiledData.tilesets.length; jj++) {
+						let tilesetId = -1;
+						let firstId = 0;
+						for (let jj = 0; jj < gameMap.tiledData.tilesets.length; jj++) {
 							firstId = gameMap.tiledData.tilesets[jj].firstgid;
-							var lastId = firstId + gameMap.tiledData.tilesets[jj].tilecount;
+							const lastId = firstId + gameMap.tiledData.tilesets[jj].tilecount;
 							if (tileId >= firstId && tileId <= lastId) {
 								tilesetId = jj;
 								break;
@@ -3499,13 +3578,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 						}
 
 						// Get objectGroup for this tileId
-						var tileSet = tilesetColliders[tilesetId];
-						var objectGroup = tileSet['' + (tileId - firstId - 1)];
+						const tileSet = tilesetColliders[tilesetId];
+						const objectGroup = tileSet['' + (tileId - firstId - 1)];
 						if (objectGroup) {
-							for (var jj = 0; jj < objectGroup.length; jj++) {
-								var object = objectGroup[jj];
-								var x = xx * scale;
-								var y = yy * scale;
+							for (let jj = 0; jj < objectGroup.length; jj++) {
+								const object = objectGroup[jj];
+								const x = xx * scale;
+								const y = yy * scale;
 								CollisionMesh.addTileDCollisionObject(x, y, object, scale, tileWidth, tileHeight, colliders);
 							}
 						}
@@ -3514,10 +3593,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 
 			// Find collision mesh layers
-			for (var ii = 0; ii < gameMap.tiledData.layers.length; ii++) {
-				var layer = gameMap.tiledData.layers[ii];
+			for (let ii = 0; ii < gameMap.tiledData.layers.length; ii++) {
+				const layer = gameMap.tiledData.layers[ii];
 				if (layer.type == "objectgroup" && layer.properties && layer.properties.collision == "mesh") {
-					for (var jj = 0; jj < layer.objects.length; jj++) {
+					for (let jj = 0; jj < layer.objects.length; jj++) {
 						CollisionMesh.addTileDCollisionObject(0, 0, layer.objects[jj], scale, tileWidth, tileHeight, colliders);
 					}
 				}
@@ -3555,7 +3634,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Collider.PRESETS = [];
 
 	Collider.createList = function() {
-		return { type: Collider.LIST, colliders: [], aabbox: { left: Number.POSITIVE_INFINITY, top: Number.POSITIVE_INFINITY, right: Number.NEGATIVE_INFINITY, bottom: Number.NEGATIVE_INFINITY } };
+		return {
+			type: Collider.LIST,
+			colliders: [],
+			aabbox: {
+				left: Number.POSITIVE_INFINITY,
+				top: Number.POSITIVE_INFINITY,
+				right: Number.NEGATIVE_INFINITY,
+				bottom: Number.NEGATIVE_INFINITY
+			}
+		};
 	};
 
 	Collider.addToList = function(list, collider) {
@@ -3570,12 +3658,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (Collider.PRESETS.length === 0) {
 			// Index starts at 1 (first item is null collider)
 			Collider.PRESETS[0] = Collider.null();
-			for (var ii = 0; ii < PRESETS.length; ii++) {
+			for (let ii = 0; ii < PRESETS.length; ii++) {
 				var xmlDoc = DOM_PARSER.parseFromString('<collider>' + JSON.parse(PRESETS[ii]) + '</collider>', 'text/xml');
 				Collider.PRESETS[ii + 1] = Collider.createFromXML(xmlDoc);
 
 				var childNodes = xmlDoc.childNodes[0].childNodes;
-				for (var jj = 0; jj < childNodes.length; jj++) {
+				for (let jj = 0; jj < childNodes.length; jj++) {
 					if (childNodes[jj].nodeName === 'name') {
 						Collider.PRESETS[childNodes[jj].innerHTML.trim()] = Collider.PRESETS[ii + 1];
 						break;
@@ -3587,24 +3675,24 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.createFromXML = function(xml) {
-		var xmlDoc = (typeof xml === 'string' ? DOM_PARSER.parseFromString(xml, 'text/xml') : xml);
-		var childNodes = xmlDoc.childNodes;
-		for (var ii = 0; ii < xmlDoc.childNodes.length; ii++) {
+		const xmlDoc = (typeof xml === 'string' ? DOM_PARSER.parseFromString(xml, 'text/xml') : xml);
+		let childNodes = xmlDoc.childNodes;
+		for (let ii = 0; ii < xmlDoc.childNodes.length; ii++) {
 			if (xmlDoc.childNodes[ii].nodeName === 'collider') {
 				childNodes = xmlDoc.childNodes[ii].childNodes;
 				break;
 			}
 		}
-		var filterNodes = [];
-		for (var ii = 0; ii < childNodes.length; ii++) {
+		const filterNodes = [];
+		for (let ii = 0; ii < childNodes.length; ii++) {
 			switch (childNodes[ii].nodeName) {
-			case 'rect':
-			case 'circle':
-			case 'line':
-			case 'polygon':
-			case 'regular':
-				filterNodes.push(childNodes[ii]);
-				break;
+				case 'rect':
+				case 'circle':
+				case 'line':
+				case 'polygon':
+				case 'regular':
+					filterNodes.push(childNodes[ii]);
+					break;
 			}
 		}
 		childNodes = filterNodes;
@@ -3612,110 +3700,122 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return Collider.null();
 		} else if (childNodes.length === 1) {
 			switch (childNodes[0].nodeName) {
-			case 'rect':
-				var x = Number(childNodes[0].getAttribute('x'));
-				var y = Number(childNodes[0].getAttribute('y'));
-				var width = Number(childNodes[0].getAttribute('width'));
-				var height = Number(childNodes[0].getAttribute('height'));
-				return Collider.createRect(x, y, width, height);
-			case 'circle':
-				var cx = Number(childNodes[0].getAttribute('cx'));
-				var cy = Number(childNodes[0].getAttribute('cy'));
-				var r = Number(childNodes[0].getAttribute('r'));
-				return Collider.createCircle(cx, cy, r);
-			case 'line':
-				var x1 = Number(childNodes[0].getAttribute('x1'));
-				var y1 = Number(childNodes[0].getAttribute('y1'));
-				var x2 = Number(childNodes[0].getAttribute('x2'));
-				var y2 = Number(childNodes[0].getAttribute('y2'));
-				return Collider.createLine(x1, y1, x2, y2);
-			case 'polygon':
-				var points = childNodes[0].getAttribute('points').split(' ');
-				for (var jj = 0; jj < points.length; jj++) {
-					points[jj] = points[jj].split(',');
-					for (var kk = 0; kk < points[jj].length; kk++) {
-						points[jj][kk] = Number(points[jj][kk]);
-					}
-				}
-				return Collider.createPolygon(points);
-			case 'regular':
-				var cx = Number(childNodes[0].getAttribute('cx'));
-				var cy = Number(childNodes[0].getAttribute('cy'));
-				var rx = Number(childNodes[0].getAttribute('rx'));
-				var ry = Number(childNodes[0].getAttribute('ry'));
-				var p = Number(childNodes[0].getAttribute('p'));
-				return Collider.createRegularPolygon(cx, cy, rx, ry, p);
-			}
-		} else {
-			var colliderList = Collider.createList();
-			for (var ii = 0; ii < childNodes.length; ii++) {
-				switch (childNodes[ii].nodeName) {
 				case 'rect':
-					var x = Number(childNodes[ii].getAttribute('x'));
-					var y = Number(childNodes[ii].getAttribute('y'));
-					var width = Number(childNodes[ii].getAttribute('width'));
-					var height = Number(childNodes[ii].getAttribute('height'));
-					Collider.addToList(colliderList, Collider.createRect(x, y, width, height));
-					break;
+					let x = Number(childNodes[0].getAttribute('x'));
+					let y = Number(childNodes[0].getAttribute('y'));
+					let width = Number(childNodes[0].getAttribute('width'));
+					let height = Number(childNodes[0].getAttribute('height'));
+					return Collider.createRect(x, y, width, height);
 				case 'circle':
-					var cx = Number(childNodes[ii].getAttribute('cx'));
-					var cy = Number(childNodes[ii].getAttribute('cy'));
-					var r = Number(childNodes[ii].getAttribute('r'));
-					Collider.addToList(colliderList, Collider.createCircle(cx, cy, r));
-					break;
+					let cx = Number(childNodes[0].getAttribute('cx'));
+					let cy = Number(childNodes[0].getAttribute('cy'));
+					let r = Number(childNodes[0].getAttribute('r'));
+					return Collider.createCircle(cx, cy, r);
 				case 'line':
-					var x1 = Number(childNodes[ii].getAttribute('x1'));
-					var y1 = Number(childNodes[ii].getAttribute('y1'));
-					var x2 = Number(childNodes[ii].getAttribute('x2'));
-					var y2 = Number(childNodes[ii].getAttribute('y2'));
-					Collider.addToList(colliderList, Collider.createLine(x1, y1, x2, y2));
-					break;
+					let x1 = Number(childNodes[0].getAttribute('x1'));
+					let y1 = Number(childNodes[0].getAttribute('y1'));
+					let x2 = Number(childNodes[0].getAttribute('x2'));
+					let y2 = Number(childNodes[0].getAttribute('y2'));
+					return Collider.createLine(x1, y1, x2, y2);
 				case 'polygon':
-					var points = childNodes[ii].getAttribute('points').split(' ');
-					for (var jj = 0; jj < points.length; jj++) {
+					let points = childNodes[0].getAttribute('points').split(' ');
+					for (let jj = 0; jj < points.length; jj++) {
 						points[jj] = points[jj].split(',');
-						for (var kk = 0; kk < points[jj].length; kk++) {
+						for (let kk = 0; kk < points[jj].length; kk++) {
 							points[jj][kk] = Number(points[jj][kk]);
 						}
 					}
-					Collider.addToList(colliderList, Collider.createPolygon(points));
-					break;
+					return Collider.createPolygon(points);
 				case 'regular':
-					var cx = Number(childNodes[ii].getAttribute('cx'));
-					var cy = Number(childNodes[ii].getAttribute('cy'));
-					var rx = Number(childNodes[ii].getAttribute('rx'));
-					var ry = Number(childNodes[ii].getAttribute('ry'));
-					var p = Number(childNodes[ii].getAttribute('p'));
-					Collider.addToList(colliderList, Collider.createRegularPolygon(cx, cy, rx, ry, p));
-					break;
+					let cx_ = Number(childNodes[0].getAttribute('cx'));
+					let cy_ = Number(childNodes[0].getAttribute('cy'));
+					let rx = Number(childNodes[0].getAttribute('rx'));
+					let ry = Number(childNodes[0].getAttribute('ry'));
+					let p = Number(childNodes[0].getAttribute('p'));
+					return Collider.createRegularPolygon(cx_, cy_, rx, ry, p);
+				}
+			} else {
+				const colliderList = Collider.createList();
+				for (let ii = 0; ii < childNodes.length; ii++) {
+					switch (childNodes[ii].nodeName) {
+						case 'rect':
+							const x = Number(childNodes[ii].getAttribute('x'));
+							const y = Number(childNodes[ii].getAttribute('y'));
+							const width = Number(childNodes[ii].getAttribute('width'));
+							const height = Number(childNodes[ii].getAttribute('height'));
+							Collider.addToList(colliderList, Collider.createRect(x, y, width, height));
+							break;
+						case 'circle':
+							const cx = Number(childNodes[ii].getAttribute('cx'));
+							const cy = Number(childNodes[ii].getAttribute('cy'));
+							const r = Number(childNodes[ii].getAttribute('r'));
+							Collider.addToList(colliderList, Collider.createCircle(cx, cy, r));
+							break;
+						case 'line':
+							const x1 = Number(childNodes[ii].getAttribute('x1'));
+							const y1 = Number(childNodes[ii].getAttribute('y1'));
+							const x2 = Number(childNodes[ii].getAttribute('x2'));
+							const y2 = Number(childNodes[ii].getAttribute('y2'));
+							Collider.addToList(colliderList, Collider.createLine(x1, y1, x2, y2));
+							break;
+						case 'polygon':
+							var points = childNodes[ii].getAttribute('points').split(' ');
+							for (let jj = 0; jj < points.length; jj++) {
+								points[jj] = points[jj].split(',');
+								for (let kk = 0; kk < points[jj].length; kk++) {
+									points[jj][kk] = Number(points[jj][kk]);
+							}
+						}
+						Collider.addToList(colliderList, Collider.createPolygon(points));
+						break;
+					case 'regular':
+						const cxr = Number(childNodes[ii].getAttribute('cx'));
+						const cyr = Number(childNodes[ii].getAttribute('cy'));
+						const rx = Number(childNodes[ii].getAttribute('rx'));
+						const ry = Number(childNodes[ii].getAttribute('ry'));
+						const p = Number(childNodes[ii].getAttribute('p'));
+						Collider.addToList(colliderList, Collider.createRegularPolygon(cx, cy, rx, ry, p));
+						break;
 				}
 			}
 			return colliderList;
 		}
+		return Collider.null(); // VELEE:
 	};
 
 	Collider.createRect = function(x, y, width, height) {
 		return Collider.createPolygon([
-			[ x, y ],
-			[ x + width, y ],
-			[ x + width, y + height ],
-			[ x, y + height ]
+			[x, y],
+			[x + width, y],
+			[x + width, y + height],
+			[x, y + height]
 		]);
 	};
 
 	Collider.createLine = function(x1, y1, x2, y2) {
 		return Collider.createPolygon([
-			[ x1, y1 ],
-			[ x2, y2 ],
+			[x1, y1],
+			[x2, y2],
 		]);
 	};
 
 	Collider.createCircle = function(x, y, radius) {
-		return { type: Collider.CIRCLE, x: x, y: y, radius: radius, aabbox: { left: x - radius, top: y - radius, right: x + radius, bottom: y + radius } };
+		return {
+			type: Collider.CIRCLE,
+			x: x,
+			y: y,
+			radius: radius,
+			aabbox: {
+				left: x - radius,
+				top: y - radius,
+				right: x + radius,
+				bottom: y + radius
+			}
+		};
 	};
 
 	Collider.createPolygon = function(vertices) {
-		var aabbox = {
+		const aabbox = {
 			left: Number.POSITIVE_INFINITY,
 			top: Number.POSITIVE_INFINITY,
 			right: Number.NEGATIVE_INFINITY,
@@ -3735,10 +3835,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return Collider.createCircle(x, y, Math.sqrt(sx * sx +  sy * sy));
 		}
 		var vertices = [];
-		var divisor = points / (Math.PI * 2);
-		var pi2 = Math.PI / 2;
-		for (var ii = 0; ii < points; ii++) {
-			vertices.push([ x + Math.cos(ii / divisor - pi2) * sx, y + Math.sin(ii / divisor - pi2) * sy ]);
+		const divisor = points / (Math.PI * 2);
+		const pi2 = Math.PI / 2;
+		for (let ii = 0; ii < points; ii++) {
+			vertices.push([
+				x + Math.cos(ii / divisor - pi2) * sx,
+				y + Math.sin(ii / divisor - pi2) * sy
+			]);
 		}
 		return Collider.createPolygon(vertices);
 	};
@@ -3797,14 +3900,15 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Collider._sharedBoat;
 	};
 
-	Collider.polygonsWithinColliderList = function( ax, ay, aabbox, bx, by, bc ) {
-		var polygons = [];
-		for (var ii = 0; ii < bc.colliders.length; ii++) {
+	Collider.polygonsWithinColliderList = function(ax, ay, aabbox, bx, by, bc) {
+		let polygons = [];
+		for (let ii = 0; ii < bc.colliders.length; ii++) {
 			if (Collider.aabboxCheck(ax, ay, aabbox, bx, by, bc.colliders[ii].aabbox)) {
 				if (bc.colliders[ii].type === Collider.LIST) {
-					polygons = polygons.concat( Collider.polygonsWithinColliderList( ax, ay, aabbox, bx, by, bc.colliders[ii] ) );
+					polygons = polygons.concat(Collider.polygonsWithinColliderList(
+						ax, ay, aabbox, bx, by, bc.colliders[ii]));
 				} else {
-					polygons.push( bc.colliders[ii] );
+					polygons.push(bc.colliders[ii]);
 				}
 			}
 		}
@@ -3817,14 +3921,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		bx = bx + bc.x;
 		by = by + bc.y;
 
-		var dx = ax - bx;
-		var dy = ay - by;
-		var dd = dx * dx + dy * dy;
-		dd -= (bc.radius * bc.radius);
+		const dx = ax - bx;
+		const dy = ay - by;
+		let dd = dx * dx + dy * dy;
+		dd -= bc.radius * bc.radius;
 		if (dd < ac.radius * ac.radius) {
 			return true;
 		}
-
 		return false;
 	};
 
@@ -3833,15 +3936,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		ay = ay + ac.y;
 		bx = bx + bc.x;
 		by = by + bc.y;
-
-		var dx = ax - bx;
-		var dy = ay - by;
-		var dd = dx * dx + dy * dy;
-		var rr = bc.radius + ac.radius;
+		const dx = ax - bx;
+		const dy = ay - by;
+		const dd = dx * dx + dy * dy;
+		const rr = bc.radius + ac.radius;
 		if (dd < rr * rr) {
 			return true;
 		}
-
 		return false;
 	};
 
@@ -3850,33 +3951,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		ay = ay + ac.y;
 		bx = bx + bc.x;
 		by = by + bc.y;
-
-		var dx = ax + vector.x - bx;
-		var dy = ay + vector.y - by;
-		var dd = dx * dx + dy * dy;
-		var rr = bc.radius + ac.radius;
+		const dx = ax + vector.x - bx;
+		const dy = ay + vector.y - by;
+		let dd = dx * dx + dy * dy;
+		const rr = bc.radius + ac.radius;
 		if (dd < rr * rr) {
 			dd = rr - Math.sqrt(dd);
-			var dl = Math.sqrt(dx * dx + dy * dy);
+			const dl = Math.sqrt(dx * dx + dy * dy);
 			vector.x += (dx / dl) * dd;
 			vector.y += (dy / dl) * dd;
 		}
-
 		return vector;
 	};
 
 	Collider.encaseCirclePolygon = function(ax, ay, ac, bx, by, bc) {
-		var aradius = ac.radius + Collider.I_PRECISION;
+		const aradius = ac.radius + Collider.I_PRECISION;
 		ax = ax + ac.x;
 		ay = ay + ac.y;
 
-		var closestPoint = {
+		const closestPoint = {
 			distance: Number.POSITIVE_INFINITY,
 		};
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-			var dx = (ax) - (bx + bc.vertices[ii][0]);
-			var dy = (ay) - (by + bc.vertices[ii][1]);
-			var d = dx * dx + dy * dy;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+			const dx = ax - (bx + bc.vertices[ii][0]);
+			const dy = ay - (by + bc.vertices[ii][1]);
+			const d = dx * dx + dy * dy;
 			if (d < closestPoint.distance) {
 				closestPoint.dx = dx;
 				closestPoint.dy = dy;
@@ -3884,54 +3983,55 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				closestPoint.index = ii;
 			}
 		}
-
-		var planeX = closestPoint.dx;
-		var planeY = closestPoint.dy;
-		var length = Math.sqrt(planeX * planeX + planeY * planeY);
+		let planeX = closestPoint.dx;
+		let planeY = closestPoint.dy;
+		const length = Math.sqrt(planeX * planeX + planeY * planeY);
 		planeX /= length;
 		planeY /= length;
 
 		// Project circle
-		var point = planeX * (ax) + planeY * (ay);
-		var maxA = point + aradius;
-		var minA = point - aradius;
-
+		const point = (planeX * ax) + (planeY * ay);
+		const maxA = point + aradius;
+		const minA = point - aradius;
 		// Project polygon
-		var minB = Number.POSITIVE_INFINITY;
-		var maxB = Number.NEGATIVE_INFINITY;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-				var projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
-				if (projection < minB) minB = projection;
-				if (projection > maxB) maxB = projection;
+		let minB = Number.POSITIVE_INFINITY;
+		let maxB = Number.NEGATIVE_INFINITY;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+			const projection = planeX * (bx + bc.vertices[ii][0]) +
+				planeY * (by + bc.vertices[ii][1]);
+			if (projection < minB)
+				minB = projection;
+			if (projection > maxB)
+				maxB = projection;
 		}
 
 		if (minB < minA || maxB > maxA) {
 			return false;
 		}
 
-		var jj;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
+		let jj;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
 			jj = ii + 1;
 			if (jj == bc.vertices.length) {
 				jj = 0;
 			}
 
-			var planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
-			var planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
-			var length = Math.sqrt(planeX * planeX + planeY * planeY);
+			let planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
+			let planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
+			const length = Math.sqrt(planeX * planeX + planeY * planeY);
 			planeX /= length;
 			planeY /= length;
 
 			// Project circle
-			var point = planeX * (ax) + planeY * (ay);
-			var maxA = point + aradius;
-			var minA = point - aradius;
+			const point = planeX * (ax) + planeY * (ay);
+			const maxA = point + aradius;
+			const minA = point - aradius;
 
 			// Project polygon
-			var minB = Number.POSITIVE_INFINITY;
-			var maxB = Number.NEGATIVE_INFINITY;
-			for (var kk = 0; kk < bc.vertices.length; kk++) {
-					var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+			let minB = Number.POSITIVE_INFINITY;
+			let maxB = Number.NEGATIVE_INFINITY;
+			for (let kk = 0; kk < bc.vertices.length; kk++) {
+					const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 					if (projection < minB) minB = projection;
 					if (projection > maxB) maxB = projection;
 			}
@@ -3945,17 +4045,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.intersectCirclePolygon = function(ax, ay, ac, bx, by, bc) {
-		var aradius = ac.radius;
+		const aradius = ac.radius;
 		ax = ax + ac.x;
 		ay = ay + ac.y;
 
-		var closestPoint = {
+		const closestPoint = {
 			distance: Number.POSITIVE_INFINITY,
 		};
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-			var dx = (ax) - (bx + bc.vertices[ii][0]);
-			var dy = (ay) - (by + bc.vertices[ii][1]);
-			var d = dx * dx + dy * dy;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+			const dx = (ax) - (bx + bc.vertices[ii][0]);
+			const dy = (ay) - (by + bc.vertices[ii][1]);
+			const d = dx * dx + dy * dy;
 			if (d < closestPoint.distance) {
 				closestPoint.dx = dx;
 				closestPoint.dy = dy;
@@ -3964,22 +4064,22 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 		}
 
-		var planeX = closestPoint.dx;
-		var planeY = closestPoint.dy;
-		var length = Math.sqrt(planeX * planeX + planeY * planeY);
+		let planeX = closestPoint.dx;
+		let planeY = closestPoint.dy;
+		const length = Math.sqrt(planeX * planeX + planeY * planeY);
 		planeX /= length;
 		planeY /= length;
 
 		// Project circle
-		var point = planeX * (ax) + planeY * (ay);
-		var maxA = point + aradius;
-		var minA = point - aradius;
+		const point = planeX * (ax) + planeY * (ay);
+		const maxA = point + aradius;
+		const minA = point - aradius;
 
 		// Project polygon
-		var minB = Number.POSITIVE_INFINITY;
-		var maxB = Number.NEGATIVE_INFINITY;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-				var projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
+		let minB = Number.POSITIVE_INFINITY;
+		let maxB = Number.NEGATIVE_INFINITY;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+				const projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
 				if (projection < minB) minB = projection;
 				if (projection > maxB) maxB = projection;
 		}
@@ -3989,29 +4089,29 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return false;
 		}
 
-		var jj;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
+		let jj;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
 			jj = ii + 1;
 			if (jj == bc.vertices.length) {
 				jj = 0;
 			}
 
-			var planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
-			var planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
-			var length = Math.sqrt(planeX * planeX + planeY * planeY);
+			let planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
+			let planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
+			const length = Math.sqrt(planeX * planeX + planeY * planeY);
 			planeX /= length;
 			planeY /= length;
 
 			// Project circle
-			var point = planeX * (ax) + planeY * (ay);
-			var maxA = point + aradius;
-			var minA = point - aradius;
+			const point = planeX * (ax) + planeY * (ay);
+			const maxA = point + aradius;
+			const minA = point - aradius;
 
 			// Project polygon
-			var minB = Number.POSITIVE_INFINITY;
-			var maxB = Number.NEGATIVE_INFINITY;
-			for (var kk = 0; kk < bc.vertices.length; kk++) {
-					var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+			let minB = Number.POSITIVE_INFINITY;
+			let maxB = Number.NEGATIVE_INFINITY;
+			for (let kk = 0; kk < bc.vertices.length; kk++) {
+					const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 					if (projection < minB) minB = projection;
 					if (projection > maxB) maxB = projection;
 			}
@@ -4026,17 +4126,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.moveCirclePolygon = function(ax, ay, ac, bx, by, bc, vector) {
-		var aradius = ac.radius;
+		const aradius = ac.radius;
 		ax = ax + ac.x;
 		ay = ay + ac.y;
 
-		var closestPoint = {
+		const closestPoint = {
 			distance: Number.POSITIVE_INFINITY,
 		};
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-			var dx = (ax + vector.x) - (bx + bc.vertices[ii][0]);
-			var dy = (ay + vector.y) - (by + bc.vertices[ii][1]);
-			var d = dx * dx + dy * dy;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+			const dx = (ax + vector.x) - (bx + bc.vertices[ii][0]);
+			const dy = (ay + vector.y) - (by + bc.vertices[ii][1]);
+			const d = dx * dx + dy * dy;
 			if (d < closestPoint.distance) {
 				closestPoint.dx = dx;
 				closestPoint.dy = dy;
@@ -4045,27 +4145,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 		}
 
-		var correctionDistance;
-		var correctionX;
-		var correctionY;
-		var absDistance;
+		let correctionDistance;
+		let correctionX;
+		let correctionY;
+		let absDistance;
 
-		var planeX = closestPoint.dx;
-		var planeY = closestPoint.dy;
-		var length = Math.sqrt(planeX * planeX + planeY * planeY);
+		let planeX = closestPoint.dx;
+		let planeY = closestPoint.dy;
+		const length = Math.sqrt(planeX * planeX + planeY * planeY);
 		planeX /= length;
 		planeY /= length;
 
 		// Project circle
-		var point = planeX * (ax + vector.x) + planeY * (ay + vector.y);
-		var maxA = point + aradius;
-		var minA = point - aradius;
+		const point = planeX * (ax + vector.x) + planeY * (ay + vector.y);
+		const maxA = point + aradius;
+		const minA = point - aradius;
 
 		// Project polygon
-		var minB = Number.POSITIVE_INFINITY;
-		var maxB = Number.NEGATIVE_INFINITY;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-				var projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
+		let minB = Number.POSITIVE_INFINITY;
+		let maxB = Number.NEGATIVE_INFINITY;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+				const projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
 				if (projection < minB) minB = projection;
 				if (projection > maxB) maxB = projection;
 		}
@@ -4080,29 +4180,29 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		correctionY = planeY;
 		absDistance = Math.abs(correctionDistance);
 
-		var jj;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
+		let jj;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
 			jj = ii + 1;
 			if (jj == bc.vertices.length) {
 				jj = 0;
 			}
 
-			var planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
-			var planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
-			var length = Math.sqrt(planeX * planeX + planeY * planeY);
+			let planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
+			let planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
+			const length = Math.sqrt(planeX * planeX + planeY * planeY);
 			planeX /= length;
 			planeY /= length;
 
 			// Project circle
-			var point = planeX * (ax + vector.x) + planeY * (ay + vector.y);
-			var maxA = point + aradius;
-			var minA = point - aradius;
+			const point = planeX * (ax + vector.x) + planeY * (ay + vector.y);
+			const maxA = point + aradius;
+			const minA = point - aradius;
 
 			// Project polygon
-			var minB = Number.POSITIVE_INFINITY;
-			var maxB = Number.NEGATIVE_INFINITY;
-			for (var kk = 0; kk < bc.vertices.length; kk++) {
-					var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+			let minB = Number.POSITIVE_INFINITY;
+			let maxB = Number.NEGATIVE_INFINITY;
+			for (let kk = 0; kk < bc.vertices.length; kk++) {
+					const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 					if (projection < minB) minB = projection;
 					if (projection > maxB) maxB = projection;
 			}
@@ -4112,8 +4212,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				return vector;
 			}
 
-			var distance = maxB - minA;
-			var gap = Math.abs(distance);
+			const distance = maxB - minA;
+			const gap = Math.abs(distance);
 			if (gap < absDistance) {
 				correctionDistance = distance;
 				correctionX = planeX;
@@ -4129,17 +4229,17 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.encasePolygonCircle = function(bx, by, bc, ax, ay, ac) {
-		var aradius = ac.radius - Collider.I_PRECISION;
+		const aradius = ac.radius - Collider.I_PRECISION;
 		ax = ax + ac.x;
 		ay = ay + ac.y;
 
-		var closestPoint = {
+		const closestPoint = {
 			distance: Number.POSITIVE_INFINITY,
 		};
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-			var dx = (ax) - (bx + bc.vertices[ii][0]);
-			var dy = (ay) - (by + bc.vertices[ii][1]);
-			var d = dx * dx + dy * dy;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+			const dx = (ax) - (bx + bc.vertices[ii][0]);
+			const dy = (ay) - (by + bc.vertices[ii][1]);
+			const d = dx * dx + dy * dy;
 			if (d < closestPoint.distance) {
 				closestPoint.dx = dx;
 				closestPoint.dy = dy;
@@ -4148,22 +4248,22 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 		}
 
-		var planeX = closestPoint.dx;
-		var planeY = closestPoint.dy;
-		var length = Math.sqrt(planeX * planeX + planeY * planeY);
+		let planeX = closestPoint.dx;
+		let planeY = closestPoint.dy;
+		const length = Math.sqrt(planeX * planeX + planeY * planeY);
 		planeX /= length;
 		planeY /= length;
 
 		// Project circle
-		var point = planeX * (ax) + planeY * (ay);
-		var maxA = point + aradius;
-		var minA = point - aradius;
+		const point = planeX * (ax) + planeY * (ay);
+		const maxA = point + aradius;
+		const minA = point - aradius;
 
 		// Project polygon
-		var minB = Number.POSITIVE_INFINITY;
-		var maxB = Number.NEGATIVE_INFINITY;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
-				var projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
+		let minB = Number.POSITIVE_INFINITY;
+		let maxB = Number.NEGATIVE_INFINITY;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
+				const projection = planeX * (bx + bc.vertices[ii][0]) + planeY * (by + bc.vertices[ii][1]);
 				if (projection < minB) minB = projection;
 				if (projection > maxB) maxB = projection;
 		}
@@ -4172,38 +4272,37 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return false;
 		}
 
-		var jj;
-		for (var ii = 0; ii < bc.vertices.length; ii++) {
+		let jj;
+		for (let ii = 0; ii < bc.vertices.length; ii++) {
 			jj = ii + 1;
 			if (jj == bc.vertices.length) {
 				jj = 0;
 			}
 
-			var planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
-			var planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
-			var length = Math.sqrt(planeX * planeX + planeY * planeY);
+			let planeX = bc.vertices[jj][1] - bc.vertices[ii][1];
+			let planeY = bc.vertices[ii][0] - bc.vertices[jj][0];
+			const length = Math.sqrt(planeX * planeX + planeY * planeY);
 			planeX /= length;
 			planeY /= length;
 
 			// Project circle
-			var point = planeX * (ax) + planeY * (ay);
-			var maxA = point + aradius;
-			var minA = point - aradius;
+			const point = planeX * (ax) + planeY * (ay);
+			const maxA = point + aradius;
+			const minA = point - aradius;
 
 			// Project polygon
-			var minB = Number.POSITIVE_INFINITY;
-			var maxB = Number.NEGATIVE_INFINITY;
-			for (var kk = 0; kk < bc.vertices.length; kk++) {
-					var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
-					if (projection < minB) minB = projection;
-					if (projection > maxB) maxB = projection;
+			let minB = Number.POSITIVE_INFINITY;
+			let maxB = Number.NEGATIVE_INFINITY;
+			for (let kk = 0; kk < bc.vertices.length; kk++) {
+				const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+				if (projection < minB) minB = projection;
+				if (projection > maxB) maxB = projection;
 			}
 
 			if (minA < minB || maxA > maxB) {
 				return false;
 			}
 		}
-
 		return true;
 	};
 
@@ -4212,7 +4311,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.movePolygonCircle = function(ax, ay, ac, bx, by, bc, vector) {
-		var ivector = {
+		let ivector = {
 			x: -vector.x,
 			y: -vector.y,
 		};
@@ -4223,35 +4322,35 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.encasePolygonPolygon = function(ax, ay, ac, bx, by, bc) {
-		var jj;
-		var colliders = [ bc, ac ];
-		for (var cc = 0; cc < 2; cc++) {
-			for (var ii = 0; ii < colliders[cc].vertices.length; ii++) {
+		let jj;
+		const colliders = [ bc, ac ];
+		for (let cc = 0; cc < 2; cc++) {
+			for (let ii = 0; ii < colliders[cc].vertices.length; ii++) {
 				jj = ii + 1;
 				if (jj == colliders[cc].vertices.length) {
 					jj = 0;
 				}
 
-				var planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
-				var planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
-				var length = Math.sqrt(planeX * planeX + planeY * planeY);
+				let planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
+				let planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
+				const length = Math.sqrt(planeX * planeX + planeY * planeY);
 				planeX /= length;
 				planeY /= length;
 
 				// Project polygon A
-				var minA = Number.POSITIVE_INFINITY;
-				var maxA = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < ac.vertices.length; kk++) {
-						var projection = planeX * (ax + ac.vertices[kk][0]) + planeY * (ay + ac.vertices[kk][1]);
+				let minA = Number.POSITIVE_INFINITY;
+				let maxA = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < ac.vertices.length; kk++) {
+						const projection = planeX * (ax + ac.vertices[kk][0]) + planeY * (ay + ac.vertices[kk][1]);
 						if (projection < minA) minA = projection;
 						if (projection > maxA) maxA = projection;
 				}
 
 				// Project polygon B
-				var minB = Number.POSITIVE_INFINITY;
-				var maxB = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < bc.vertices.length; kk++) {
-						var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+				let minB = Number.POSITIVE_INFINITY;
+				let maxB = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < bc.vertices.length; kk++) {
+						const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 						if (projection < minB) minB = projection;
 						if (projection > maxB) maxB = projection;
 				}
@@ -4261,40 +4360,39 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				}
 			}
 		}
-
 		return true;
 	};
 
 	Collider.intersectPolygonPolygon = function(ax, ay, ac, bx, by, bc) {
-		var jj;
-		var colliders = [ bc, ac ];
-		for (var cc = 0; cc < 2; cc++) {
-			for (var ii = 0; ii < colliders[cc].vertices.length; ii++) {
+		let jj;
+		const colliders = [ bc, ac ];
+		for (let cc = 0; cc < 2; cc++) {
+			for (let ii = 0; ii < colliders[cc].vertices.length; ii++) {
 				jj = ii + 1;
 				if (jj == colliders[cc].vertices.length) {
 					jj = 0;
 				}
 
-				var planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
-				var planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
-				var length = Math.sqrt(planeX * planeX + planeY * planeY);
+				let planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
+				let planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
+				const length = Math.sqrt(planeX * planeX + planeY * planeY);
 				planeX /= length;
 				planeY /= length;
 
 				// Project polygon A
-				var minA = Number.POSITIVE_INFINITY;
-				var maxA = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < ac.vertices.length; kk++) {
-						var projection = planeX * (ax + ac.vertices[kk][0]) + planeY * (ay + ac.vertices[kk][1]);
+				let minA = Number.POSITIVE_INFINITY;
+				let maxA = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < ac.vertices.length; kk++) {
+						const projection = planeX * (ax + ac.vertices[kk][0]) + planeY * (ay + ac.vertices[kk][1]);
 						if (projection < minA) minA = projection;
 						if (projection > maxA) maxA = projection;
 				}
 
 				// Project polygon B
-				var minB = Number.POSITIVE_INFINITY;
-				var maxB = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < bc.vertices.length; kk++) {
-						var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+				let minB = Number.POSITIVE_INFINITY;
+				let maxB = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < bc.vertices.length; kk++) {
+						const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 						if (projection < minB) minB = projection;
 						if (projection > maxB) maxB = projection;
 				}
@@ -4310,40 +4408,40 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Collider.movePolygonPolygon = function(ax, ay, ac, bx, by, bc, vector) {
-		var correctionDistance;
-		var correctionX;
-		var correctionY;
-		var absDistance = Number.POSITIVE_INFINITY;
+		let correctionDistance;
+		let correctionX;
+		let correctionY;
+		let absDistance = Number.POSITIVE_INFINITY;
 
-		var jj;
-		var colliders = [ bc, ac ];
-		for (var cc = 0; cc < 2; cc++) {
-			for (var ii = 0; ii < colliders[cc].vertices.length; ii++) {
+		let jj;
+		const colliders = [ bc, ac ];
+		for (let cc = 0; cc < 2; cc++) {
+			for (let ii = 0; ii < colliders[cc].vertices.length; ii++) {
 				jj = ii + 1;
 				if (jj == colliders[cc].vertices.length) {
 					jj = 0;
 				}
 
-				var planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
-				var planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
-				var length = Math.sqrt(planeX * planeX + planeY * planeY);
+				let planeX = colliders[cc].vertices[jj][1] - colliders[cc].vertices[ii][1];
+				let planeY = colliders[cc].vertices[ii][0] - colliders[cc].vertices[jj][0];
+				const length = Math.sqrt(planeX * planeX + planeY * planeY);
 				planeX /= length;
 				planeY /= length;
 
 				// Project polygon A
-				var minA = Number.POSITIVE_INFINITY;
-				var maxA = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < ac.vertices.length; kk++) {
-						var projection = planeX * (ax + vector.x + ac.vertices[kk][0]) + planeY * (ay + vector.y + ac.vertices[kk][1]);
+				let minA = Number.POSITIVE_INFINITY;
+				let maxA = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < ac.vertices.length; kk++) {
+						const projection = planeX * (ax + vector.x + ac.vertices[kk][0]) + planeY * (ay + vector.y + ac.vertices[kk][1]);
 						if (projection < minA) minA = projection;
 						if (projection > maxA) maxA = projection;
 				}
 
 				// Project polygon B
-				var minB = Number.POSITIVE_INFINITY;
-				var maxB = Number.NEGATIVE_INFINITY;
-				for (var kk = 0; kk < bc.vertices.length; kk++) {
-						var projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
+				let minB = Number.POSITIVE_INFINITY;
+				let maxB = Number.NEGATIVE_INFINITY;
+				for (let kk = 0; kk < bc.vertices.length; kk++) {
+						const projection = planeX * (bx + bc.vertices[kk][0]) + planeY * (by + bc.vertices[kk][1]);
 						if (projection < minB) minB = projection;
 						if (projection > maxB) maxB = projection;
 				}
@@ -4353,8 +4451,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					return vector;
 				}
 
-				var distance = maxB - minA;
-				var gap = Math.abs(distance);
+				const distance = maxB - minA;
+				const gap = Math.abs(distance);
 				if (gap < absDistance) {
 					correctionDistance = distance;
 					correctionX = planeX;
@@ -4382,7 +4480,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 */
 	Collider.encase = function(ax, ay, ac, bx, by, bc) {
 		if (ac.type == Collider.LIST) {
-			for (var ii = 0; ii < ac.colliders.length; ii++) {
+			for (let ii = 0; ii < ac.colliders.length; ii++) {
 				if (Collider.encase(ax, ay, ac.colliders[ii], bx, by, bc)) {
 					return true;
 				}
@@ -4391,7 +4489,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		if (bc.type == Collider.LIST) {
-			for (var ii = 0; ii < bc.colliders.length; ii++) {
+			for (let ii = 0; ii < bc.colliders.length; ii++) {
 				if (Collider.encase(ax, ay, ac, bx, by, bc.colliders[ii])) {
 					return true;
 				}
@@ -4434,7 +4532,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 */
 	Collider.intersect = function(ax, ay, ac, bx, by, bc) {
 		if (ac.type == Collider.LIST) {
-			for (var ii = 0; ii < ac.colliders.length; ii++) {
+			for (let ii = 0; ii < ac.colliders.length; ii++) {
 				if (Collider.intersect(ax, ay, ac.colliders[ii], bx, by, bc)) {
 					return true;
 				}
@@ -4443,7 +4541,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		if (bc.type == Collider.LIST) {
-			for (var ii = 0; ii < bc.colliders.length; ii++) {
+			for (let ii = 0; ii < bc.colliders.length; ii++) {
 				if (Collider.intersect(ax, ay, ac, bx, by, bc.colliders[ii])) {
 					return true;
 				}
@@ -4487,7 +4585,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	 */
 	Collider.move = function(ax, ay, ac, bx, by, bc, vector) {
 		if (ac.type == Collider.LIST) {
-			for (var ii = 0; ii < ac.colliders.length; ii++) {
+			for (let ii = 0; ii < ac.colliders.length; ii++) {
 				vector = Collider.move(ax, ay, ac.colliders[ii], bx, by, bc, vector);
 				if (vector.x === 0 && vector.y === 0) {
 					break;
@@ -4497,7 +4595,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		if (bc.type == Collider.LIST) {
-			for (var ii = 0; ii < bc.colliders.length; ii++) {
+			for (let ii = 0; ii < bc.colliders.length; ii++) {
 				vector = Collider.move(ax, ay, ac, bx, by, bc.colliders[ii], vector);
 				if (vector.x === 0 && vector.y === 0) {
 					break;
@@ -4531,31 +4629,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Collider.treeFromArray = function(colliders) {
 		while (colliders.length > 1) {
-			var shortestDist = Number.POSITIVE_INFINITY;
-			var closestNode = -1;
-			for (var ii = 1; ii < colliders.length; ii++) {
-				var leftDistance = Math.abs(colliders[ii].aabbox.right - colliders[0].aabbox.left);
+			let shortestDist = Number.POSITIVE_INFINITY;
+			let closestNode = -1;
+			for (let ii = 1; ii < colliders.length; ii++) {
+				const leftDistance = Math.abs(colliders[ii].aabbox.right - colliders[0].aabbox.left);
 				if (leftDistance < shortestDist) {
 					shortestDist = leftDistance;
 					closestNode = ii;
 					continue;
 				}
 
-				var rightDistance = Math.abs(colliders[ii].aabbox.left - colliders[0].aabbox.right);
+				const rightDistance = Math.abs(colliders[ii].aabbox.left - colliders[0].aabbox.right);
 				if (rightDistance < shortestDist) {
 					shortestDist = rightDistance;
 					closestNode = ii;
 					continue;
 				}
 
-				var topDistance = Math.abs(colliders[ii].aabbox.bottom - colliders[0].aabbox.top);
+				const topDistance = Math.abs(colliders[ii].aabbox.bottom - colliders[0].aabbox.top);
 				if (topDistance < shortestDist) {
 					shortestDist = topDistance;
 					closestNode = ii;
 					continue;
 				}
 
-				var bottomDistance = Math.abs(colliders[ii].aabbox.top - colliders[0].aabbox.bottom);
+				const bottomDistance = Math.abs(colliders[ii].aabbox.top - colliders[0].aabbox.bottom);
 				if (bottomDistance < shortestDist) {
 					shortestDist = bottomDistance;
 					closestNode = ii;
@@ -4564,7 +4662,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			}
 
 			// Create pairing
-			var pair = Collider.createList();
+			const pair = Collider.createList();
 			Collider.addToList(pair, colliders[0]);
 			Collider.addToList(pair, colliders[closestNode]);
 			colliders.splice(closestNode, 1);
@@ -4589,22 +4687,22 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Collider.aabboxCheck = function(ax, ay, ac, bx, by, bc, vx, vy) {
 		vx = vx || 0;
 		vy = vy || 0;
-		var left = ax + ac.left + (vx < 0 ? vx : 0);
+		const left = ax + ac.left + (vx < 0 ? vx : 0);
 		if (left > bx + bc.right) {
 			return false;
 		}
 
-		var top = ay + ac.top + (vy < 0 ? vy : 0);
+		const top = ay + ac.top + (vy < 0 ? vy : 0);
 		if (top > by + bc.bottom) {
 			return false;
 		}
 
-		var right = ax + ac.right + (vx > 0 ? vx : 0);
+		const right = ax + ac.right + (vx > 0 ? vx : 0);
 		if (right < bx + bc.left) {
 			return false;
 		}
 
-		var bottom = ay + ac.bottom + (vy > 0 ? vy : 0);
+		const bottom = ay + ac.bottom + (vy > 0 ? vy : 0);
 		if (bottom < by + bc.top) {
 			return false;
 		}
@@ -4677,12 +4775,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Direction.normalizeSquare = function(vx, vy, length) {
-		var angle = Math.atan2(vy, vx);
-		var cos = Math.cos(angle);
-		var sin = Math.sin(angle);
+		const angle = Math.atan2(vy, vx);
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
 		if (!length) {
-			var absCos = Math.abs(cos);
-			var absSin = Math.abs(sin);
+			const absCos = Math.abs(cos);
+			const absSin = Math.abs(sin);
 			if (absSin <= absCos) {
 				length = 1 / absCos;
 			} else {
@@ -4831,7 +4929,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			subMoveArgs.push(mover);
 			subMoveArgs.push(step.dir);
 			if (step.dir === 'towards' || step.dir === 'away') {
-				var target = step.other;
+				let target = step.other;
 					if (step.other === 'event') {
 						target = JSON.stringify(step.moverEventId);
 					} else if (step.other.startsWith('follower')) {
