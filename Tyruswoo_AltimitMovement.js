@@ -572,9 +572,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  */
 
 (() => {
-	//=========================================================================
+	//=============================================================================
 	// Parameters and Constants
-	//=========================================================================
+	//=============================================================================
 
 	const pluginName = 'Tyruswoo_AltimitMovement';
 	const DOM_PARSER = new DOMParser();
@@ -582,9 +582,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// const GAME_PAD_THRESHOLD = 1 / 5;
 	// const GAME_PAD_LIMIT = 1 - GAME_PAD_THRESHOLD;
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// PLAYER
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	const playerColliderList = PARAMETERS['player_collider_list'];
 	const PLAYER = {
 		CIRCULAR_MOVEMENT: PARAMETERS['player_circular_movement'] != 'false',
@@ -593,9 +593,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			: "<collider><circle cx='0.5' cy='0.7' r='0.25' /></collider>",
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// FOLLOWERS
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	const followersColliderList = PARAMETERS['followers_collider_list'];
 	const FOLLOWERS = {
 		DISTANCE: Number(PARAMETERS['followers_distance']),
@@ -605,9 +605,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			: "<collider><circle cx='0.5' cy='0.7' r='0.25' /></collider>",
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// VEHICLES
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	const boatColliderList = PARAMETERS['vehicles_boat_collider_list'];
 	const shipColliderList = PARAMETERS['vehicles_ship_collider_list'];
 	const airshipColliderList = PARAMETERS['vehicles_airship_collider_list'];
@@ -623,9 +623,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			: "<collider><circle cx='0.5' cy='0.5' r='0.25' /></collider>",
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// EVENT
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	const characterColliderList = PARAMETERS['event_character_collider_list'];
 	const titleColliderList = PARAMETERS['event_tile_collider_list'];
 	const EVENT = {
@@ -637,9 +637,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			: "<collider><rect x='0' y='0' width='1' height='1' /></collider>",
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// PRESETS
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	const presets = PARAMETERS['presets'];
 	const PRESETS = presets ? JSON.parse(presets) : [];
 	const MOVE_ROUTE = {
@@ -654,25 +654,37 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		COLLISION_MESH_CACHING: PARAMETERS['play_test_collision_mesh_caching'] != 'false',
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_System
-	//=========================================================================
+	//=============================================================================
 
-	const Game_System_initialize = Game_System.prototype.initialize;
+	// Alias
+	Tyruswoo.AltimitMovement.Game_System_initialize = 
+		Game_System.prototype.initialize;
 	Game_System.prototype.initialize = function() {
-		Game_System_initialize.call(this);
+		Tyruswoo.AltimitMovement.Game_System_initialize.call(this);
 		this._eventColliders = [];
+
 		this._staticMoveAlignGrid = MOVE_ROUTE.ALIGN_GRID;
 		this._moveAlignGrid = MOVE_ROUTE.ALIGN_GRID;
+
 		this._staticFollowerDistance = FOLLOWERS.DISTANCE;
 		this._followerDistance = FOLLOWERS.DISTANCE;
+
 		this._staticEnableTouchMouse = INPUT_CONFIG.ENABLE_TOUCH_MOUSE;
 		this._enableTouchMouse = INPUT_CONFIG.ENABLE_TOUCH_MOUSE;
 	};
-	
-	//=========================================================================
+
+	// New method
+	Game_System.prototype.createColliderFromXML = function(xml) {
+		return Collider.createFromXML(xml);
+	};
+
+	//=============================================================================
 	// Game_Interpreter
-	//=========================================================================
+	//=============================================================================
+	// Game_Interpreter overrides
+	//-----------------------------------------------------------------------------
 
 	// Alias method
 	// Deprecated MV-style plugin command call
@@ -884,6 +896,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 		subject._moveTargetSkippable = options.skip;
 		subject._moveTarget = true;
+
 		if (object) {
 			let dx = object.x - subject.x;
 			let dy = object.y - subject.y;
@@ -896,9 +909,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			} else {
 				stepDistance = Number(distance);
 			}
+
 			if (command == Game_Character.ROUTE_MOVE_AWAY) {
 				stepDistance *= -1;
 			}
+
 			subject._moveTargetX = subject.x + dx * stepDistance;
 			subject._moveTargetY = subject.y + dy * stepDistance;
 		} else {
@@ -968,6 +983,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (!target) {
 			return;
 		}
+
 		const presetIndex = Number(args[3]);
 		if (isNaN(presetIndex)) {
 			target.setCollider(Collider.getPreset(args[3].substring(1, args[3].length - 1)));
@@ -1117,9 +1133,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return null;
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_CharacterBase
-	//=========================================================================
+	//=============================================================================
+	// Game_CharacterBase overrides
+	//-----------------------------------------------------------------------------
 
 	// new method
 	Game_CharacterBase.prototype.continueProcessMoveCommand = function() {
@@ -1191,16 +1209,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	// alias method
-	const Game_CharacterBase_isMoving = Game_CharacterBase.prototype.isMoving;
+	Tyruswoo.AltimitMovement.Game_CharacterBase_isMoving = 
+		Game_CharacterBase.prototype.isMoving;
 	Game_CharacterBase.prototype.isMoving = function() {
-		return Game_CharacterBase_isMoving.call(this) || this._isMoving;
+		return Tyruswoo.AltimitMovement.Game_CharacterBase_isMoving.call(this) ||
+			this._isMoving;
 	};
 
 	// alias method
-	const Game_CharacterBase_updateAnimation = 
+	Tyruswoo.AltimitMovement.Game_CharacterBase_updateAnimation = 
 		Game_CharacterBase.prototype.updateAnimation;
 	Game_CharacterBase.prototype.updateAnimation = function() {
-		Game_CharacterBase_updateAnimation.call(this);
+		Tyruswoo.AltimitMovement.Game_CharacterBase_updateAnimation.call(this);
 		this._wasMoving = this._isMoving;
 		this._isMoving = this._x !== this._realX || this._y !== this._realY;
 		if (!this._isMoving) {
@@ -1274,9 +1294,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return val;
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// Game_CharacterBase extensions (new properties and methods)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 
 	Object.defineProperties(Game_CharacterBase.prototype, {
 		stepDistance: {
@@ -1353,7 +1373,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} else if (loopMap == 8) {
 			vector.x -= $gameMap.width();
 			vector.y -= $gameMap.height();
-		} return vector;
+		}
+		return vector;
 	}
 
 	Game_CharacterBase.prototype.moveVectorCharacters = function(characters, move) {
@@ -1599,9 +1620,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this._direction8;
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_Character
-	//=========================================================================
+	//=============================================================================
 
 	// replacement method
 	Game_Character.prototype.updateRoutineMove = function() {
@@ -1764,9 +1785,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_Player
-	//=========================================================================
+	//=============================================================================
 
 	// alias method
 	const Game_Player_initMembers = Game_Player.prototype.initMembers;
@@ -2181,37 +2202,37 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		const ship = $gameMap.ship();
 		const boat = $gameMap.boat();
 		for (let ii = 0; ii < bboxTests.length; ii++) {
-			if (!!airship &&
-				airship._mapId === $gameMap.mapId() &&
-				Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, airship._x, airship._y, airship.collider().aabbox)) {
+			if (!!airship && airship._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, airship._x, airship._y, airship.collider().aabbox)) {
 				this._vehicleType = 'airship';
 				this._collisionType = CollisionMesh.AIRSHIP;
 				vehicle = airship;
 				break;
 			}
-			if (!!ship &&
-				ship._mapId === $gameMap.mapId() &&
-				Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, ship._x, ship._y, ship.collider().aabbox)) {
+			if (!!ship && ship._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, ship._x, ship._y, ship.collider().aabbox)) {
 				this._vehicleType = 'ship';
 				this._collisionType = CollisionMesh.SHIP;
 				vehicle = ship;
 				break;
 			}
-			if (!!boat &&
-				boat._mapId === $gameMap.mapId() &&
-				Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, boat._x, boat._y, boat.collider().aabbox)) {
+			if (!!boat && boat._mapId === $gameMap.mapId() &&
+			Collider.aabboxCheck(bboxTests[ii].x, bboxTests[ii].y, bboxTests[ii].aabbox, boat._x, boat._y, boat.collider().aabbox)) {
 				this._vehicleType = 'boat';
 				this._collisionType = CollisionMesh.BOAT;
 				vehicle = boat;
 				break;
 			}
 		}
+
 		if (vehicle && this.isInVehicle()) {
 			this._vehicleGettingOn = true;
 			vehicle._passengerCollider = this.collider();
 			this._collider = vehicle.collider();
+
 			const dx = $gameMap.directionX(this._x, vehicle._x);
 			const dy = $gameMap.directionY(this._y, vehicle._y);
+
 			const wasThrough = this.isThrough();
 			this.setThrough(true);
 			this.moveVector(dx, dy);
@@ -2221,7 +2242,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this._vehicleGettingOn;
 	};
 
-	// replacement method
 	Game_Player.prototype.getOffVehicle = function() {
 		if (!this.vehicle().isLandOk(this.x, this.y, this.direction()))
 			return this._vehicleGettingOff;
@@ -2288,23 +2308,27 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this.setTransparent(false);
 	};
 
-	//-------------------------------------------------------------------------
-	// Game_Event collider extensions (new methods)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
+	// Game_Player extensions (new methods)
+	//-----------------------------------------------------------------------------
+
 	Game_Player.prototype.actionWidth = function() {
 		const bbox = this.collider().aabbox;
 		const width = bbox.right - bbox.left;
 		return width < 1 ? width : 1;
 	};
+
 	Game_Player.prototype.actionHeight = function() {
 		const bbox = this.collider().aabbox;
 		const height = bbox.bottom - bbox.top;
 		return height < 1 ? height : 1;
 	};
 	
-	//=========================================================================
+	//=============================================================================
 	// Game_Follower
-	//=========================================================================
+	//=============================================================================
+	// Game_Follower overrides
+	//-----------------------------------------------------------------------------
 
 	Game_Follower.prototype.initMembers = function() {
 		Game_Character.prototype.initMembers.call(this);
@@ -2398,16 +2422,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 	
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// Game_Follower extension (new method)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	Game_Follower.prototype.setFrozen = function(frozen) {
 		this._isFrozen = frozen;
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_Followers
-	//=========================================================================
+	//=============================================================================
+	// Game_Followers overrides
+	//-----------------------------------------------------------------------------
 
 	Game_Followers.prototype.update = function() {
 		if (this.areGathering()) {
@@ -2472,16 +2498,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return true;
 	};
 	
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// Game_Followers extensions (new methods)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	Game_Followers.prototype.contains = function(item) {
 		return this._data.indexOf(item) >= 0;
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_Vehicle
-	//=========================================================================
+	//=============================================================================
 
 	const Game_Vehicle_initialize = Game_Vehicle.prototype.initialize;
 	Game_Vehicle.prototype.initialize = function(type) {
@@ -2563,30 +2589,31 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 	
-	//=========================================================================
+	//=============================================================================
 	// Game_Event
-	//=========================================================================
+	//=============================================================================
 
 	// alias method
-	const Game_Event_setupPageSettings = Game_Event.prototype.setupPageSettings;
+	Tyruswoo.AltimitMovement.Game_Event_setupPageSettings = 
+		Game_Event.prototype.setupPageSettings;
 	Game_Event.prototype.setupPageSettings = function() {
-		Game_Event_setupPageSettings.call(this);
+		Tyruswoo.AltimitMovement.Game_Event_setupPageSettings.call(this);
 		this.collider();
 	};
 
 	// alias method
-	const Game_Event_start = Game_Event.prototype.start;
+	Tyruswoo.AltimitMovement.Game_Event_start = Game_Event.prototype.start;
 	Game_Event.prototype.start = function() {
 		if (this._lastFrame === Graphics.frameCount) {
 			return;
 		}
-		Game_Event_start.call(this);
+		Tyruswoo.AltimitMovement.Game_Event_start.call(this);
 		this._lastFrame = Graphics.frameCount + 1;
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// Game_Event collider extensions (new methods)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 
 	Game_Event.prototype.getStoredCollider = function() {
 		const mapId = $gameMap.mapId();
@@ -2702,9 +2729,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 	
-	//=========================================================================
+	//=============================================================================
 	// Game_Interpreter
-	//=========================================================================
+	//=============================================================================
 
 	// alias method
 	const Game_Interpreter_command101 = Game_Interpreter.prototype.command101;
@@ -2713,9 +2740,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return Game_Interpreter_command101.call(this, params);
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// Game_Map
-	//=========================================================================
+	//=============================================================================
 
 	// alias method
 	const Game_Map_setup = Game_Map.prototype.setup;
@@ -2726,7 +2753,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		$gameSystem._eventColliders[mapId] = [];
 	};
 
-	// replacement method
 	Game_Map.prototype.tileId = function(x, y, z) {
 		x = x | 0;
 		y = y | 0;
@@ -2751,9 +2777,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		return this.roundY(mapY);
 	};
 
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 	// Game_Map extensions (new methods)
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 
 	Game_Map.prototype.directionX = function(ax, bx) {
 		if (this.isLoopHorizontal()) {
@@ -2782,6 +2808,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Map.prototype.collisionMesh = function(collisionType) {
 		collisionType = collisionType || CollisionMesh.WALK;
 		return CollisionMesh.getMesh(this.mapId(), collisionType);
+	}
+
+	// New method by Tyruswoo
+	Game_Map.prototype.recalculateCollisionMesh = function() {
+		Tyruswoo.AltimitMovement._recalculateCollisionMesh = true;
 	};
 
 	Game_Map.prototype.getCharactersUnderPoint = function(x, y) {
@@ -2911,6 +2942,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				return false;
 			}
 		}
+
 		// Test collision with map
 		for (let ii = 0; ii < bboxTests.length; ii++) {
 			const moveVector = getLoopMapCorrection({ x: 0, y: 0 }, bboxTests[ii].type);
@@ -2951,7 +2983,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				left: aabbox.left + (vx < 0 ? vx : 0),
 				top: aabbox.top + (vy < 0 ? vy : 0),
 				right: aabbox.right + (vx > 0 ? vx : 0),
-				bottom: aabbox.bottom + (vy > 0 ? vy : 0),
+				bottom: aabbox.bottom + (vy > 0 ? vy : 0)
 			};
 		}
 		// Construct aabbox tests for map edges
@@ -3024,18 +3056,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		];
 	};
 
-	// added by Tyruswoo
-	Game_Map.prototype.recalculateCollisionMesh = function() {
-		Tyruswoo.AltimitMovement._recalculateCollisionMesh = true;
-	};
-
-	//=========================================================================
+	//=============================================================================
 	// Sprite_Destination
-	//-------------------------------------------------------------------------
-	// Cursor change destination!
-	//=========================================================================
+	//=============================================================================
+	// Sprite_Destination overrides
+	//-----------------------------------------------------------------------------
 
-	// replacement method
 	Sprite_Destination.prototype.createBitmap = function() {
 		const tileWidth = $gameMap.tileWidth();
 		const tileHeight = $gameMap.tileHeight();
@@ -3046,7 +3072,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this.blendMode = PIXI.BLEND_MODES.ADD;
 	};
 
-	// replacement method
 	Sprite_Destination.prototype.update = function() {
 		Sprite.prototype.update.call(this);
 		if ($gamePlayer._touchTarget) {
@@ -3059,7 +3084,6 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 	};
 
-	// replacement method
 	Sprite_Destination.prototype.updatePosition = function() {
 		const tileWidth = $gameMap.tileWidth();
 		const tileHeight = $gameMap.tileHeight();
@@ -3069,9 +3093,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		this.y = ($gameMap.adjustY(y) + 0.5) * tileHeight;
 	};
 
-	//=========================================================================
+	//=============================================================================
 	// CollisionMesh
-	//=========================================================================
+	// Manages the active map's collision mesh.
+	//=============================================================================
 
 	class CollisionMesh {
 		constructor() {
@@ -3083,29 +3108,32 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	CollisionMesh.BOAT = 1;
 	CollisionMesh.SHIP = 2;
 	CollisionMesh.AIRSHIP = 3;
-	CollisionMesh.meshInMemory = {
-		mapId: null,
-		mesh: [],
-	};
+
+	CollisionMesh.meshInMemory = { mapId: null, mesh: [] };
 
 	CollisionMesh.getMesh = function(mapId, type) {
 		type = type || CollisionMesh.WALK;
 
-		// Tyruswoo changed this condition to enable collision mesh recalc.
-		if (CollisionMesh.meshInMemory.mapId === mapId &&
-			!Tyruswoo.AltimitMovement._recalculateCollisionMesh) {
+		if (CollisionMesh.meshInMemory.mesh[type] !== undefined &&
+		CollisionMesh.meshInMemory.mapId === mapId &&
+		!Tyruswoo.AltimitMovement._recalculateCollisionMesh) {
+			// A mesh is ready, it's for this map,
+			// and no recalculation was requested.
+			// Return what we already have.
 			return CollisionMesh.meshInMemory.mesh[type];
 		}
-		// Recalculation is about to happen, so clear the recalc flag.
+		// The recalculation request, if any, has now been processed.
 		Tyruswoo.AltimitMovement._recalculateCollisionMesh = false;
 
-		let gameMap;
+		// Recalculate the mesh.
+		var gameMap;
 		if ($gameMap.mapId() === mapId) {
 			gameMap = $gameMap;
 		} else {
 			gameMap = new Game_Map();
 			gameMap.setup(mapId);
 		}
+
 		CollisionMesh.meshInMemory.mapId = mapId;
 		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] =
 			CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
@@ -3128,25 +3156,23 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		// Make collision mask
 		const collisionGrid = [];
 		if (!passFunc) {
-			passFunc = function() {
-				return true;
-			};
+			passFunc = function(x, y, d) { return true; };
 		}
 		for (let xx = 0; xx < gameMap.width(); xx++) {
 			collisionGrid[xx] = [];
 			for (let yy = 0; yy < gameMap.height(); yy++) {
 				collisionGrid[xx][yy] = 0;
 				if (!passFunc.call(gameMap, xx, yy, Direction.UP)) {
-					collisionGrid[xx][yy] |= 0x1 << 0;
+					collisionGrid[xx][yy] |= (0x1 << 0);
 				}
 				if (!passFunc.call(gameMap, xx, yy, Direction.LEFT)) {
-					collisionGrid[xx][yy] |= 0x1 << 1;
+					collisionGrid[xx][yy] |= (0x1 << 1);
 				}
 				if (!passFunc.call(gameMap, xx, yy, Direction.DOWN)) {
-					collisionGrid[xx][yy] |= 0x1 << 2;
+					collisionGrid[xx][yy] |= (0x1 << 2);
 				}
 				if (!passFunc.call(gameMap, xx, yy, Direction.RIGHT)) {
-					collisionGrid[xx][yy] |= 0x1 << 3;
+					collisionGrid[xx][yy] |= (0x1 << 3);
 				}
 			}
 		}
@@ -3159,13 +3185,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				[0, 0],
 				[0, gameMap.height()],
 				[-d, gameMap.height() + q],
-				[-d, -q],
+				[-d, -q]
 			]));
 			colliders.push(Collider.createPolygon([
 				[gameMap.width(), gameMap.height()],
 				[gameMap.width(), 0],
 				[gameMap.width() + d, -q],
-				[gameMap.width() + d, gameMap.height() + q],
+				[gameMap.width() + d, gameMap.height() + q] 
 			]));
 		}
 		if (!gameMap.isLoopVertical()) {
@@ -3174,15 +3200,16 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				[gameMap.width(), 0],
 				[0, 0],
 				[-q, -d],
-				[gameMap.width() + q, -d],
+				[gameMap.width() + q, -d]
 			]));
 			colliders.push(Collider.createPolygon([
 				[0, gameMap.height()],
 				[gameMap.width(), gameMap.height()],
 				[gameMap.width() + q, gameMap.height() + d],
-				[-q, gameMap.height() + d],
+				[-q, gameMap.height() + d]
 			]));
 		}
+
 		// Build tiles (Fixes some cases for humpy corner collision)
 		for (let yy = 0; yy < gameMap.height(); yy++) {
 			const top = gameMap.roundY(yy - 1);
@@ -3206,6 +3233,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				if (bottom >= gameMap.height() || collisionGrid[xx][bottom] == 0) {
 					open++;
 				}
+
 				if (open === 4) {
 					collisionGrid[xx][yy] = 0;
 					colliders.push(Collider.createPolygon([
@@ -3217,6 +3245,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				}
 			}
 		}
+
 		// Build horizontal lines
 		let horizontalLine = null;
 		const hColliders = [];
@@ -3224,7 +3253,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			for (let xx = 0; xx < gameMap.width(); xx++) {
 				const y2 = gameMap.roundY(yy - 1);
 				if (collisionGrid[xx][yy] & (0x1 << 0) ||
-					(y2 >= 0 && collisionGrid[xx][y2] & (0x1 << 2))) {
+				(y2 >= 0 && collisionGrid[xx][y2] & (0x1 << 2))) {
 					// Can't move up or down
 					// Is a horizontal line
 					if (!horizontalLine) {
@@ -3256,7 +3285,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			for (let yy = 0; yy < gameMap.height(); yy++) {
 				const x2 = gameMap.roundX(xx - 1);
 				if (collisionGrid[xx][yy] & (0x1 << 1) ||
-					(x2 >= 0 && collisionGrid[x2][yy] & (0x1 << 3))) {
+				(x2 >= 0 && collisionGrid[x2][yy] & (0x1 << 3))) {
 					// Can't move left or right
 					// Is a vertical line
 					if (!verticalLine) {
@@ -3509,8 +3538,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				left: Number.POSITIVE_INFINITY,
 				top: Number.POSITIVE_INFINITY,
 				right: Number.NEGATIVE_INFINITY,
-				bottom: Number.NEGATIVE_INFINITY,
-			},
+				bottom: Number.NEGATIVE_INFINITY
+			}
 		};
 	};
 
@@ -3570,24 +3599,24 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		} else if (childNodes.length === 1) {
 			switch (childNodes[0].nodeName) {
 				case 'rect':
-					const x = Number(childNodes[0].getAttribute('x'));
-					const y = Number(childNodes[0].getAttribute('y'));
-					const width = Number(childNodes[0].getAttribute('width'));
-					const height = Number(childNodes[0].getAttribute('height'));
+					let x = Number(childNodes[0].getAttribute('x'));
+					let y = Number(childNodes[0].getAttribute('y'));
+					let width = Number(childNodes[0].getAttribute('width'));
+					let height = Number(childNodes[0].getAttribute('height'));
 					return Collider.createRect(x, y, width, height);
 				case 'circle':
 					let cx = Number(childNodes[0].getAttribute('cx'));
 					let cy = Number(childNodes[0].getAttribute('cy'));
-					const r = Number(childNodes[0].getAttribute('r'));
+					let r = Number(childNodes[0].getAttribute('r'));
 					return Collider.createCircle(cx, cy, r);
 				case 'line':
-					const x1 = Number(childNodes[0].getAttribute('x1'));
-					const y1 = Number(childNodes[0].getAttribute('y1'));
-					const x2 = Number(childNodes[0].getAttribute('x2'));
-					const y2 = Number(childNodes[0].getAttribute('y2'));
+					let x1 = Number(childNodes[0].getAttribute('x1'));
+					let y1 = Number(childNodes[0].getAttribute('y1'));
+					let x2 = Number(childNodes[0].getAttribute('x2'));
+					let y2 = Number(childNodes[0].getAttribute('y2'));
 					return Collider.createLine(x1, y1, x2, y2);
 				case 'polygon':
-					const pointsAttr = childNodes[0].getAttribute('points')?.split(' ');
+					let pointsAttr = childNodes[0].getAttribute('points')?.split(' ');
 					if (!pointsAttr)
 						return Collider.null();
 					const points = [];
@@ -3599,12 +3628,12 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 					}
 					return Collider.createPolygon(points);
 				case 'regular':
-					cx = Number(childNodes[0].getAttribute('cx'));
-					cy = Number(childNodes[0].getAttribute('cy'));
-					const rx = Number(childNodes[0].getAttribute('rx'));
-					const ry = Number(childNodes[0].getAttribute('ry'));
-					const p = Number(childNodes[0].getAttribute('p'));
-					return Collider.createRegularPolygon(cx, cy, rx, ry, p);
+					let cx_ = Number(childNodes[0].getAttribute('cx'));
+					let cy_ = Number(childNodes[0].getAttribute('cy'));
+					let rx = Number(childNodes[0].getAttribute('rx'));
+					let ry = Number(childNodes[0].getAttribute('ry'));
+					let p = Number(childNodes[0].getAttribute('p'));
+					return Collider.createRegularPolygon(cx_, cy_, rx, ry, p);
 			}
 		} else {
 			const colliderList = Collider.createList();
@@ -3646,8 +3675,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 						Collider.addToList(colliderList, Collider.createPolygon(points));
 						break;
 					case 'regular':
-						cx = Number(childNodes[ii].getAttribute('cx'));
-						cy = Number(childNodes[ii].getAttribute('cy'));
+						const cxr = Number(childNodes[ii].getAttribute('cx'));
+						const cyr = Number(childNodes[ii].getAttribute('cy'));
 						const rx = Number(childNodes[ii].getAttribute('rx'));
 						const ry = Number(childNodes[ii].getAttribute('ry'));
 						const p = Number(childNodes[ii].getAttribute('p'));
@@ -3665,7 +3694,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			[x, y],
 			[x + width, y],
 			[x + width, y + height],
-			[x, y + height],
+			[x, y + height]
 		]);
 	};
 
@@ -3686,8 +3715,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				left: x - radius,
 				top: y - radius,
 				right: x + radius,
-				bottom: y + radius,
-			},
+				bottom: y + radius
+			}
 		};
 	};
 
@@ -3720,13 +3749,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (!points || points < 3) {
 			return Collider.createCircle(x, y, Math.sqrt(sx * sx + sy * sy));
 		}
-		const vertices = [];
+		var vertices = [];
 		const divisor = points / (Math.PI * 2);
 		const pi2 = Math.PI / 2;
 		for (let ii = 0; ii < points; ii++) {
 			vertices.push([
 				x + Math.cos(ii / divisor - pi2) * sx,
-				y + Math.sin(ii / divisor - pi2) * sy,
+				y + Math.sin(ii / divisor - pi2) * sy
 			]);
 		}
 		return Collider.createPolygon(vertices);
@@ -3793,7 +3822,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		for (let ii = 0; ii < bc.colliders.length; ii++) {
 			if (Collider.aabboxCheck(ax, ay, aabbox, bx, by, bc.colliders[ii].aabbox)) {
 				if (bc.colliders[ii].type === Collider.LIST) {
-					polygons = polygons.concat(Collider.polygonsWithinColliderList(ax, ay, aabbox, bx, by, bc.colliders[ii]));
+					polygons = polygons.concat(Collider.polygonsWithinColliderList(
+						ax, ay, aabbox, bx, by, bc.colliders[ii]));
 				} else {
 					polygons.push(bc.colliders[ii]);
 				}
@@ -3809,6 +3839,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		ay = ay + ac.y;
 		bx = bx + bc.x;
 		by = by + bc.y;
+
 		const dx = ax - bx;
 		const dy = ay - by;
 		let dd = dx * dx + dy * dy;
@@ -3884,8 +3915,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		const length = Math.sqrt(planeX * planeX + planeY * planeY);
 		planeX /= length;
 		planeY /= length;
+
 		// Project circle
-		const point = planeX * ax + planeY * ay;
+		const point = (planeX * ax) + (planeY * ay);
 		const maxA = point + aradius;
 		const minA = point - aradius;
 		// Project polygon
@@ -3899,9 +3931,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			if (projection > maxB)
 				maxB = projection;
 		}
+
 		if (minB < minA || maxB > maxA) {
 			return false;
 		}
+
 		let jj;
 		for (let ii = 0; ii < bc.vertices.length; ii++) {
 			jj = ii + 1;
@@ -4187,6 +4221,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				if (projection > maxB)
 					maxB = projection;
 			}
+
 			if (minA < minB || maxA > maxB) {
 				return false;
 			}
