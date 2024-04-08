@@ -25,7 +25,29 @@ vice versa.
 To use this plugin, you can use a plugin command each time you want the
 map's collision mesh to be recalculated.
 
-## Plugin Command: Recalculate Collision Mesh
+## Plugin Commands
+
+### Change Player Collider
+
+### Change This Collider
+
+### Change Event Collider
+
+### Change Vehicle Collider
+
+### Change Follower Collider
+
+### Change Followers Distance
+
+### Set Followers Can Follow
+
+### Change Move Route Alignment
+
+### Move
+
+### Change Touch/Mouse Input
+
+### Recalculate Collision Mesh
 
 This command informs AltimitMovement that it needs to recalculate the map's
 collision mesh. Use it after completing any tile changes affecting passability,
