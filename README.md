@@ -68,16 +68,38 @@ The example below makes a 5-pointed polygon, i.e. a pentagon.
 
 ### Player Collider
 
+This collider determines what shape the player "bumps into" events and walls with.
+
+The default player collider is a tile-sized circle centered low, written like this:
+
+    <circle cx='0.5' cy='0.7' r='0.25' />
+
 ### Normalize Player Movement?
+
+If this parameter is turned `ON` (as it is by default), diagonal movement speed accounts for Euclidean distance covered.
+
+If it's turned `OFF`, diagonal movement has the same speed in the X dimension as going straight east or west, and the same speed in the Y dimension as going straight north or south. Therefore, diagonal movement is faster if Normalize Player Movement is turned `OFF`.
 
 ### Follow Distance
 
-### Followers Collider
+This is how many tiles apart followers should be as the player moves forward in a straight line. A distance of 1 results in a tight chain; a distance of 2 doubles the spacing. Default follow distance is 1.5.
+
+### Follower Collider
+
+This collider is used for each of the player's followers.
+
+Default follower collider: `<circle cx='0.5' cy='0.7' r='0.25' />`
 
 ### Normalize Follower Movement?
 
+This is like Normalize Player Movement, except that it applies to the player's followers. Turn `ON` for more realistic diagonal movement; turn `OFF` for faster diagonal movement.
+
 ### Boat Collider
 
+This collider is used for the party's boat. Its default collider is a small circle, written like this:
+
+    <circle cx='0.5' cy='0.5' r='0.333' />
+    
 ### Ship Collider
 
 ### Airship Collider
