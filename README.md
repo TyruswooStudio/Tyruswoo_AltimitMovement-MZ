@@ -25,6 +25,75 @@ vice versa.
 To use this plugin, you can use a plugin command each time you want the
 map's collision mesh to be recalculated.
 
+## Collider Definitions
+
+A collider is the shape with which an object in the game bumps into other objects.
+This plugin allows you to define colliders of the following types of shapes:
+Rectangle, Circle, Line, Polygon, and Regular Polygon.
+
+### Rectangle
+
+A rectangle has offsets `x` and `y`, and `width` and `height` expressed in tile-sized units.
+Below is an example of a square that's example one tile in size.
+
+    <rect x='0.0' y='0.0' width='1.0' height='1.0' />
+
+### Circle
+
+This example makes a tile-sized circle:
+
+    <circle cx='0.5' cy='0.5' r='0.5' />
+
+### Line
+
+This example makes a line from top-left to bottom-right of a single tile:
+
+    <line x1='0' y1='0' x2='1' y2='1' />
+
+### Polygon
+
+A polygon collider must be convex and clock-wise-winding.
+The example below makes a triangle.
+
+    <polygon points='0.0,1.0 0.5,0.0 1.0,1.0' />
+
+### Regular polygon
+
+A regular polygon has all angles equal and all sides equal.
+The example below makes a 5-pointed polygon, i.e. a pentagon.
+
+    <regular cx='0.5' cy='0.5' rx='0.5' ry='0.5' p='5' />
+
+## Plugin Parameters
+
+### Player Collider
+
+### Normalize Player Movement?
+
+### Follow Distance
+
+### Followers Collider
+
+### Normalize Follower Movement?
+
+### Boat Collider
+
+### Ship Collider
+
+### Airship Collider
+
+### Character Collider
+
+### Tile Collider
+
+### Collider Presets
+
+### Align Move Routes to Grid?
+
+### Use Touch/Mouse?
+
+### Gamepad Mode
+
 ## Plugin Commands
 
 ### Change Player Collider
