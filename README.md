@@ -83,7 +83,7 @@ If `No` is selected, diagonal movement has the same speed in the X dimension as 
 
 ### Follow Distance
 
-This is how many tiles apart followers should be as the player moves forward in a straight line. A distance of 1 results in a tight chain; a distance of 2 doubles the spacing. Default follow distance is 1.5.
+This specifies how far apart followers should be as the player moves forward in a straight line. A distance of 1 results in a tight chain; a distance of 2 doubles the spacing. Default follow distance is 1.5.
 
 ### Follower Collider
 
@@ -142,17 +142,20 @@ This changes what the gamepad's analog stick does. Gamepad mode can be `Movement
 
 ## Plugin Commands
 
-### Change Player Collider
+### The Change Collider Commands
 
-### Change This Collider
+The following plugin commands change the collider of a character, event, or vehicle:
+- **Change Player Collider** - Change the collider of the player (i.e. the party leader).
+- **Change This Collider** - Change the collider of the active event.
+- **Change Event Collider** - Enter the Event ID of any event on the map.
+- **Change Vehicle Collider** - Change the collider of the Boat, Ship, or Airship.
+- **Change Follower Collider** - Pick a follower from the lineup.
 
-### Change Event Collider
-
-### Change Vehicle Collider
-
-### Change Follower Collider
+In the command's `Change To` argument, enter the number of the collider preset you want the character, event, or vehicle to start using. For instance, if you want to use the second collider in the Collider Presets list, enter a 2.
 
 ### Change Followers Distance
+
+Use this to change the followers' distance during gameplay. It works like the Follow Distance plugin parameter: larger number makes followers walk farther apart.
 
 ### Set Followers Can Follow
 
