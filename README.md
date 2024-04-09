@@ -79,7 +79,7 @@ The default player collider is a tile-sized circle centered low, written like th
 
 If this parameter has `Yes` selected (as it has by default), diagonal movement speed accounts for Euclidean distance covered.
 
-If `Yes` is selected, diagonal movement has the same speed in the X dimension as going straight east or west, and the same speed in the Y dimension as going straight north or south. Therefore, diagonal movement is faster if Normalize Player Movement has `No` selected.
+If `No` is selected, diagonal movement has the same speed in the X dimension as going straight east or west, and the same speed in the Y dimension as going straight north or south. Therefore, diagonal movement is faster if Normalize Player Movement has `No` selected.
 
 ### Follow Distance
 
