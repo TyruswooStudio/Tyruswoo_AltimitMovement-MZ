@@ -40,13 +40,14 @@ Below is an example of a square that's example one tile in size.
 
 ### Circle
 
-This example makes a tile-sized circle:
+A circle has offsets `cx` and `cy`, and a radius `r`. This example makes a tile-sized circle:
 
     <circle cx='0.5' cy='0.5' r='0.5' />
 
 ### Line
 
-This example makes a line from top-left to bottom-right of a single tile:
+A line runs from the coordinates (`x1`,`y1`) to (`x2`,`y2`).
+The example below makes a line from top-left to bottom-right of a single tile:
 
     <line x1='0' y1='0' x2='1' y2='1' />
 
@@ -76,9 +77,9 @@ The default player collider is a tile-sized circle centered low, written like th
 
 ### Normalize Player Movement?
 
-If this parameter is turned `ON` (as it is by default), diagonal movement speed accounts for Euclidean distance covered.
+If this parameter has `Yes` selected (as it has by default), diagonal movement speed accounts for Euclidean distance covered.
 
-If it's turned `OFF`, diagonal movement has the same speed in the X dimension as going straight east or west, and the same speed in the Y dimension as going straight north or south. Therefore, diagonal movement is faster if Normalize Player Movement is turned `OFF`.
+If `Yes` is selected, diagonal movement has the same speed in the X dimension as going straight east or west, and the same speed in the Y dimension as going straight north or south. Therefore, diagonal movement is faster if Normalize Player Movement has `No` selected.
 
 ### Follow Distance
 
@@ -92,7 +93,8 @@ Default follower collider: `<circle cx='0.5' cy='0.7' r='0.25' />`
 
 ### Normalize Follower Movement?
 
-This is like Normalize Player Movement, except that it applies to the player's followers. Turn `ON` for more realistic diagonal movement; turn `OFF` for faster diagonal movement.
+This is like Normalize Player Movement, except that it applies to the player's followers.
+Select `Yes` for more realistic diagonal movement, or `No` for faster diagonal movement.
 
 ### Boat Collider
 
@@ -102,19 +104,41 @@ This collider is used for the party's boat. Its default collider is a small circ
     
 ### Ship Collider
 
+This collider is used for the party's ship. Its default collider is a tile-sized circle:
+
+    <circle cx='0.5' cy='0.5' r='0.5' />
+
 ### Airship Collider
+
+This is the collider used for the party's airship. Its default collider is a small circle:
+
+    <circle cx='0.5' cy='0.5' r='0.25' />
 
 ### Character Collider
 
+This is the collider used for all non-player characters, except for those whose collider is manually set to something else. The default value is a tile-sized, low-centered circle, as written below:
+
+    <circle cx='0.5' cy='0.7' r='0.25' />
+
 ### Tile Collider
 
+This is the collider used for all tile events: that is, all events that have their appearance set to a tile, to a sprite whose filename starts with "!", or to no appearance. By default this collider is a tile-sized square, as written below:
+
+    <rect x='0' y='0' width='1' height='1' />
+
 ### Collider Presets
+
+In this list you can define as many collider shapes as you like. To set a character or event to use this collider, use one of the Change Collider plugin commands, and enter the number of the collider you want used. To use the first collider in the Collider Presets list, put 1, or to use the second collider in the list, put 2, and so on.
 
 ### Align Move Routes to Grid?
 
 ### Use Touch/Mouse?
 
+When Use Touch/Mouse has `Yes` selected, the player can click on the screen to choose where to move, and the party will start walking there. To turn off this feature and require movement to be done by controller or arrow keys, select `No`.
+
 ### Gamepad Mode
+
+This changes what the gamepad's analog stick does. Gamepad mode can be `Movement + Facing` (default), `Movement Only`, `Facing Only` or `Disabled`.
 
 ## Plugin Commands
 
