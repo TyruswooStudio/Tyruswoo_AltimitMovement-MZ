@@ -87,9 +87,9 @@ This specifies how far apart followers should be as the player moves forward in 
 
 ### Follower Collider
 
-This collider is used for each of the player's followers.
+This collider is used for each of the player's followers. The default follower collider is a tile-sized, low-centered circle:
 
-Default follower collider: `<circle cx='0.5' cy='0.7' r='0.25' />`
+    <circle cx='0.5' cy='0.7' r='0.25' />
 
 ### Normalize Follower Movement?
 
