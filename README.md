@@ -170,7 +170,7 @@ Use this plugin command to change whether characters must align to the grid befo
 ### Move
 
 Use this plugin command to assign advanced movement commands. Its Move Command argument has the following sub-arguments:
-- **Mover** - The character, event, or vehicle that should move.
+- **Mover** - The entity that should move. You can assign a Move command to this event, the player, any event on the map, or even to a follower or vehicle.
 - **Direction** - This can be random, any cardinal or diagonal direction you choose, forward, backward, toward other, or away from other.
 - **Distance** - This is the move distance in tiles.
 - **Other** - The other character, event, or vehicle that the mover is moving toward or away from. This only needs to be set if the Direction is "toward other" or "away from other"; otherwise its value doesn't matter.
