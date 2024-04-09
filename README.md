@@ -132,6 +132,8 @@ In this list you can define as many collider shapes as you like. To set a charac
 
 ### Align Move Routes to Grid?
 
+If `yes` is selected, a character will always align to the tile they're standing on before they step through a move route. This is set to `yes` by default; to disable it, select `no`.
+
 ### Use Touch/Mouse?
 
 When Use Touch/Mouse has `Yes` selected, the player can click on the screen to choose where to move, and the party will start walking there. To turn off this feature and require movement to be done by controller or arrow keys, select `No`.
@@ -159,11 +161,27 @@ Use this to change the followers' distance during gameplay. It works like the Fo
 
 ### Set Followers Can Follow
 
+Pick a specific follower, or all followers. You can make the followers stop following, or resume following, the party leader. (For more options for controlling follower movement, we recommend [Tyruswoo Follower Control](https://www.tyruswoo.com/downloads/rpg-maker-plugin-downloads/#follower-control-mz).)
+
 ### Change Move Route Alignment
+
+Use this plugin command to change whether characters must align to the grid before they begin a move route.
 
 ### Move
 
+Use this plugin command to assign advanced movement commands. Its Move Command argument has the following sub-arguments:
+- **Mover** - The character, event, or vehicle that should move.
+- **Direction** - This can be random, any cardinal or diagonal direction you choose, forward, backward, toward other, or away from other.
+- **Distance** - This is the move distance in tiles.
+- **Other** - The other character, event, or vehicle that the mover is moving toward or away from. This only needs to be set if the Direction is "toward other" or "away from other"; otherwise its value doesn't matter.
+- **Mover Event Id** - If the mover is an event other than this event, specify its Event ID here. Otherwise, you can leave this blank.
+- **Other Event Id** - If the mover is moving toward or away from an event that isn't this event, put the other event's ID here. Otherwise, you can leave this blank.
+
+In addition to defining the Move Command, you can choose whether the active event should **Wait For Completion** of this move, and whether this command should **Skip If Cannot Move**.
+
 ### Change Touch/Mouse Input
+
+You can use this to turn touch/mouse input on or off during gameplay.
 
 ### Recalculate Collision Mesh
 
