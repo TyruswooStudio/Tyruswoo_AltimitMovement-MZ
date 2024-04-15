@@ -228,6 +228,9 @@ on the correct page when the first event finishes running.
 **v0.9.0** - 3/27/2024
 - Added VeLee's optional debug overlay, AltimitMovementDebug.js
 
+**v0.9.1** - 4/15/2024
+- Documented all plugin parameters and commands.
+
 > **Remember, only you can build your dreams!**
 >
 > *Tyruswoo*
