@@ -352,9 +352,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * v0.9.0  3/27/2024
  *        - Added VeLee's optional debug overlay, AltimitMovementDebug.js
  * 
- * v0.9.1  4/15/2024
+ * v0.9.1  8/9/2024
  *        - Documented all plugin parameters and commands.
- * 
+ *        - Made Tyruswoo Altimit Movement compatible with Tyruswoo Map
+ *          Properties v2.1.0 and up.
  * ============================================================================
  * MIT License
  *
@@ -2024,6 +2025,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Game_Player.prototype.initMembers;
 	Game_Player.prototype.initMembers = function() {
 		Tyruswoo.AltimitMovement.Game_Player_initMembers.call(this);
+		this._collisionType = CollisionMesh.PLAYER;
 		this._collider = Collider.createFromXML(PLAYER.COLLIDER_LIST);
 		this._circularMovement = PLAYER.CIRCULAR_MOVEMENT;
 	};
@@ -2563,10 +2565,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 	Game_Player.prototype.updateVehicleGetOff = function() {
 		if (!this.areFollowersGathering() && this.vehicle().isLowest() &&
-		this._collisionType !== CollisionMesh.WALK) {
+		this._collisionType !== CollisionMesh.PLAYER) {
 			this._collider = this.vehicle()._passengerCollider;
 			this.vehicle()._passengerCollider = undefined;
-			this._collisionType = CollisionMesh.WALK;
+			this._collisionType = CollisionMesh.PLAYER;
 			this._vehicleGettingOff = false;
 			this._vehicleType = 'walk';
 			this.setTransparent(false);
@@ -2880,6 +2882,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	// Game_Event overrides
 	//-----------------------------------------------------------------------------
 
+	Tyruswoo.AltimitMovement.Game_Event_initMembers =
+		Game_Event.prototype.initMembers;
+	Game_Event.prototype.initMembers = function() {
+		Tyruswoo.AltimitMovement.Game_Event_initMembers.call(this);
+		this._collisionType = CollisionMesh.EVENT;
+	};
+
 	// alias method
 	Tyruswoo.AltimitMovement.Game_Event_setupPageSettings = 
 		Game_Event.prototype.setupPageSettings;
@@ -3175,7 +3184,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Map.prototype.collisionMesh = function(collisionType) {
-		collisionType = collisionType || CollisionMesh.WALK;
+		collisionType = collisionType ?? CollisionMesh.PLAYER;
 		return CollisionMesh.getMesh(this.mapId(), collisionType);
 	}
 
@@ -3432,7 +3441,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		if (!this.checkPassage(x, y, 0x0f)) {
 			return false;
 		}
-		return this.canMoveOn(character, x, y, CollisionMesh.getMesh(this.mapId(), CollisionMesh.WALK));
+		const charType = character == $gamePlayer ? CollisionMesh.PLAYER : CollisionMesh.EVENT;
+		return this.canMoveOn(character, x, y, CollisionMesh.getMesh(this.mapId(), charType));
 	};
 
 	Game_Map.prototype.getAABBoxTests = function(character, vx, vy) {
@@ -3520,11 +3530,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	CollisionMesh.BOAT = 1;
 	CollisionMesh.SHIP = 2;
 	CollisionMesh.AIRSHIP = 3;
+	CollisionMesh.EVENT = 4;
+	CollisionMesh.PLAYER = CollisionMesh.WALK;
 
 	CollisionMesh.meshInMemory = { mapId: null, mesh: [] };
 
 	CollisionMesh.getMesh = function(mapId, type) {
-		type = type || CollisionMesh.WALK;
+		type = type ?? CollisionMesh.PLAYER;
 
 		if (CollisionMesh.meshInMemory.mesh[type] !== undefined &&
 		CollisionMesh.meshInMemory.mapId === mapId &&
@@ -3547,8 +3559,20 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		}
 
 		CollisionMesh.meshInMemory.mapId = mapId;
-		CollisionMesh.meshInMemory.mesh[CollisionMesh.WALK] =
-			CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
+		if (Imported.Tyruswoo_MapProperties) {
+			// MapProperties plugin needs one mesh for players, another for events.
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.PLAYER] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPlayerPassable);
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.EVENT] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isEventPassable);
+		} else {
+			// Players and events reference the same mesh.
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.PLAYER] =
+				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isPassable);
+			CollisionMesh.meshInMemory.mesh[CollisionMesh.EVENT] =
+				CollisionMesh.meshInMemory.mesh[CollisionMesh.PLAYER];
+		}
+
 		if (!gameMap.boat().isTransparent()) {
 			CollisionMesh.meshInMemory.mesh[CollisionMesh.BOAT] =
 				CollisionMesh.makeCollisionMesh(gameMap, gameMap.isBoatPassable);
