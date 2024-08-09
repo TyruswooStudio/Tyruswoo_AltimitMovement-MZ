@@ -36,7 +36,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.9.1 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.9.2 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -352,8 +352,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * v0.9.0  3/27/2024
  *        - Added VeLee's optional debug overlay, AltimitMovementDebug.js
  * 
- * v0.9.1  8/9/2024
+ * v0.9.1  4/15/2024
  *        - Documented all plugin parameters and commands.
+ * 
+ * v0.9.2  8/9/2024
  *        - Made Tyruswoo Altimit Movement compatible with Tyruswoo Map
  *          Properties v2.1.0 and up.
  * ============================================================================
