@@ -36,7 +36,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.9.2 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.9.3 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -358,6 +358,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * v0.9.2  8/9/2024
  *        - Made Tyruswoo Altimit Movement compatible with Tyruswoo Map
  *          Properties v2.1.0 and up.
+ * 
+ * v0.9.3  8/13/2024
+ *        - Fixed a bug where the touch target wasn't clearing at the start of
+ *          a foreground event.
  * ============================================================================
  * MIT License
  *
@@ -2906,6 +2910,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 			return;
 		}
 		Tyruswoo.AltimitMovement.Game_Event_start.call(this);
+		if (this._trigger !== 4) { // If not a parallel process event...
+			// Clear the touch target.
+			// We don't want it blinking while a foreground event plays out.
+			$gamePlayer._touchTarget = null;
+		}
 		this._lastFrame = Graphics.frameCount + 1;
 	};
 
