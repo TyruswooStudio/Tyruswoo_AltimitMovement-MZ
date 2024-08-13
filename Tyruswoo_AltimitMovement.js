@@ -323,7 +323,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * <regular cx='0.5' cy='0.5' rx='0.5' ry='0.5' p='5' />
  *
  * ============================================================================
- * For more help using this plugin, see Tyruswoo.com.
+ * Visit Tyruswoo.com to ask for help, donate, or browse more of our plugins.
  * ============================================================================
  * Version History:
  *
