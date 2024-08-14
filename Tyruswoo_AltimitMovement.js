@@ -2072,7 +2072,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	};
 
 	Game_Player.prototype.getInputDirection = function() {
-		return Input.dir8;
+		let dir = Input.dir8;
+		if (mv3d) {
+			// MZ3D (a port of MV3D) can turn the camera. Account for this.
+			return mv3d.transformDirection(dir, mv3d.blendCameraYaw.currentValue());
+		} else {
+			return dir;
+		}
 	};
 
 	Game_Player.prototype.moveByInput = function() {
