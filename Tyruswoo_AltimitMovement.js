@@ -31,12 +31,16 @@
 var Imported = Imported || {};
 Imported.Tyruswoo_AltimitMovement = true;
 
+// Also signal that AltimitMovement is present, for plugins that look for that.
+Imported.AltimitMovement = true;
+PluginManager._scripts.push("AltimitMovement");
+
 var Tyruswoo = Tyruswoo || {};
 Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.9.3 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.9.4 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -362,6 +366,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * v0.9.3  8/13/2024
  *        - Fixed a bug where the touch target wasn't clearing at the start of
  *          a foreground event.
+ * 
+ * v0.9.4  8/30/2024
+ *        - Made plugin visible to plugins that look for "AltimitMovement"
+ *          in PluginManager's list of scripts.
  * ============================================================================
  * MIT License
  *
