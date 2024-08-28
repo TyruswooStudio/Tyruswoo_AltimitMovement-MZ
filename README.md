@@ -2,9 +2,6 @@
 
 Tyruswoo’s modification of the open-source pixel movement plugin Altimit Movement!
 
-This modified plugin provides a command to recalculate tile boundaries.
-This allows Tyruswoo Altimit Movement to be used with Tile Control MZ.
-
 ## Usage
 
 Plugin will automatically apply when ON.
@@ -14,16 +11,25 @@ Plugin will automatically apply when ON.
 - Modified from AltimitMovement Version 0.50 Beta
 - Website: https://github.com/AltimitSystems/mv-plugins/tree/master/movement
 
-## Basics of how to use this plugin
+## Compatibility Note
 
-This plugin does not require Tile Control to run. The plugin is a modified
-version of AltimitMovement, with an added feature of being able to use a
-plugin command (or script) to recalculate the map collision mesh. This is
-useful if Tile Control changed any tiles from passable to impassible, or
-vice versa.
+This edition of Tyruswoo Altimit Movement for RPG Maker MZ is expressly
+designed to be compatible with Tyruswoo Tile Control, Tyruswoo Map
+Properties, and MZ3D.
 
-To use this plugin, you can use a plugin command each time you want the
-map's collision mesh to be recalculated.
+Compatibility with some plugins requires extra steps:
+* If MZ3D is present, place Tyruswoo Altimit Movement above MZ3D in the
+  plugin list.
+* If you're using Tyruswoo Tile Control, use Tyruswoo Altimit Movement's
+  plugin command "Recalculate Collision Mesh" after using Tile Control to
+  change tiles during runtime.
+
+Tyruswoo Altimit Movement aims to be compatible with most other plugins.
+Since it changes RMMZ's core engine more radically than most plugins do,
+we advise putting Tyruswoo Altimit Movement at the top of the plugin list.
+
+If you encounter any compatibility issues, please contact us
+at [Tyruswoo.com](https://www.tyruswoo.com) and we'll do our best to work out a fix.
 
 ## Collider Definitions
 
@@ -200,7 +206,7 @@ the script and the plugin command have the same effect.
 
 AltimitMovementDebug.js is an optional supplementary plugin developed by VeLee and packaged with Tyruswoo Altimit Movement. When AltimitMovementDebug.js is added to the plugin list and turned ON, it shows a color-coded wireframe overlay of the map's collision mesh and all characters' colliders. To hide the overlay, use Plugin Manager to turn AltimitMovevementDebug.js OFF.
 
-### Visit [**Tyruswoo.com**](https://www.tyruswoo.com) to [ask for help](https://www.tyruswoo.com/contact-us/), [donate](https://www.tyruswoo.com/donate/), or browse more of our [plugins](https://www.tyruswoo.com/downloads/rpg-maker-plugin-downloads/).
+### Visit [Tyruswoo.com](https://www.tyruswoo.com) to [ask for help](https://www.tyruswoo.com/contact-us/), [donate](https://www.tyruswoo.com/donate/), or browse more of our [plugins](https://www.tyruswoo.com/downloads/rpg-maker-plugin-downloads/).
 
 ## Version History
 
@@ -233,6 +239,18 @@ on the correct page when the first event finishes running.
 
 **v0.9.2** - 8/9/2024
 - Made Tyruswoo Altimit Movement compatible with Tyruswoo Map Properties v2.1.0 and up.
+
+**v0.9.3** - 8/13/2024
+- Fixed a bug where the touch target wasn't clearing at the start of
+  a foreground event.
+
+**v0.9.4** - 8/27/2024
+- Made compatible with MZ3D, as long as MZ3D is placed BELOW
+  Tyruswoo_AltimitMovement in the plugin list.
+  Credit to Cutievirus for this compatibility fix.
+- Fixed a rare crash that said "Assignment to constant variable."
+- Made plugin visible to plugins that look for "AltimitMovement"
+  in PluginManager's list of scripts.
 
 > **Remember, only you can build your dreams!**
 >

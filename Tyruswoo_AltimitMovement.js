@@ -28,6 +28,7 @@
  * SOFTWARE.
  */
 
+// Signal to other plugins that this plugin is present.
 var Imported = Imported || {};
 Imported.Tyruswoo_AltimitMovement = true;
 
@@ -52,16 +53,25 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *  Modified from AltimitMovement Version 0.50 Beta
  *  Website https://github.com/AltimitSystems/mv-plugins/tree/master/movement
  * ============================================================================
- * Basics of how to use this plugin:
- *
- * This plugin does not require Tile Control to run. The plugin is a modified
- * version of AltimitMovement, with an added feature of being able to use a
- * plugin command (or script) to recalculate the map collision mesh. This is
- * useful if Tile Control changed any tiles from passable to impassible, or
- * vice versa.
- *
- * To use this plugin, you can use a plugin command each time you want the
- * map's collision mesh to be recalculated.
+ * Compatibility Note:
+ * 
+ * This edition of Tyruswoo Altimit Movement for RPG Maker MZ is expressly
+ * designed to be compatible with Tyruswoo Tile Control, Tyruswoo Map
+ * Properties, and MZ3D.
+ * 
+ * Compatibility with some plugins requires extra steps:
+ * * If MZ3D is present, place Tyruswoo Altimit Movement above MZ3D in the
+ *   plugin list.
+ * * If you're using Tyruswoo Tile Control, use Tyruswoo Altimit Movement's
+ *   plugin command "Recalculate Collision Mesh" after using Tile Control to
+ *   change tiles during runtime.
+ * 
+ * Tyruswoo Altimit Movement aims to be compatible with most other plugins.
+ * Since it changes RMMZ's core engine more radically than most plugins do,
+ * we advise putting Tyruswoo Altimit Movement at the top of the plugin list.
+ * 
+ * If you encounter any compatibility issues, please contact us at Tyruswoo.com
+ * and we'll do our best to work out a fix.
  * ============================================================================
  * 
  * Collider Definitions
@@ -367,7 +377,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Fixed a bug where the touch target wasn't clearing at the start of
  *          a foreground event.
  * 
- * v0.9.4  8/30/2024
+ * v0.9.4  8/27/2024
+ *        - Made compatible with MZ3D, as long as MZ3D is placed BELOW
+ *          Tyruswoo_AltimitMovement in the plugin list. Credit to Cutievirus
+ *          for this compatibility fix.
+ *        - Fixed a rare crash that said "Assignment to constant variable."
  *        - Made plugin visible to plugins that look for "AltimitMovement"
  *          in PluginManager's list of scripts.
  * ============================================================================
@@ -3414,8 +3428,8 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		// Test collision with map
 		for (let ii = 0; ii < bboxTests.length; ii++) {
-			const offsetX = 0;
-			const offsetY = 0;
+			let offsetX = 0;
+			let offsetY = 0;
 			if (bboxTests[ii].type == 1) {
 				offsetX += this.width();
 			} else if (bboxTests[ii].type == 2) {
@@ -5235,5 +5249,32 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	PluginManager.registerCommand(pluginName, 'recalculateCollisionMesh', args => {
 		$gameMap.recalculateCollisionMesh();
 	});
+
+	//=============================================================================
+	// MZ3D Compatibility
+	//=============================================================================
+
+	// Apply the compatibility patch on Scene_Boot,
+	// so that MZ3D will be found no matter where it sits on the plugin list.
+	Tyruswoo.AltimitMovement.Scene_Boot_create = Scene_Boot.prototype.create;
+	Scene_Boot.prototype.create = function() {
+		Tyruswoo.AltimitMovement.Scene_Boot_create.call(this);
+		Tyruswoo.AltimitMovement.makeCompatibleWithMZ3D();
+	};
+
+	Tyruswoo.AltimitMovement.makeCompatibleWithMZ3D = function() {
+		if (!window.mv3d || !mv3d.tileCollision) {
+			return; // MZ3D is not present, so no compatibility is needed.
+		}
+
+		// Credit to Cutievirus, creator of MZ3D, for the compatibility fix
+		// contained in the function below.
+		Tyruswoo.AltimitMovement._mv3d_tileCollision = mv3d.tileCollision;
+		mv3d.tileCollision = function(char, x, y, useStairThresh=false, useTargetZ=false) {
+			if (char._mv3d_isFlying && !char._mv3d_isFlying()) useTargetZ=false
+			return Tyruswoo.AltimitMovement._mv3d_tileCollision.call(
+				this, char, x, y, useStairThresh, useTargetZ);
+		}
+	};
 
 })();
