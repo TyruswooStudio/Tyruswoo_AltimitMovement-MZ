@@ -41,7 +41,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 /*:
  * @target MZ
- * @plugindesc MZ v0.9.4 Patched AltimitMovement to work with Tyruswoo_TileControl.
+ * @plugindesc MZ v0.9.5 Patched AltimitMovement to work with Tyruswoo_TileControl.
  * @author Tyruswoo and Altimit Community
  * @url https://www.tyruswoo.com
  *
@@ -73,7 +73,18 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * If you encounter any compatibility issues, please contact us at Tyruswoo.com
  * and we'll do our best to work out a fix.
  * ============================================================================
+ * Player X and Y
  * 
+ * Tyruswoo Altimit Movement may interfere with scripts or event commands that
+ * expect an exact value for $gamePlayer.x or $gamePlayer.y. This is because
+ * Altimit Movement sets $gamePlayer.x and $gamePlayer.y to a fractional
+ * (floating point) value that represents the player's exact position.
+ * 
+ * To get the nearest integer values to the player's coordinates, you can use
+ * the following phrases in script calls:
+ *     Math.round($gamePlayer.x)
+ *     Math.round($gamePlayer.y)
+ * ============================================================================
  * Collider Definitions
  * 
  * A collider is the shape with which an object in the game bumps into other
@@ -384,6 +395,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Fixed a rare crash that said "Assignment to constant variable."
  *        - Made plugin visible to plugins that look for "AltimitMovement"
  *          in PluginManager's list of scripts.
+ * 
+ * v0.9.5  Pending
+ *        - Added note on how this plugin affects player X and Y coordinates.
  * ============================================================================
  * MIT License
  *
