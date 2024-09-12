@@ -261,6 +261,9 @@ on the correct page when the first event finishes running.
 - Made plugin visible to plugins that look for "AltimitMovement"
   in PluginManager's list of scripts.
 
+**v0.9.5** - Pending
+- Added note on how this plugin affects player X and Y coordinates.
+
 > **Remember, only you can build your dreams!**
 >
 > *Tyruswoo*
