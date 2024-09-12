@@ -28,15 +28,17 @@ Tyruswoo Altimit Movement aims to be compatible with most other plugins.
 Since it changes RMMZ's core engine more radically than most plugins do,
 we advise putting Tyruswoo Altimit Movement at the top of the plugin list.
 
+If you encounter any compatibility issues, please contact us
+at [Tyruswoo.com](https://www.tyruswoo.com) and we'll do our best to work out a fix.
+
+## Player X and Y
+
 Tyruswoo Altimit Movement may interfere with scripts or event commands that
 expect an exact value for `$gamePlayer.x` or `$gamePlayer.y`. This is
 because Altimit Movement sets `$gamePlayer.x` and `$gamePlayer.y` to a
 fractional (floating point) value that represents the player's exact position.
 To get the nearest integer values to the player's coordinates, you can use
 `Math.round($gamePlayer.x)` and `Math.round($gamePlayer.y)`.
-
-If you encounter any compatibility issues, please contact us
-at [Tyruswoo.com](https://www.tyruswoo.com) and we'll do our best to work out a fix.
 
 ## Collider Definitions
 
