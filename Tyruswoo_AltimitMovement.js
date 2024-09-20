@@ -396,7 +396,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Made plugin visible to plugins that look for "AltimitMovement"
  *          in PluginManager's list of scripts.
  * 
- * v0.9.5  Pending
+ * v0.9.5  9/20/2024
  *        - Added note on how this plugin affects player X and Y coordinates.
  * ============================================================================
  * MIT License
