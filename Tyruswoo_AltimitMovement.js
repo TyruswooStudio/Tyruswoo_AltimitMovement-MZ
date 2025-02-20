@@ -398,6 +398,11 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * 
  * v0.9.5  9/20/2024
  *        - Added note on how this plugin affects player X and Y coordinates.
+ * 
+ * v0.9.6  Pending
+ *        - Added plugin parameter "Pixel Perfect Scroll". When turned ON,
+ *          it preserves the sharpness of the map by scrolling it by whole
+ *          pixels only.
  * ============================================================================
  * MIT License
  *
@@ -518,7 +523,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @type note
  * @default "<rect x='0' y='0' width='1' height='1' />"
  * 
- *
+ * 
  * @param presets
  * @text Collider presets
  * @desc Preset colliders to be referenced by events.
@@ -539,7 +544,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @off No
  * @default true
  * 
- *
+ * 
  * @param input_config
  * @text Input config
  * @desc Configuration for input method.
@@ -567,7 +572,14 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * @option Disabled
  * @value 0
  * @default 3
- *
+ * 
+ * 
+ * @param pixel_perfect_scroll
+ * @text Pixel Perfect Scroll
+ * @type boolean
+ * @default true
+ * 
+ * 
  * @command setPlayerCollider
  * @text Change Player Collider
  * @desc Change Player's Collider to another preset.
@@ -974,6 +986,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		ENABLE_TOUCH_MOUSE: (PARAMETERS['input_config_enable_touch_mouse'] != 'false'),
 		GAMEPAD_MODE: parseInt(PARAMETERS['input_config_gamepad_mode']),
 	};
+
+	Tyruswoo.AltimitMovement.pixelPerfectScroll =
+		(PARAMETERS['pixel_perfect_scroll'] != 'false');
 
 	//=============================================================================
 	// Game_System
@@ -5263,6 +5278,19 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	PluginManager.registerCommand(pluginName, 'recalculateCollisionMesh', args => {
 		$gameMap.recalculateCollisionMesh();
 	});
+
+	//=============================================================================
+	// Pixel Perfect Scrolling
+	//=============================================================================
+
+	if (Tyruswoo.AltimitMovement.pixelPerfectScroll) {
+		Spriteset_Map.prototype.updateTilemap = function() {
+			this._tilemap.origin.x = Math.round(
+				$gameMap.displayX() * $gameMap.tileWidth());
+			this._tilemap.origin.y = Math.round(
+				$gameMap.displayY() * $gameMap.tileHeight());
+		};
+	}
 
 	//=============================================================================
 	// MZ3D Compatibility
