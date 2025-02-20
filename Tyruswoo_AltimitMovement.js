@@ -409,7 +409,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  *        - Added note on how this plugin affects player X and Y coordinates.
  * 
  * v0.9.6  Pending
- *        - Added plugin parameter "Pixel Perfect Scroll".
+ *        - Added Pixel Perfect Scroll plugin parameter.
  * ============================================================================
  * MIT License
  *
