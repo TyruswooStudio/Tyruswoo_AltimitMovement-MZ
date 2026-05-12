@@ -408,8 +408,10 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
  * v0.9.5  9/20/2024
  *        - Added note on how this plugin affects player X and Y coordinates.
  * 
- * v0.9.6  Pending
+ * v0.9.6  5/12/2026
  *        - Added Pixel Perfect Scroll plugin parameter.
+ *        - Fixed compatibility issue with Hendrix_Animation_Solution.js
+ * 
  * ============================================================================
  * MIT License
  *
@@ -1544,7 +1546,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Game_CharacterBase.prototype.isMoving;
 	Game_CharacterBase.prototype.isMoving = function() {
 		return Tyruswoo.AltimitMovement.Game_CharacterBase_isMoving.call(this) ||
-			this._isMoving;
+			this._altIsMoving;
 	};
 
 	// alias method
@@ -1552,9 +1554,9 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Game_CharacterBase.prototype.updateAnimation;
 	Game_CharacterBase.prototype.updateAnimation = function() {
 		Tyruswoo.AltimitMovement.Game_CharacterBase_updateAnimation.call(this);
-		this._wasMoving = this._isMoving;
-		this._isMoving = this._x !== this._realX || this._y !== this._realY;
-		if (!this._isMoving) {
+		this._altWasMoving = this._altIsMoving;
+		this._altIsMoving = this._x !== this._realX || this._y !== this._realY;
+		if (!this._altIsMoving) {
 			this.refreshBushDepth();
 		}
 	};
@@ -1822,13 +1824,13 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 				this.setDirectionVector(move.x, move.y);
 			}
 			this.increaseSteps();
-			this._isMoving = true;
+			this._altIsMoving = true;
 
 			this.checkEventTriggerTouchFrontVector(move.x, move.y);
 		} else {
 			this.setMovementSuccess(false);
 			this.setDirectionVector(vx, vy);
-			this._isMoving = false;
+			this._altIsMoving = false;
 
 			this.checkEventTriggerTouchFrontVector(vx, vy);
 		}
@@ -1938,7 +1940,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Character.prototype.updateRoutineMove = function() {
 		if (this._moveTarget) {
 			const moveRoute = this._moveRoute;
-			if (!moveRoute.skippable || this._wasMoving) {
+			if (!moveRoute.skippable || this._altWasMoving) {
 				return;
 			}
 		}
@@ -2115,7 +2117,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 	Game_Player.prototype.update = function(sceneActive) {
 		const lastScrolledX = this.scrolledX();
 		const lastScrolledY = this.scrolledY();
-		const wasMoving = this._wasMoving;
+		const wasMoving = this._altWasMoving;
 		this.updateDashing();
 		if (sceneActive) {
 			this.moveByInput();
@@ -2123,7 +2125,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 		Game_Character.prototype.update.call(this);
 		this.updateScroll(lastScrolledX, lastScrolledY);
 		this.updateVehicle();
-		if (!this._isMoving) {
+		if (!this._altIsMoving) {
 			this.updateNonmoving(wasMoving, sceneActive);
 		}
 		this._followers.update();
@@ -2751,7 +2753,7 @@ Tyruswoo.AltimitMovement = Tyruswoo.AltimitMovement || {};
 
 		if (this.isOnLadder()) {
 			this.setDirection(8);
-		} else if (!this._wasMoving) {
+		} else if (!this._altWasMoving) {
 			const adx = Math.abs(dx);
 			const ady = Math.abs(dy);
 			if (adx > ady) {

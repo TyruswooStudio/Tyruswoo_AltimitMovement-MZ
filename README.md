@@ -272,8 +272,9 @@ on the correct page when the first event finishes running.
 **v0.9.5** - 9/20/2024
 - Added note on how this plugin affects player X and Y coordinates.
 
-**v0.9.6** - Pending
+**v0.9.6** - 5/12/2026
 - Added Pixel Perfect Scroll plugin parameter.
+- Fixed compatibility issue with Hendrix_Animation_Solution.js
 
 > **Remember, only you can build your dreams!**
 >
