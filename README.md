@@ -157,6 +157,14 @@ When Use Touch/Mouse has `Yes` selected, the player can click on the screen to c
 
 This changes what the gamepad's analog stick does. Gamepad mode can be `Movement + Facing` (default), `Movement Only`, `Facing Only` or `Disabled`.
 
+### Pixel Perfect Scroll
+
+When this parameter is turned ON (as it is by default), it preserves the
+sharpness of the map by rounding the scroll position to the nearest whole
+pixel. Pixel Perfect Scroll also prevents the appearance of seams in joined
+star-passability tiles that are designed to provide the appearance of
+continuous cover.
+
 ## Plugin Commands
 
 ### The Change Collider Commands
@@ -263,6 +271,9 @@ on the correct page when the first event finishes running.
 
 **v0.9.5** - 9/20/2024
 - Added note on how this plugin affects player X and Y coordinates.
+
+**v0.9.6** - Pending
+- Added Pixel Perfect Scroll plugin parameter.
 
 > **Remember, only you can build your dreams!**
 >
